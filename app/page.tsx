@@ -1,17 +1,19 @@
 import Link from 'next/link'
 import Navbar from './_components/Navbar'
 import Footer from './_components/Footer'
+import { createSupabaseServerClient } from '@/lib/supabase/server'
 
-// Estos datos en la Fase 2 vendrán de la Base de Datos (CMS)
-const pageConfig = {
-  brandName: 'CRM Maquilladora',
-  heroTitle: 'Realza tu belleza natural',
-  heroSubtitle: 'Servicios profesionales de maquillaje para eventos, novias y cursos de automaquillaje.',
-  heroCtaText: 'Reserva tu turno',
-  whatsappNumber: '5491112345678', // Reemplazar en Fase 2
-}
+export default async function LandingPage() {
+  const supabase = await createSupabaseServerClient()
+  const { data } = await supabase.from('site_settings').select('*').single()
 
-export default function LandingPage() {
+  const pageConfig = {
+    brandName: data?.brand_name || 'CRM Maquilladora',
+    heroTitle: data?.hero_title || 'Realza tu belleza natural',
+    heroSubtitle: data?.hero_subtitle || 'Servicios profesionales de maquillaje para eventos, novias y cursos de automaquillaje.',
+    heroCtaText: data?.hero_cta_text || 'Reserva tu turno',
+    whatsappNumber: data?.whatsapp_number || '5491112345678',
+  }
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden bg-surface-bg">
       {/* Orbes decorativos de fondo (mismo estilo que el login) */}

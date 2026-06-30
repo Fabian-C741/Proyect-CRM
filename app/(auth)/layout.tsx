@@ -1,14 +1,19 @@
 import type { Metadata } from 'next'
+import { createSupabaseServerClient } from '@/lib/supabase/server'
 
 export const metadata: Metadata = {
-  title: 'Acceso — CRM Maquilladora',
+  title: 'Acceso — Admin',
 }
 
-export default function AuthLayout({
+export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const supabase = await createSupabaseServerClient()
+  const { data } = await supabase.from('site_settings').select('brand_name').single()
+  const brandName = data?.brand_name || 'CRM Maquilladora'
+
   return (
     <div
       style={{
@@ -94,37 +99,36 @@ export default function AuthLayout({
       >
         {/* Logo / Marca */}
         <div style={{ textAlign: 'center', marginBottom: '2.5rem' }}>
-          {/* Icono con glow */}
+          {/* Logo y Nombre Dinámico */}
           <div
             style={{
               display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: 72,
-              height: 72,
-              borderRadius: 20,
+              width: '72px',
+              height: '72px',
+              borderRadius: '20px',
               background: 'linear-gradient(135deg, #ec4899 0%, #db2777 100%)',
-              boxShadow:
-                '0 0 0 1px rgba(236,72,153,0.3), 0 12px 40px rgba(236, 72, 153, 0.45), 0 4px 12px rgba(0,0,0,0.4)',
-              marginBottom: 20,
+              boxShadow: '0 8px 32px rgba(236, 72, 153, 0.4), inset 0 2px 0 rgba(255,255,255,0.2)',
+              marginBottom: '1.5rem',
             }}
           >
-            {/* Icono de diamante / estrella para maquilladora */}
-            <svg width="36" height="36" viewBox="0 0 24 24" fill="white">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="white">
               <path d="M12 1L9.5 8.5H2L8 13.5L5.5 21L12 16L18.5 21L16 13.5L22 8.5H14.5L12 1Z" />
             </svg>
           </div>
-
+          
           <h1
-            className="text-gradient"
             style={{
-              fontSize: '2rem',
+              fontSize: '1.75rem',
               fontWeight: 800,
-              margin: 0,
-              letterSpacing: '-0.02em',
+              color: 'white',
+              letterSpacing: '-0.03em',
+              lineHeight: 1.2,
+              marginBottom: '0.5rem',
             }}
           >
-            CRM Maquilladora
+            {brandName}
           </h1>
           <p
             style={{

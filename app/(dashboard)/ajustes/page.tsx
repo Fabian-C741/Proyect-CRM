@@ -1,0 +1,26 @@
+import { createSupabaseServerClient } from '@/lib/supabase/server'
+import SettingsForm from './SettingsForm'
+
+export const metadata = {
+  title: 'Ajustes del Sitio — CRM',
+}
+
+export default async function AjustesPage() {
+  const supabase = await createSupabaseServerClient()
+  
+  // Obtener configuración actual
+  const { data: settings } = await supabase.from('site_settings').select('*').single()
+
+  return (
+    <div style={{ animation: 'authFadeUp 0.4s ease-out forwards' }}>
+      <header style={{ marginBottom: '2rem' }}>
+        <h1 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.5rem' }}>Ajustes del Sitio (CMS)</h1>
+        <p style={{ color: 'var(--text-secondary)' }}>
+          Edita la información de tu página web pública y el título de tu marca.
+        </p>
+      </header>
+      
+      <SettingsForm initialData={settings || {}} />
+    </div>
+  )
+}
