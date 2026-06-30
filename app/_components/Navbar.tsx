@@ -39,19 +39,12 @@ export default function Navbar({ brandName }: { brandName: string }) {
 
       <nav style={{ display: 'none', gap: '2rem', fontSize: '0.9375rem', fontWeight: 500 }} className="md:flex">
         <Link href="#servicios" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s' }} className="hover:text-white">Servicios</Link>
-        <Link href="#portfolio" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s' }} className="hover:text-white">Portfolio</Link>
+        <Link href="#galeria" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s' }} className="hover:text-white">Galería</Link>
         <Link href="#cursos" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s' }} className="hover:text-white">Cursos</Link>
       </nav>
       
-      <div>
-        <Link 
-          href="/login" 
-          className="btn-secondary"
-          style={{ padding: '0.5rem 1rem', fontSize: '0.875rem' }}
-        >
-          Ingresar
-        </Link>
-      </div>
+      {/* Botón de login removido para no confundir a los clientes */}
+      <div style={{ width: 80 }}></div>
     </header>
   )
 }

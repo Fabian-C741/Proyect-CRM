@@ -105,14 +105,6 @@ export default function LandingPage() {
               </svg>
               {pageConfig.heroCtaText}
             </Link>
-            
-            <Link
-              href="#servicios"
-              className="btn-secondary"
-              style={{ padding: '1rem 2rem', fontSize: '1rem', borderRadius: '14px' }}
-            >
-              Ver Portfolio
-            </Link>
           </div>
         </div>
       </main>
