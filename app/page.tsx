@@ -107,6 +107,55 @@ export default function LandingPage() {
             </Link>
           </div>
         </div>
+
+        {/* --- Sección de Servicios --- */}
+        <section id="servicios" style={{ width: '100%', maxWidth: '1000px', margin: '6rem auto 4rem', textAlign: 'left' }}>
+          <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '2rem', textAlign: 'center' }}>Servicios Destacados</h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
+            {/* Tarjeta de Servicio 1 */}
+            <div className="card-glass" style={{ overflow: 'hidden', padding: 0, transition: 'transform 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+              <div style={{ height: '200px', background: 'url(https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=800&auto=format&fit=crop) center/cover' }}></div>
+              <div style={{ padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>Maquillaje Social</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', marginBottom: '1.5rem' }}>Look perfecto y duradero para eventos, fiestas y reuniones importantes.</p>
+                <Link href={`https://wa.me/${pageConfig.whatsappNumber}?text=Hola! Quiero info sobre Maquillaje Social`} target="_blank" className="btn-secondary" style={{ width: '100%', justifyContent: 'center' }}>Consultar</Link>
+              </div>
+            </div>
+
+            {/* Tarjeta de Servicio 2 */}
+            <div className="card-glass" style={{ overflow: 'hidden', padding: 0, transition: 'transform 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+              <div style={{ height: '200px', background: 'url(https://images.unsplash.com/photo-1596704017254-9b121068fb31?q=80&w=800&auto=format&fit=crop) center/cover' }}></div>
+              <div style={{ padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>Maquillaje de Novia</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', marginBottom: '1.5rem' }}>Prueba y maquillaje para el día más especial, con productos de alta gama.</p>
+                <Link href={`https://wa.me/${pageConfig.whatsappNumber}?text=Hola! Quiero info sobre Maquillaje para Novias`} target="_blank" className="btn-secondary" style={{ width: '100%', justifyContent: 'center' }}>Consultar</Link>
+              </div>
+            </div>
+
+            {/* Tarjeta de Servicio 3 */}
+            <div className="card-glass" style={{ overflow: 'hidden', padding: 0, transition: 'transform 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+              <div style={{ height: '200px', background: 'url(https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800&auto=format&fit=crop) center/cover' }}></div>
+              <div style={{ padding: '1.5rem' }}>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>Cursos de Automaquillaje</h3>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', marginBottom: '1.5rem' }}>Aprende a conocer tu rostro y las mejores técnicas para el día a día.</p>
+                <Link href={`https://wa.me/${pageConfig.whatsappNumber}?text=Hola! Quiero info sobre Cursos`} target="_blank" className="btn-secondary" style={{ width: '100%', justifyContent: 'center' }}>Consultar</Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* --- Sección de Galería / Portfolio --- */}
+        <section id="galeria" style={{ width: '100%', maxWidth: '1000px', margin: '2rem auto 6rem' }}>
+          <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '1rem', textAlign: 'center' }}>Mis Trabajos</h2>
+          <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '2rem' }}>Una muestra de los looks que podemos crear juntas.</p>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+            <div style={{ height: '250px', borderRadius: '12px', background: 'url(https://images.unsplash.com/photo-1512496015851-a1cbf39a5180?q=80&w=600&auto=format&fit=crop) center/cover' }}></div>
+            <div style={{ height: '250px', borderRadius: '12px', background: 'url(https://images.unsplash.com/photo-1596704017254-9b121068fb31?q=80&w=600&auto=format&fit=crop) center/cover' }}></div>
+            <div style={{ height: '250px', borderRadius: '12px', background: 'url(https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=600&auto=format&fit=crop) center/cover' }}></div>
+            <div style={{ height: '250px', borderRadius: '12px', background: 'url(https://images.unsplash.com/photo-1516975080661-460d3d52c41c?q=80&w=600&auto=format&fit=crop) center/cover' }}></div>
+          </div>
+        </section>
       </main>
 
       <Footer brandName={pageConfig.brandName} />
