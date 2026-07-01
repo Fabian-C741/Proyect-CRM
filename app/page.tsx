@@ -4,8 +4,15 @@ import Footer from './_components/Footer'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 
 export default async function LandingPage() {
-  const supabase = await createSupabaseServerClient()
-  const { data } = await supabase.from('site_settings').select('*').single()
+  // Intenta obtener configuración de la DB, pero usa valores por defecto si falla
+  let data: Record<string, string> | null = null
+  try {
+    const supabase = await createSupabaseServerClient()
+    const result = await supabase.from('site_settings').select('*').single()
+    data = result.data
+  } catch {
+    // Supabase no disponible o credenciales no configuradas — usa defaults
+  }
 
   const pageConfig = {
     brandName: data?.brand_name || 'CRM Maquilladora',
