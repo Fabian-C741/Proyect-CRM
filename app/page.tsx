@@ -122,7 +122,7 @@ export default async function LandingPage() {
           <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '2rem', textAlign: 'center' }}>Servicios Destacados</h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
             {/* Tarjeta de Servicio 1 */}
-            <div className="card-glass" style={{ overflow: 'hidden', padding: 0, transition: 'transform 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+            <div className="card-glass card-hover" style={{ overflow: 'hidden', padding: 0 }}>
               <div style={{ height: '200px', background: 'url(https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=800&auto=format&fit=crop) center/cover' }}></div>
               <div style={{ padding: '1.5rem' }}>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>Maquillaje Social</h3>
@@ -132,7 +132,7 @@ export default async function LandingPage() {
             </div>
 
             {/* Tarjeta de Servicio 2 */}
-            <div className="card-glass" style={{ overflow: 'hidden', padding: 0, transition: 'transform 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+            <div className="card-glass card-hover" style={{ overflow: 'hidden', padding: 0 }}>
               <div style={{ height: '200px', background: 'url(https://images.unsplash.com/photo-1596704017254-9b121068fb31?q=80&w=800&auto=format&fit=crop) center/cover' }}></div>
               <div style={{ padding: '1.5rem' }}>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>Maquillaje de Novia</h3>
@@ -142,7 +142,7 @@ export default async function LandingPage() {
             </div>
 
             {/* Tarjeta de Servicio 3 */}
-            <div className="card-glass" style={{ overflow: 'hidden', padding: 0, transition: 'transform 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}>
+            <div className="card-glass card-hover" style={{ overflow: 'hidden', padding: 0 }}>
               <div style={{ height: '200px', background: 'url(https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800&auto=format&fit=crop) center/cover' }}></div>
               <div style={{ padding: '1.5rem' }}>
                 <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>Cursos de Automaquillaje</h3>

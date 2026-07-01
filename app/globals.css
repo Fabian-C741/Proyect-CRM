@@ -84,6 +84,15 @@ body {
   border-radius: 16px;
 }
 
+/* Hover lift effect — reemplaza onMouseEnter/onMouseLeave en Server Components */
+.card-hover {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card-hover:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.3);
+}
+
 /* Botón primario */
 .btn-primary {
   background: linear-gradient(135deg, #ec4899 0%, #db2777 100%);
