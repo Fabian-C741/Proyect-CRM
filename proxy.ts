@@ -88,14 +88,18 @@ export async function proxy(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser()
 
+  console.log(`Proxy: Pathname="${pathname}" UserID="${user?.id || 'NO_USER'}"`)
+
   // --- 4. Proteger rutas del dashboard ---
   if (!user && isDashboardRoute) {
+    console.log('Proxy: Bloqueando acceso a dashboard (sin usuario). Redirigiendo a /login')
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = '/login'
     return NextResponse.redirect(loginUrl)
   }
 
   if (user && isAuthRoute) {
+    console.log('Proxy: Usuario ya autenticado en ruta de auth. Redirigiendo a /dashboard')
     const dashboardUrl = request.nextUrl.clone()
     dashboardUrl.pathname = '/dashboard'
     return NextResponse.redirect(dashboardUrl)
