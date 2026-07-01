@@ -44,9 +44,25 @@ export async function proxy(request: NextRequest) {
   const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
   const supabaseAnonKey = process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
 
+  const { pathname } = request.nextUrl
+  const isAuthRoute = pathname.startsWith('/login')
+  const isPublicAsset = pathname.startsWith('/_next') || pathname.startsWith('/api/auth')
+  const isDashboardRoute = !isAuthRoute && !isPublicAsset && pathname !== '/'
+
+  // Si no hay credenciales configuradas, permitir la landing page pero bloquear el dashboard
+  if (!supabaseUrl || !supabaseAnonKey) {
+    if (isDashboardRoute) {
+      const loginUrl = request.nextUrl.clone()
+      loginUrl.pathname = '/login'
+      return NextResponse.redirect(loginUrl)
+    }
+    // Landing page y rutas públicas pasan sin sesión
+    return supabaseResponse
+  }
+
   const supabase = createServerClient(
-    supabaseUrl!,
-    supabaseAnonKey!,
+    supabaseUrl,
+    supabaseAnonKey,
     {
       cookies: {
         getAll() {
@@ -73,11 +89,6 @@ export async function proxy(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   // --- 4. Proteger rutas del dashboard ---
-  const { pathname } = request.nextUrl
-  const isAuthRoute = pathname.startsWith('/login')
-  const isPublicAsset = pathname.startsWith('/_next') || pathname.startsWith('/api/auth')
-  const isDashboardRoute = !isAuthRoute && !isPublicAsset && pathname !== '/'
-
   if (!user && isDashboardRoute) {
     const loginUrl = request.nextUrl.clone()
     loginUrl.pathname = '/login'

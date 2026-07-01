@@ -10,9 +10,14 @@ export default async function AuthLayout({
 }: {
   children: React.ReactNode
 }) {
-  const supabase = await createSupabaseServerClient()
-  const { data } = await supabase.from('site_settings').select('brand_name').single()
-  const brandName = data?.brand_name || 'CRM Maquilladora'
+  let brandName = 'CRM Maquilladora'
+  try {
+    const supabase = await createSupabaseServerClient()
+    const { data } = await supabase.from('site_settings').select('brand_name').single()
+    brandName = data?.brand_name || brandName
+  } catch {
+    // Supabase no disponible — usa el nombre por defecto
+  }
 
   return (
     <div
