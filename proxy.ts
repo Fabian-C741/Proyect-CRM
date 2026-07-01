@@ -20,7 +20,7 @@ export async function proxy(request: NextRequest) {
     script-src 'self' 'unsafe-inline' 'unsafe-eval' https://fonts.googleapis.com;
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src 'self' https://fonts.gstatic.com;
-    img-src 'self' blob: data: https://*.supabase.co;
+    img-src 'self' blob: data: https://*.supabase.co https://images.unsplash.com;
     connect-src 'self' https://*.supabase.co wss://*.supabase.co;
     object-src 'none';
     base-uri 'self';
