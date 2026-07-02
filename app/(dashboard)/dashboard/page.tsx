@@ -56,8 +56,6 @@ export default async function DashboardPage() {
           }
         />
       </div>
-
-      {/* Aquí podrías agregar más secciones como "Próximas citas" o "Clientes recientes" */}
     </div>
   )
 }
