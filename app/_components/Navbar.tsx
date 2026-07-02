@@ -37,10 +37,12 @@ export default function Navbar({ brandName }: { brandName: string }) {
         </span>
       </div>
 
-      <nav style={{ display: 'none', gap: '2rem', fontSize: '0.9375rem', fontWeight: 500 }} className="md:flex">
+      <nav style={{ display: 'none', gap: '1.5rem', fontSize: '0.9375rem', fontWeight: 500 }} className="md:flex">
         <Link href="#servicios" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s' }} className="hover:text-white">Servicios</Link>
-        <Link href="#galeria" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s' }} className="hover:text-white">Galería</Link>
         <Link href="#cursos" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s' }} className="hover:text-white">Cursos</Link>
+        <Link href="#galeria" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s' }} className="hover:text-white">Galería</Link>
+        <Link href="#testimonios" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s' }} className="hover:text-white">Opiniones</Link>
+        <Link href="#sobre-mi" style={{ color: 'var(--text-secondary)', transition: 'color 0.2s' }} className="hover:text-white">Sobre Mí</Link>
       </nav>
       
       {/* Botón de login removido para no confundir a los clientes */}

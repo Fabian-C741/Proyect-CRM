@@ -69,6 +69,12 @@ export type Curso = {
   precio: number
   duracion_horas: number | null
   activo: boolean
+  imagen_url: string | null
+  tipo: 'servicio' | 'curso' | 'pdf' | 'ebook'
+  modo_venta: 'whatsapp' | 'link_externo' | 'mensaje'
+  link_externo: string | null
+  mensaje_whatsapp: string | null
+  mostrar_en_landing: boolean
   created_at: string
 }
 
@@ -83,6 +89,49 @@ export type Agenda = {
   created_at: string
   clientes?: Pick<Cliente, 'id' | 'nombre' | 'telefono'>
   cursos?: Pick<Curso, 'id' | 'nombre' | 'precio'>
+}
+
+export type Servicio = {
+  id: string
+  user_id: string
+  nombre: string
+  descripcion: string | null
+  imagen_url: string | null
+  orden: number
+  activo: boolean
+  created_at: string
+}
+
+export type PortfolioItem = {
+  id: string
+  user_id: string
+  imagen_url: string
+  descripcion: string | null
+  orden: number
+  created_at: string
+}
+
+export type Testimonio = {
+  id: string
+  user_id: string
+  nombre_cliente: string
+  texto: string
+  estrellas: number
+  activo: boolean
+  created_at: string
+}
+
+export type SiteSettings = {
+  id: string
+  user_id: string
+  brand_name: string
+  hero_title: string
+  hero_subtitle: string | null
+  hero_cta_text: string
+  whatsapp_number: string | null
+  sobre_mi_texto: string | null
+  sobre_mi_imagen_url: string | null
+  updated_at: string
 }
 
 // ============================================================
