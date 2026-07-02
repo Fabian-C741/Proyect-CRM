@@ -28,13 +28,6 @@ export default async function ConfiguracionPage() {
               <span className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Correo electrónico</span>
               <span className="text-sm text-slate-300 font-medium">{user?.email || 'No disponible'}</span>
             </div>
-
-            <div>
-              <span className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Fecha de registro</span>
-              <span className="text-sm text-slate-300">
-                {user?.created_at ? new Date(user.created_at).toLocaleDateString('es-AR', { dateStyle: 'long' }) : '-'}
-              </span>
-            </div>
           </div>
         </div>
 
