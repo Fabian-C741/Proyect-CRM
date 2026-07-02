@@ -1,4 +1,5 @@
 import { getClientes } from '@/lib/dal/clientes'
+import NuevoClienteModal from './NuevoClienteModal'
 
 export default async function ClientesPage() {
   const clientes = await getClientes()
@@ -10,9 +11,7 @@ export default async function ClientesPage() {
           <h1 className="text-2xl font-bold text-white mb-2">Clientes</h1>
           <p className="text-slate-400">Gestiona tu lista de clientes.</p>
         </div>
-        <button className="btn-primary">
-          Nuevo Cliente
-        </button>
+        <NuevoClienteModal />
       </div>
 
       <div className="card-glass overflow-hidden">
