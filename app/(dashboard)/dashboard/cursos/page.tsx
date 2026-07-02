@@ -1,4 +1,5 @@
 import { getCursos } from '@/lib/dal/cursos'
+import NuevoCursoModal from './NuevoCursoModal'
 
 export default async function CursosPage() {
   const cursos = await getCursos()
@@ -10,9 +11,7 @@ export default async function CursosPage() {
           <h1 className="text-2xl font-bold text-white mb-2">Cursos y Servicios</h1>
           <p className="text-slate-400">Gestiona tus servicios ofrecidos.</p>
         </div>
-        <button className="btn-primary">
-          Nuevo Curso
-        </button>
+        <NuevoCursoModal />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

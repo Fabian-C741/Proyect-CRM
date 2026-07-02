@@ -1,7 +1,13 @@
-import { getAgenda } from '@/lib/dal/cursos'
+import { getAgenda, getCursos } from '@/lib/dal/cursos'
+import { getClientes } from '@/lib/dal/clientes'
+import NuevaCitaModal from './NuevaCitaModal'
 
 export default async function AgendaPage() {
-  const agenda = await getAgenda(20) // Próximas 20 citas
+  const [agenda, clientes, cursos] = await Promise.all([
+    getAgenda(20),
+    getClientes(),
+    getCursos()
+  ])
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto">
@@ -10,9 +16,7 @@ export default async function AgendaPage() {
           <h1 className="text-2xl font-bold text-white mb-2">Agenda</h1>
           <p className="text-slate-400">Próximas citas y eventos.</p>
         </div>
-        <button className="btn-primary">
-          Nueva Cita
-        </button>
+        <NuevaCitaModal clientes={clientes} cursos={cursos} />
       </div>
 
       <div className="card-glass overflow-hidden">
