@@ -19,12 +19,23 @@ export async function createCursoAction(formData: FormData) {
     return { error: 'El nombre del curso es obligatorio' }
   }
 
-  const precio = parseFloat(precioRaw)
-  if (isNaN(precio) || precio < 0) {
-    return { error: 'El precio debe ser un número válido igual o mayor a 0' }
+  // Formatear precio a 2 decimales máximo
+  const precio = parseFloat(parseFloat(precioRaw).toFixed(2))
+  if (isNaN(precio) || precio < 0 || precio > 99999999) {
+    return { error: 'El precio debe ser un número válido entre 0 y 99.999.999' }
   }
 
-  const duracion_horas = duracionRaw ? parseFloat(duracionRaw) : null
+  // Formatear duración a 2 decimales máximo
+  let duracion_horas: number | null = null
+  if (duracionRaw) {
+    const parsedDuracion = parseFloat(duracionRaw)
+    if (!isNaN(parsedDuracion)) {
+      if (parsedDuracion < 0 || parsedDuracion > 99) {
+        return { error: 'La duración debe ser un número válido entre 0 y 99 horas' }
+      }
+      duracion_horas = parseFloat(parsedDuracion.toFixed(2))
+    }
+  }
 
   const supabase = await createSupabaseServerClient()
   const { error } = await supabase.from('cursos').insert({
@@ -32,7 +43,7 @@ export async function createCursoAction(formData: FormData) {
     nombre,
     descripcion: descripcion || null,
     precio,
-    duracion_horas: isNaN(duracion_horas as number) ? null : duracion_horas,
+    duracion_horas,
     activo: true
   })
 
