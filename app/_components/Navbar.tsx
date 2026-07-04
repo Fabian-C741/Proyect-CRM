@@ -11,6 +11,7 @@ type Props = {
 
 export default function Navbar({ brandName, menuItems }: Props) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   // Fallback si no hay elementos guardados en la DB
   const links = menuItems.length > 0 ? menuItems : [
@@ -58,8 +59,23 @@ export default function Navbar({ brandName, menuItems }: Props) {
         </span>
       </div>
 
-      {/* Navigation */}
-      <nav style={{ display: 'none', gap: '2rem', fontSize: '0.9375rem', fontWeight: 500 }} className="md:flex items-center">
+      {/* Hamburger Button para móvil */}
+      <button 
+        className="md:hidden flex items-center p-2 text-white"
+        onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+        aria-label="Abrir menú"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          {isMobileMenuOpen ? (
+            <><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></>
+          ) : (
+            <><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></>
+          )}
+        </svg>
+      </button>
+
+      {/* Navigation (Desktop) */}
+      <nav style={{ gap: '2rem', fontSize: '0.9375rem', fontWeight: 500 }} className="hidden md:flex items-center">
         {links.map((item) => {
           const hasChildren = item.children && item.children.length > 0
 
@@ -164,8 +180,41 @@ export default function Navbar({ brandName, menuItems }: Props) {
         })}
       </nav>
 
-      {/* Spacer or CTA (Maintained layout structure) */}
-      <div style={{ width: 80 }} className="hidden md:block"></div>
+      {/* Menú Móvil Overlay */}
+      {isMobileMenuOpen && (
+        <div className="absolute top-[80px] left-0 right-0 p-4 md:hidden z-50">
+          <div className="flex flex-col gap-2 p-4 bg-[#16162a] border border-white/10 rounded-xl shadow-2xl">
+            {links.map((item) => (
+              <div key={item.id} className="flex flex-col">
+                <Link
+                  href={item.href || '#'}
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="py-2 px-3 text-white font-medium hover:bg-white/5 rounded-lg"
+                >
+                  {item.label}
+                </Link>
+                {item.children && item.children.length > 0 && (
+                  <div className="flex flex-col pl-4 border-l border-white/10 ml-3 mt-1 gap-1">
+                    {item.children.map(child => (
+                      <Link
+                        key={child.id}
+                        href={child.href || '#'}
+                        onClick={() => setIsMobileMenuOpen(false)}
+                        className="py-1.5 px-3 text-slate-400 text-sm hover:text-white hover:bg-white/5 rounded-lg"
+                      >
+                        {child.label}
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Spacer */}
+      <div style={{ width: 40 }} className="hidden md:block"></div>
     </header>
   )
 }
