@@ -207,3 +207,8 @@ body {
 .badge-red    { background: rgba(239, 68, 68, 0.15);  color: #f87171; }
 .badge-brand  { background: rgba(236, 72, 153, 0.15); color: #f472b6; }
 .badge-gray   { background: rgba(148, 163, 184, 0.1); color: #94a3b8; }
+.badge-blue   { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
+
+/* Hover muy sutil para filas de lista */
+.hover\:bg-white\/3:hover { background-color: rgba(255,255,255,0.03); }
+

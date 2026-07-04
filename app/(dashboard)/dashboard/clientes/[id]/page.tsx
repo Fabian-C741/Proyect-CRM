@@ -1,14 +1,46 @@
-import { getCliente } from '@/lib/dal/clientes'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { getCliente } from '@/lib/dal/clientes'
+import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { getCurrentUser } from '@/lib/dal/auth'
+import type { Agenda } from '@/lib/definitions'
+import ClienteDetailClient from './ClienteDetailClient'
 
-export default async function ClienteDetallePage({
-  params,
-}: {
+interface PageProps {
   params: Promise<{ id: string }>
-}) {
-  const resolvedParams = await params
-  const cliente = await getCliente(resolvedParams.id)
+}
+
+async function getClienteCitas(clienteId: string): Promise<Agenda[]> {
+  try {
+    const user = await getCurrentUser()
+    if (!user) return []
+
+    const supabase = await createSupabaseServerClient()
+    const { data, error } = await supabase
+      .from('agenda')
+      .select(`
+        id, user_id, cliente_id, curso_id, fecha, estado, notas, created_at,
+        cursos (id, nombre, precio)
+      `)
+      .eq('cliente_id', clienteId)
+      .eq('user_id', user.id)
+      .order('fecha', { ascending: false })
+
+    if (error) return []
+    return (data ?? []) as unknown as Agenda[]
+  } catch {
+    return []
+  }
+}
+
+export default async function ClienteDetailPage({ params }: PageProps) {
+  // En Next.js 15, params es una Promise — debemos awaitearlo
+  const { id } = await params
+
+  const [cliente, citas] = await Promise.all([
+    getCliente(id),
+    getClienteCitas(id),
+  ])
 
   if (!cliente) {
     notFound()
@@ -16,40 +48,18 @@ export default async function ClienteDetallePage({
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      <div className="flex items-center gap-4 mb-8">
-        <Link 
-          href="/dashboard/clientes"
-          className="p-2 rounded-lg bg-white/5 text-slate-400 hover:text-white transition-colors"
-        >
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-          </svg>
+      {/* Breadcrumb */}
+      <nav className="flex items-center gap-2 text-sm text-slate-400">
+        <Link href="/dashboard/clientes" className="hover:text-slate-200 transition-colors">
+          Clientes
         </Link>
-        <div>
-          <h1 className="text-2xl font-bold text-white">{cliente.nombre}</h1>
-          <p className="text-slate-400">Detalles del cliente</p>
-        </div>
-      </div>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+        <span className="text-white font-medium">{cliente.nombre}</span>
+      </nav>
 
-      <div className="card-glass p-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div>
-            <h3 className="text-sm font-medium text-slate-500 mb-1">Email</h3>
-            <p className="text-white font-medium">{cliente.email || 'No registrado'}</p>
-          </div>
-          <div>
-            <h3 className="text-sm font-medium text-slate-500 mb-1">Teléfono</h3>
-            <p className="text-white font-medium">{cliente.telefono || 'No registrado'}</p>
-          </div>
-          <div className="col-span-full">
-            <h3 className="text-sm font-medium text-slate-500 mb-1">Notas</h3>
-            <p className="text-white whitespace-pre-wrap bg-white/5 p-4 rounded-lg mt-2">
-              {cliente.notas || 'Sin notas adicionales.'}
-            </p>
-          </div>
-        </div>
-      </div>
+      <ClienteDetailClient cliente={cliente} citas={citas} />
     </div>
   )
 }

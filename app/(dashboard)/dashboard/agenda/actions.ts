@@ -45,3 +45,31 @@ export async function createCitaAction(formData: FormData) {
   revalidatePath('/dashboard') // Revalidar contadores en dashboard
   return { success: true }
 }
+
+const ESTADOS_VALIDOS = ['pendiente', 'confirmado', 'cancelado', 'completado'] as const
+type EstadoCita = (typeof ESTADOS_VALIDOS)[number]
+
+export async function updateEstadoCitaAction(id: string, estado: EstadoCita) {
+  const user = await getCurrentUser()
+  if (!user) return { error: 'No autorizado' }
+
+  if (!ESTADOS_VALIDOS.includes(estado)) {
+    return { error: 'Estado inválido' }
+  }
+
+  const supabase = await createSupabaseServerClient()
+  const { error } = await supabase
+    .from('agenda')
+    .update({ estado })
+    .eq('id', id)
+    .eq('user_id', user.id) // doble seguridad además de RLS
+
+  if (error) {
+    console.error('[actions:updateEstadoCita]', error.message)
+    return { error: 'No se pudo actualizar el estado: ' + error.message }
+  }
+
+  revalidatePath('/dashboard/agenda')
+  revalidatePath('/dashboard')
+  return { success: true }
+}

@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import { getClientes } from '@/lib/dal/clientes'
 import NuevoClienteModal from './NuevoClienteModal'
 
@@ -36,7 +37,12 @@ export default async function ClientesPage() {
                   <td className="px-6 py-4">{cliente.email || '-'}</td>
                   <td className="px-6 py-4">{cliente.telefono || '-'}</td>
                   <td className="px-6 py-4">
-                    <button className="text-pink-500 hover:text-pink-400 font-medium">Ver</button>
+                    <Link
+                      href={`/dashboard/clientes/${cliente.id}`}
+                      className="text-pink-500 hover:text-pink-400 font-medium transition-colors"
+                    >
+                      Ver detalle →
+                    </Link>
                   </td>
                 </tr>
               ))}
