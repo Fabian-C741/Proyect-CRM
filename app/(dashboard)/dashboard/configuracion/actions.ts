@@ -182,3 +182,79 @@ export async function deleteTestimonioAction(id: string) {
   revalidatePath('/dashboard/configuracion')
   return { success: true }
 }
+
+// ─────────────────────────────────────────────
+// MENU ITEMS
+// ─────────────────────────────────────────────
+export async function createMenuItemAction(formData: FormData) {
+  const user = await getCurrentUser()
+  if (!user) return { error: 'No autorizado' }
+
+  const label = formData.get('label') as string
+  if (!label) return { error: 'La etiqueta del menú es obligatoria' }
+
+  const rawHref = formData.get('href') as string
+  const parent_id = (formData.get('parent_id') as string) || null
+
+  const supabase = await createSupabaseServerClient()
+  const { error } = await supabase.from('menu_items').insert({
+    user_id: user.id,
+    label: label.trim(),
+    href: rawHref?.trim() || null,
+    parent_id: parent_id || null,
+    orden: parseInt((formData.get('orden') as string) || '0') || 0,
+    activo: true,
+  })
+
+  if (error) return { error: 'Error al crear elemento de menú: ' + error.message }
+  revalidatePath('/')
+  revalidatePath('/dashboard/configuracion')
+  return { success: true }
+}
+
+export async function updateMenuItemAction(id: string, formData: FormData) {
+  const user = await getCurrentUser()
+  if (!user) return { error: 'No autorizado' }
+
+  const label = formData.get('label') as string
+  if (!label) return { error: 'La etiqueta es obligatoria' }
+
+  const rawHref = formData.get('href') as string
+  const parent_id = (formData.get('parent_id') as string) || null
+
+  const supabase = await createSupabaseServerClient()
+  const { error } = await supabase
+    .from('menu_items')
+    .update({
+      label: label.trim(),
+      href: rawHref?.trim() || null,
+      parent_id: parent_id || null,
+      orden: parseInt((formData.get('orden') as string) || '0') || 0,
+      activo: formData.get('activo') === 'true',
+    })
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) return { error: 'Error al actualizar elemento de menú: ' + error.message }
+  revalidatePath('/')
+  revalidatePath('/dashboard/configuracion')
+  return { success: true }
+}
+
+export async function deleteMenuItemAction(id: string) {
+  const user = await getCurrentUser()
+  if (!user) return { error: 'No autorizado' }
+
+  const supabase = await createSupabaseServerClient()
+  const { error } = await supabase
+    .from('menu_items')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) return { error: 'Error al eliminar elemento de menú: ' + error.message }
+  revalidatePath('/')
+  revalidatePath('/dashboard/configuracion')
+  return { success: true }
+}
+

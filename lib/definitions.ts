@@ -134,6 +134,19 @@ export type SiteSettings = {
   updated_at: string
 }
 
+export type MenuItem = {
+  id: string
+  user_id: string
+  label: string
+  href: string | null
+  orden: number
+  activo: boolean
+  parent_id: string | null
+  created_at: string
+  children?: MenuItem[] // Para agrupar los submenús localmente
+}
+
+
 // ============================================================
 // TIPOS DE FORMULARIOS (Server Actions)
 // ============================================================

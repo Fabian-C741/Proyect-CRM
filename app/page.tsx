@@ -7,7 +7,11 @@ import {
   getPortfolioPublico,
   getTestimoniosPublicos,
   getCursosPublicos,
+  getMenuItemsPublicos,
 } from '@/lib/dal/landing'
+
+export const dynamic = 'force-dynamic'
+
 
 // ─── Fallbacks por si la DB está vacía ─────────────────────────
 const FALLBACK_SERVICIOS = [
@@ -37,12 +41,13 @@ const TIPO_ICONS: Record<string, string> = {
 }
 
 export default async function LandingPage() {
-  const [settings, serviciosDB, portfolioDB, testimonios, cursosDB] = await Promise.all([
+  const [settings, serviciosDB, portfolioDB, testimonios, cursosDB, menuItems] = await Promise.all([
     getSiteSettings(),
     getServiciosPublicos(),
     getPortfolioPublico(),
     getTestimoniosPublicos(),
     getCursosPublicos(),
+    getMenuItemsPublicos(),
   ])
 
   const pageConfig = {
@@ -64,7 +69,8 @@ export default async function LandingPage() {
       <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: 800, height: 800, borderRadius: '50%', background: 'radial-gradient(circle, rgba(236,72,153,0.08) 0%, transparent 60%)', pointerEvents: 'none', filter: 'blur(40px)', zIndex: 0 }} />
       <div style={{ position: 'absolute', bottom: '10%', right: '-10%', width: 600, height: 600, borderRadius: '50%', background: 'radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 60%)', pointerEvents: 'none', filter: 'blur(40px)', zIndex: 0 }} />
 
-      <Navbar brandName={pageConfig.brandName} />
+      <Navbar brandName={pageConfig.brandName} menuItems={menuItems} />
+
 
       <main className="flex-1 relative z-10 flex flex-col items-center text-center px-6 pt-32 pb-10">
 

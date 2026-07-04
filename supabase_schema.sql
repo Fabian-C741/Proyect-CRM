@@ -97,6 +97,18 @@ create table if not exists public.testimonios (
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
+-- Tabla: menu_items (navegación dinámica de la landing page)
+create table if not exists public.menu_items (
+    id uuid default uuid_generate_v4() primary key,
+    user_id uuid not null references auth.users(id) on delete cascade,
+    label text not null,
+    href text,
+    orden int default 0 not null,
+    activo boolean default true not null,
+    parent_id uuid references public.menu_items(id) on delete cascade,
+    created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
 -- 3. TRIGGERS (para auto-actualizar updated_at)
 create or replace function public.handle_updated_at()
 returns trigger as $$
@@ -120,6 +132,7 @@ alter table public.site_settings enable row level security;
 alter table public.servicios enable row level security;
 alter table public.portfolio enable row level security;
 alter table public.testimonios enable row level security;
+alter table public.menu_items enable row level security;
 
 -- Políticas para Clientes (privadas)
 create policy "Usuarios pueden ver sus propios clientes" 
@@ -177,6 +190,12 @@ create policy "Lectura pública de testimonios activos"
 create policy "Usuarios gestionan sus testimonios"
   on public.testimonios for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
+-- Políticas para Menu Items (lectura pública activos, write privado)
+create policy "Lectura pública de menu_items activos"
+  on public.menu_items for select using (activo = true);
+create policy "Usuarios gestionan su menú"
+  on public.menu_items for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
 -- 5. ÍNDICES DE RENDIMIENTO
 create index if not exists idx_clientes_user_id on public.clientes(user_id);
 create index if not exists idx_cursos_user_id on public.cursos(user_id);
@@ -186,3 +205,5 @@ create index if not exists idx_agenda_cliente_id on public.agenda(cliente_id);
 create index if not exists idx_servicios_user_id on public.servicios(user_id, orden);
 create index if not exists idx_portfolio_user_id on public.portfolio(user_id, orden);
 create index if not exists idx_testimonios_user_id on public.testimonios(user_id);
+create index if not exists idx_menu_items_user_id on public.menu_items(user_id, orden);
+create index if not exists idx_menu_items_parent_id on public.menu_items(parent_id);

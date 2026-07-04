@@ -1,6 +1,7 @@
 import 'server-only'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
-import type { Servicio, PortfolioItem, Testimonio, SiteSettings, Curso } from '@/lib/definitions'
+import type { Servicio, PortfolioItem, Testimonio, SiteSettings, Curso, MenuItem } from '@/lib/definitions'
+
 
 /**
  * Obtiene la configuración del sitio (primera fila activa — single-user design).
@@ -98,3 +99,31 @@ export async function getCursosPublicos(): Promise<Curso[]> {
     return []
   }
 }
+
+/**
+ * Obtiene los elementos de menú activos y los estructura con sus hijos (dropdowns).
+ */
+export async function getMenuItemsPublicos(): Promise<MenuItem[]> {
+  try {
+    const supabase = await createSupabaseServerClient()
+    const { data, error } = await supabase
+      .from('menu_items')
+      .select('*')
+      .eq('activo', true)
+      .order('orden', { ascending: true })
+
+    if (error || !data) return []
+
+    const items = data as MenuItem[]
+    const roots = items.filter((item) => !item.parent_id)
+    
+    roots.forEach((root) => {
+      root.children = items.filter((item) => item.parent_id === root.id)
+    })
+
+    return roots
+  } catch {
+    return []
+  }
+}
+

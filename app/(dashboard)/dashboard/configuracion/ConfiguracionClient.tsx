@@ -6,7 +6,9 @@ import SiteSettingsEditor from './SiteSettingsEditor'
 import ServiciosEditor from './ServiciosEditor'
 import PortfolioEditor from './PortfolioEditor'
 import TestimoniosEditor from './TestimoniosEditor'
+import MenuEditor from './MenuEditor'
 import { logoutAction } from '@/app/(auth)/login/logoutAction'
+import type { MenuItem } from '@/lib/definitions'
 
 type Props = {
   user: { id: string; email: string | undefined }
@@ -14,18 +16,21 @@ type Props = {
   servicios: Servicio[]
   portfolio: PortfolioItem[]
   testimonios: Testimonio[]
+  menuItems: MenuItem[]
 }
 
 const TABS = [
   { id: 'sitio', label: '🌐 Mi Sitio', description: 'Hero, marca y bio' },
+  { id: 'menu', label: '⚓ Menú Superior', description: 'Navegación dinámica' },
   { id: 'servicios', label: '💄 Servicios', description: 'Tarjetas de servicios' },
   { id: 'portfolio', label: '📸 Portfolio', description: 'Galería de trabajos' },
   { id: 'testimonios', label: '⭐ Testimonios', description: 'Reseñas de clientes' },
   { id: 'cuenta', label: '👤 Cuenta', description: 'Tu perfil y sesión' },
 ]
 
-export default function ConfiguracionClient({ user, settings, servicios, portfolio, testimonios }: Props) {
+export default function ConfiguracionClient({ user, settings, servicios, portfolio, testimonios, menuItems }: Props) {
   const [activeTab, setActiveTab] = useState('sitio')
+
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
@@ -81,6 +86,17 @@ export default function ConfiguracionClient({ user, settings, servicios, portfol
             <SiteSettingsEditor settings={settings} />
           </div>
         )}
+
+        {activeTab === 'menu' && (
+          <div>
+            <h2 className="text-lg font-semibold text-white mb-1">Menú de Navegación Superior</h2>
+            <p className="text-slate-400 text-sm mb-6">
+              Personaliza los enlaces en la parte superior de tu web. Deja el enlace vacío para crear un menú desplegable (dropdown).
+            </p>
+            <MenuEditor menuItems={menuItems} />
+          </div>
+        )}
+
 
         {activeTab === 'servicios' && (
           <div>
