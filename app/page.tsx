@@ -263,12 +263,7 @@ export default async function LandingPage() {
 
       <Footer brandName={pageConfig.brandName} />
 
-      <style>{`
-        @keyframes authFadeUp {
-          from { opacity: 0; transform: translateY(20px) scale(0.98); }
-          to   { opacity: 1; transform: translateY(0)   scale(1); }
-        }
-      `}</style>
+
     </div>
   )
 }
