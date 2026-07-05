@@ -77,6 +77,7 @@ async function verificarDisponibilidad(userId: string, fecha: string, hora: stri
 export async function crearReservaWeb(data: ReservaWebInput): Promise<{ success: boolean; error?: string }> {
   try {
     const adminClient = getSupabaseAdmin()
+    console.log('[crearReservaWeb] Admin client OK, querying site_settings...')
     // Obtener el user_id del admin desde site_settings
     const { data: settingsData, error: settingsError } = await adminClient
       .from('site_settings')
@@ -84,9 +85,11 @@ export async function crearReservaWeb(data: ReservaWebInput): Promise<{ success:
       .limit(1)
       .maybeSingle()
 
+    console.log('[crearReservaWeb] Result:', { settingsData, settingsError })
     const settings = settingsData as { user_id: string } | null
 
     if (settingsError || !settings?.user_id) {
+      console.log('[crearReservaWeb] No settings found:', { settingsError, hasUser: !!settings?.user_id })
       return { success: false, error: 'No se encontró la configuración del negocio.' }
     }
 
