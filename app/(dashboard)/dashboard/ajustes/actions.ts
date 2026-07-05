@@ -1,15 +1,15 @@
 'use server'
 
-import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { revalidatePath } from 'next/cache'
-import { redirect } from 'next/navigation'
+import { createSupabaseServerClient } from '@/lib/supabase/server'
 
 export async function updateSiteSettings(formData: FormData) {
   const supabase = await createSupabaseServerClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login')
+    return { success: false, error: 'No autorizado' }
   }
 
   const brandName = formData.get('brandName') as string
@@ -17,9 +17,11 @@ export async function updateSiteSettings(formData: FormData) {
   const heroSubtitle = formData.get('heroSubtitle') as string
   const heroCtaText = formData.get('heroCtaText') as string
 
-  // Verificar si ya existe un registro para este usuario
-  const { data: existing, error: selError } = await supabase
-    .from('site_settings')
+  const admin = getSupabaseAdmin()
+  const tbl = admin.from('site_settings') as any
+
+  // Verificar si ya existe un registro
+  const { data: existing, error: selError } = await tbl
     .select('id')
     .eq('user_id', user.id)
     .maybeSingle()
@@ -31,8 +33,7 @@ export async function updateSiteSettings(formData: FormData) {
 
   let error
   if (existing) {
-    const { error: updateError } = await supabase
-      .from('site_settings')
+    const { error: updateError } = await tbl
       .update({
         brand_name: brandName,
         hero_title: heroTitle,
@@ -43,8 +44,7 @@ export async function updateSiteSettings(formData: FormData) {
       .eq('id', existing.id)
     error = updateError
   } else {
-    const { error: insertError } = await supabase
-      .from('site_settings')
+    const { error: insertError } = await tbl
       .insert({
         user_id: user.id,
         brand_name: brandName,
