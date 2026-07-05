@@ -73,3 +73,34 @@ export async function updateEstadoCitaAction(id: string, estado: EstadoCita) {
   revalidatePath('/dashboard')
   return { success: true }
 }
+
+// ─────────────────────────────────────────────────────────────
+// Reservas Web (visitantes sin login)
+// ─────────────────────────────────────────────────────────────
+
+const ESTADOS_RESERVA_WEB = ['pendiente', 'confirmado', 'cancelado'] as const
+type EstadoReservaWeb = (typeof ESTADOS_RESERVA_WEB)[number]
+
+export async function updateEstadoReservaWebAction(id: string, estado: EstadoReservaWeb) {
+  const user = await getCurrentUser()
+  if (!user) return { error: 'No autorizado' }
+
+  if (!ESTADOS_RESERVA_WEB.includes(estado)) {
+    return { error: 'Estado inválido' }
+  }
+
+  const supabase = await createSupabaseServerClient()
+  const { error } = await supabase
+    .from('reservas_web')
+    .update({ estado })
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) {
+    console.error('[actions:updateEstadoReservaWeb]', error.message)
+    return { error: 'No se pudo actualizar el estado: ' + error.message }
+  }
+
+  revalidatePath('/dashboard/agenda')
+  return { success: true }
+}

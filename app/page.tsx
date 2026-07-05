@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Navbar from './_components/Navbar'
 import Footer from './_components/Footer'
+import ReservaSection from './_components/ReservaSection'
 import {
   getSiteSettings,
   getServiciosPublicos,
@@ -10,24 +11,29 @@ import {
   getMenuItemsPublicos,
 } from '@/lib/dal/landing'
 
+import type { Servicio } from '@/lib/definitions'
+
 export const dynamic = 'force-dynamic'
 
 
 // ─── Fallbacks por si la DB está vacía ─────────────────────────
 const FALLBACK_SERVICIOS = [
   {
-    id: 'f1', nombre: 'Maquillaje Social', descripcion: 'Look perfecto y duradero para eventos, fiestas y reuniones importantes.',
+    id: 'f1', user_id: '', nombre: 'Maquillaje Social', descripcion: 'Look perfecto y duradero para eventos, fiestas y reuniones importantes.',
     imagen_url: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=800&auto=format&fit=crop',
+    precio: 0, duracion_minutos: 60, orden: 0, activo: true, created_at: ''
   },
   {
-    id: 'f2', nombre: 'Maquillaje de Novia', descripcion: 'Prueba y maquillaje para el día más especial, con productos de alta gama.',
+    id: 'f2', user_id: '', nombre: 'Maquillaje de Novia', descripcion: 'Prueba y maquillaje para el día más especial, con productos de alta gama.',
     imagen_url: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?q=80&w=800&auto=format&fit=crop',
+    precio: 0, duracion_minutos: 90, orden: 1, activo: true, created_at: ''
   },
   {
-    id: 'f3', nombre: 'Cursos de Automaquillaje', descripcion: 'Aprende a conocer tu rostro y las mejores técnicas para el día a día.',
+    id: 'f3', user_id: '', nombre: 'Cursos de Automaquillaje', descripcion: 'Aprende a conocer tu rostro y las mejores técnicas para el día a día.',
     imagen_url: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800&auto=format&fit=crop',
+    precio: 0, duracion_minutos: 120, orden: 2, activo: true, created_at: ''
   },
-]
+] as Servicio[]
 
 const FALLBACK_PORTFOLIO = [
   { id: 'p1', imagen_url: 'https://images.unsplash.com/photo-1512496015851-a1cbf39a5180?q=80&w=600&auto=format&fit=crop', descripcion: null },
@@ -122,6 +128,9 @@ export default async function LandingPage() {
             ))}
           </div>
         </section>
+
+        {/* ───── RESERVA DE TURNO ───── */}
+        <ReservaSection servicios={servicios} />
 
         {/* ───── CURSOS / PRODUCTOS ───── */}
         {cursosDB.length > 0 && (

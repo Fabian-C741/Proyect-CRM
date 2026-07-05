@@ -13,10 +13,23 @@ export default function Navbar({ brandName, menuItems }: Props) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
-  const getHref = (url: string | null | undefined) => {
+  const getHref = (url: string | null | undefined): string => {
     if (!url) return '#'
+    // URLs externas
+    if (url.startsWith('http://') || url.startsWith('https://')) return url
     if (url.startsWith('www.')) return `https://${url}`
-    return url
+    // Rutas internas del dashboard (páginas reales de Next.js)
+    if (url.startsWith('/dashboard')) return url
+    // Anclas directas (#servicios, #galeria)
+    if (url.startsWith('#')) return url
+    // Rutas que empiezan con / pero NO son del dashboard → probablemente anclas sin el #
+    // Ej: '/servicios' → '/#servicios', '/galeria' → '/#galeria'
+    if (url.startsWith('/')) {
+      const slug = url.replace(/^\//, '')
+      return `/#${slug}`
+    }
+    // Texto plano sin / ni # → ancla en home. Ej: 'servicios' → '/#servicios'
+    return `/#${url}`
   }
 
   // Fallback si no hay elementos guardados en la DB

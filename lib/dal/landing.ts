@@ -1,6 +1,54 @@
 import 'server-only'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { supabaseAdmin } from '@/lib/supabase/admin'
 import type { Servicio, PortfolioItem, Testimonio, SiteSettings, Curso, MenuItem } from '@/lib/definitions'
+
+export interface ReservaWebInput {
+  nombre_visitante: string
+  telefono_visitante: string
+  servicio_id: string | null
+  servicio_nombre: string
+  servicio_precio: number | null
+  fecha_preferida: string   // YYYY-MM-DD
+  hora_preferida: string | null
+  notas: string | null
+}
+
+/**
+ * Crea una reserva web de un visitante anónimo.
+ * Usa supabaseAdmin para bypassear la autenticación ya que el visitante no tiene sesión.
+ * Asocia la reserva al primer admin registrado en site_settings.
+ */
+export async function crearReservaWeb(data: ReservaWebInput): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Obtener el user_id del admin desde site_settings
+    const { data: settings, error: settingsError } = await supabaseAdmin
+      .from('site_settings')
+      .select('user_id')
+      .limit(1)
+      .maybeSingle()
+
+    if (settingsError || !settings?.user_id) {
+      return { success: false, error: 'No se encontró la configuración del negocio.' }
+    }
+
+    const { error } = await supabaseAdmin.from('reservas_web').insert({
+      user_id: settings.user_id,
+      ...data,
+      estado: 'pendiente',
+    })
+
+    if (error) {
+      console.error('[crearReservaWeb]', error.message)
+      return { success: false, error: 'No se pudo guardar la reserva.' }
+    }
+
+    return { success: true }
+  } catch (e) {
+    console.error('[crearReservaWeb] excepción:', e)
+    return { success: false, error: 'Error inesperado.' }
+  }
+}
 
 
 /**

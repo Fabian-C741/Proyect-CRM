@@ -97,8 +97,25 @@ export type Servicio = {
   nombre: string
   descripcion: string | null
   imagen_url: string | null
+  precio: number
+  duracion_minutos: number | null
   orden: number
   activo: boolean
+  created_at: string
+}
+
+export type ReservaWeb = {
+  id: string
+  user_id: string
+  nombre_visitante: string
+  telefono_visitante: string
+  servicio_id: string | null
+  servicio_nombre: string
+  servicio_precio: number | null
+  fecha_preferida: string
+  hora_preferida: string | null
+  notas: string | null
+  estado: 'pendiente' | 'confirmado' | 'cancelado'
   created_at: string
 }
 
