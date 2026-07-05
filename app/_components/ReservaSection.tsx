@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { crearReservaWeb } from '@/lib/dal/landing'
+import { crearReservaWebAction } from '@/app/(dashboard)/dashboard/ajustes/actions'
 import type { Servicio } from '@/lib/definitions'
 
 const FALLBACK_SERVICIOS: Pick<Servicio, 'id' | 'nombre' | 'descripcion' | 'precio' | 'duracion_minutos'>[] = [
@@ -46,7 +46,7 @@ export default function ReservaSection({ servicios }: Props) {
     setLoading(true)
     setErrorMsg('')
 
-    const result = await crearReservaWeb({
+    const result = await crearReservaWebAction({
       nombre_visitante: nombre.trim(),
       telefono_visitante: telefono.trim(),
       servicio_id: servicioSeleccionado?.id && !servicioSeleccionado.id.startsWith('f') ? servicioSeleccionado.id : null,

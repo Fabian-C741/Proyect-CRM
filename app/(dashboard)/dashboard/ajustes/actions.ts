@@ -40,3 +40,9 @@ export async function updateSiteSettings(formData: FormData) {
   
   return { success: true }
 }
+
+export async function crearReservaWebAction(data: any) {
+  // Import dinámico en el scope de la función para evitar conflictos de importaciones server/client
+  const { crearReservaWeb } = await import('@/lib/dal/landing')
+  return await crearReservaWeb(data)
+}
