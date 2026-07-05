@@ -18,11 +18,16 @@ export async function updateSiteSettings(formData: FormData) {
   const heroCtaText = formData.get('heroCtaText') as string
 
   // Verificar si ya existe un registro para este usuario
-  const { data: existing } = await supabase
+  const { data: existing, error: selError } = await supabase
     .from('site_settings')
     .select('id')
     .eq('user_id', user.id)
     .maybeSingle()
+
+  if (selError) {
+    console.error('Error checking settings:', selError)
+    return { success: false, error: 'Error al verificar: ' + selError.message }
+  }
 
   let error
   if (existing) {
@@ -52,7 +57,7 @@ export async function updateSiteSettings(formData: FormData) {
 
   if (error) {
     console.error('Error updating settings:', error)
-    return { success: false, error: 'Hubo un error al guardar los ajustes' }
+    return { success: false, error: 'Error: ' + error.message }
   }
 
   // Refrescar caché para que los cambios se vean en la web pública de inmediato
