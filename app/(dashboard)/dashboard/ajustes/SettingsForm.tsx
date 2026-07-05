@@ -36,7 +36,7 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
       )}
 
       <div>
-        <label htmlFor="brandName" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Nombre de tu Marca</label>
+        <label htmlFor="brandName" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Nombre de tu Marca</label>
         <input 
           type="text" 
           id="brandName" 
@@ -49,7 +49,7 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
       </div>
 
       <div>
-        <label htmlFor="heroTitle" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Título Principal (Landing Page)</label>
+        <label htmlFor="heroTitle" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Título Principal (Landing Page)</label>
         <input 
           type="text" 
           id="heroTitle" 
@@ -61,7 +61,7 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
       </div>
 
       <div>
-        <label htmlFor="heroSubtitle" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Subtítulo / Descripción</label>
+        <label htmlFor="heroSubtitle" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Subtítulo / Descripción</label>
         <textarea 
           id="heroSubtitle" 
           name="heroSubtitle" 
@@ -73,7 +73,7 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
       </div>
 
       <div>
-        <label htmlFor="heroCtaText" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 600 }}>Texto del Botón Principal</label>
+        <label htmlFor="heroCtaText" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Texto del Botón Principal</label>
         <input 
           type="text" 
           id="heroCtaText" 
@@ -86,9 +86,16 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
 
 
 
-      <button type="submit" className="btn-primary" disabled={loading} style={{ marginTop: '1rem' }}>
-        {loading ? 'Guardando...' : 'Guardar Cambios'}
-      </button>
+      <div>
+        <button
+          type="submit"
+          className="btn-primary"
+          disabled={loading}
+          style={{ marginTop: '0.5rem' }}
+        >
+          {loading ? 'Guardando...' : 'Guardar Cambios'}
+        </button>
+      </div>
     </form>
   )
 }
