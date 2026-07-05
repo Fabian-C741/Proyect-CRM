@@ -24,9 +24,29 @@ export async function saveSiteSettingsAction(formData: FormData) {
   }
 
   const supabase = await createSupabaseServerClient()
-  const { error } = await supabase
+
+  // Primero ver si ya existe un registro para este usuario
+  const { data: existing } = await supabase
     .from('site_settings')
-    .upsert(payload, { onConflict: 'user_id' })
+    .select('id')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  let error
+  if (existing) {
+    // Actualizar registro existente
+    const { error: updateError } = await supabase
+      .from('site_settings')
+      .update(payload)
+      .eq('id', existing.id)
+    error = updateError
+  } else {
+    // Insertar nuevo
+    const { error: insertError } = await supabase
+      .from('site_settings')
+      .insert(payload)
+    error = insertError
+  }
 
   if (error) return { error: 'Error al guardar: ' + error.message }
 
