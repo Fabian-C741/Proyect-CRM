@@ -13,6 +13,12 @@ export default function Navbar({ brandName, menuItems }: Props) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
+  const getHref = (url: string | null | undefined) => {
+    if (!url) return '#'
+    if (url.startsWith('www.')) return `https://${url}`
+    return url
+  }
+
   // Fallback si no hay elementos guardados en la DB
   const links = menuItems.length > 0 ? menuItems : [
     { id: 'f1', label: 'Servicios', href: '#servicios', parent_id: null },
@@ -146,7 +152,7 @@ export default function Navbar({ brandName, menuItems }: Props) {
                     {item.children?.map((child) => (
                       <Link
                         key={child.id}
-                        href={child.href || '#'}
+                        href={getHref(child.href)}
                         style={{
                           color: 'var(--text-secondary)',
                           padding: '0.5rem 0.75rem',
@@ -170,7 +176,7 @@ export default function Navbar({ brandName, menuItems }: Props) {
           return (
             <Link
               key={item.id}
-              href={item.href || '#'}
+              href={getHref(item.href)}
               style={{ color: 'var(--text-secondary)', textDecoration: 'none', padding: '0.5rem 0' }}
               className="hover:text-white transition-colors"
             >
@@ -187,7 +193,7 @@ export default function Navbar({ brandName, menuItems }: Props) {
             {links.map((item) => (
               <div key={item.id} className="flex flex-col">
                 <Link
-                  href={item.href || '#'}
+                  href={getHref(item.href)}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className="py-2 px-3 text-white font-medium hover:bg-white/5 rounded-lg"
                 >
@@ -198,7 +204,7 @@ export default function Navbar({ brandName, menuItems }: Props) {
                     {item.children.map(child => (
                       <Link
                         key={child.id}
-                        href={child.href || '#'}
+                        href={getHref(child.href)}
                         onClick={() => setIsMobileMenuOpen(false)}
                         className="py-1.5 px-3 text-slate-400 text-sm hover:text-white hover:bg-white/5 rounded-lg"
                       >
