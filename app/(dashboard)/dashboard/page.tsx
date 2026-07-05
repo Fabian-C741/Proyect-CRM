@@ -2,6 +2,8 @@ import { getClientesCount } from '@/lib/dal/clientes'
 import { getCursosCount, getCitasPendientesCount } from '@/lib/dal/cursos'
 import StatCard from '@/app/_components/StatCard'
 
+export const dynamic = 'force-dynamic'
+
 export default async function DashboardPage() {
   // Ejecutar queries en paralelo gracias al DAL y Promise.all
   const [totalClientes, totalCursos, citasPendientes] = await Promise.all([

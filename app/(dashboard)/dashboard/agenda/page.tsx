@@ -8,6 +8,8 @@ import CambiarEstadoCita from './CambiarEstadoCita'
 import AccionesReservaWeb from './AccionesReservaWeb'
 import type { Agenda } from '@/lib/definitions'
 
+export const dynamic = 'force-dynamic'
+
 export default async function AgendaPage() {
   const [agenda, clientes, cursos, reservasWeb, settings] = await Promise.all([
     getAgenda(50),

@@ -241,6 +241,51 @@ export async function updateMenuItemAction(id: string, formData: FormData) {
   return { success: true }
 }
 
+// ─────────────────────────────────────────────
+// BLOQUEOS HORARIOS
+// ─────────────────────────────────────────────
+export async function crearBloqueoAction(formData: FormData) {
+  const user = await getCurrentUser()
+  if (!user) return { error: 'No autorizado' }
+
+  const fecha = formData.get('fecha') as string
+  if (!fecha) return { error: 'La fecha es obligatoria' }
+
+  const hora_inicio = (formData.get('hora_inicio') as string) || null
+  const hora_fin = (formData.get('hora_fin') as string) || null
+  const motivo = (formData.get('motivo') as string) || null
+
+  const supabase = await createSupabaseServerClient()
+  const { error } = await supabase.from('bloqueos_horarios').insert({
+    user_id: user.id,
+    fecha,
+    hora_inicio,
+    hora_fin,
+    motivo,
+    activo: true,
+  })
+
+  if (error) return { error: 'Error al crear bloqueo: ' + error.message }
+  revalidatePath('/dashboard/configuracion')
+  return { success: true }
+}
+
+export async function eliminarBloqueoAction(id: string) {
+  const user = await getCurrentUser()
+  if (!user) return { error: 'No autorizado' }
+
+  const supabase = await createSupabaseServerClient()
+  const { error } = await supabase
+    .from('bloqueos_horarios')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) return { error: 'Error al eliminar bloqueo: ' + error.message }
+  revalidatePath('/dashboard/configuracion')
+  return { success: true }
+}
+
 export async function deleteMenuItemAction(id: string) {
   const user = await getCurrentUser()
   if (!user) return { error: 'No autorizado' }

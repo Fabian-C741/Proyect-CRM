@@ -151,6 +151,17 @@ export type SiteSettings = {
   updated_at: string
 }
 
+export type BloqueoHorario = {
+  id: string
+  user_id: string
+  fecha: string
+  hora_inicio: string | null
+  hora_fin: string | null
+  motivo: string | null
+  activo: boolean
+  created_at: string
+}
+
 export type MenuItem = {
   id: string
   user_id: string

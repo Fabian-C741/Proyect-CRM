@@ -1,12 +1,13 @@
 'use client'
 
 import { useState } from 'react'
-import type { SiteSettings, Servicio, PortfolioItem, Testimonio } from '@/lib/definitions'
+import type { SiteSettings, Servicio, PortfolioItem, Testimonio, BloqueoHorario } from '@/lib/definitions'
 import SiteSettingsEditor from './SiteSettingsEditor'
 import ServiciosEditor from './ServiciosEditor'
 import PortfolioEditor from './PortfolioEditor'
 import TestimoniosEditor from './TestimoniosEditor'
 import MenuEditor from './MenuEditor'
+import BloqueosEditor from './BloqueosEditor'
 import { logoutAction } from '@/app/(auth)/login/logoutAction'
 import type { MenuItem } from '@/lib/definitions'
 
@@ -17,6 +18,7 @@ type Props = {
   portfolio: PortfolioItem[]
   testimonios: Testimonio[]
   menuItems: MenuItem[]
+  bloqueos: BloqueoHorario[]
 }
 
 const TABS = [
@@ -25,10 +27,11 @@ const TABS = [
   { id: 'servicios', label: '💄 Servicios', description: 'Tarjetas de servicios' },
   { id: 'portfolio', label: '📸 Portfolio', description: 'Galería de trabajos' },
   { id: 'testimonios', label: '⭐ Testimonios', description: 'Reseñas de clientes' },
+  { id: 'bloqueos', label: '🔒 Bloq. Horarios', description: 'Días no disponibles' },
   { id: 'cuenta', label: '👤 Cuenta', description: 'Tu perfil y sesión' },
 ]
 
-export default function ConfiguracionClient({ user, settings, servicios, portfolio, testimonios, menuItems }: Props) {
+export default function ConfiguracionClient({ user, settings, servicios, portfolio, testimonios, menuItems, bloqueos }: Props) {
   const [activeTab, setActiveTab] = useState('sitio')
 
 
@@ -125,6 +128,16 @@ export default function ConfiguracionClient({ user, settings, servicios, portfol
               Las reseñas generan confianza. Aparecen en la sección &quot;Opiniones&quot; de tu landing.
             </p>
             <TestimoniosEditor testimonios={testimonios} />
+          </div>
+        )}
+
+        {activeTab === 'bloqueos' && (
+          <div>
+            <h2 className="text-lg font-semibold text-white mb-1">Bloqueos Horarios</h2>
+            <p className="text-slate-400 text-sm mb-6">
+              Bloqueá días completos o franjas horarias para evitar que los visitantes reserven cuando no estás disponible (viajes, enfermedad, feriados, etc.).
+            </p>
+            <BloqueosEditor bloqueos={bloqueos} />
           </div>
         )}
 

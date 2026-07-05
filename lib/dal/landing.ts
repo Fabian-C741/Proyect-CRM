@@ -1,6 +1,6 @@
 import 'server-only'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
-import { supabaseAdmin } from '@/lib/supabase/admin'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import type { Servicio, PortfolioItem, Testimonio, SiteSettings, Curso, MenuItem } from '@/lib/definitions'
 
 export interface ReservaWebInput {
@@ -15,26 +15,97 @@ export interface ReservaWebInput {
 }
 
 /**
+ * Verifica si el día/hora está disponible para reservar.
+ * Retorna un mensaje de error si no está disponible, o null si está libre.
+ */
+async function verificarDisponibilidad(userId: string, fecha: string, hora: string | null): Promise<string | null> {
+  const adminClient = getSupabaseAdmin()
+
+  // 1. Verificar bloqueos del admin (día completo o franja horaria)
+  const { data: bloqueosRaw, error: blkErr } = await (adminClient
+    .from('bloqueos_horarios') as any)
+    .select('hora_inicio, hora_fin')
+    .eq('user_id', userId)
+    .eq('activo', true)
+    .eq('fecha', fecha)
+
+  const bloqueos = bloqueosRaw as Array<{ hora_inicio: string | null; hora_fin: string | null }> | null
+
+  if (!blkErr && bloqueos && bloqueos.length > 0) {
+    for (const b of bloqueos) {
+      const bloqueaDiaCompleto = !b.hora_inicio && !b.hora_fin
+      if (bloqueaDiaCompleto) {
+        return 'Lo sentimos, este día no está disponible para reservas.'
+      }
+      if (hora && b.hora_inicio && b.hora_fin) {
+        const hh = hora.slice(0, 5)
+        const hi = b.hora_inicio.slice(0, 5)
+        const hf = b.hora_fin.slice(0, 5)
+        if (hh >= hi && hh < hf) {
+          return 'Lo sentimos, esta franja horaria no está disponible.'
+        }
+      }
+    }
+  }
+
+  // 2. Verificar que no haya otra reserva NO cancelada en el mismo día+horario
+  if (hora) {
+    const { data: existingRaw } = await (adminClient
+      .from('reservas_web') as any)
+      .select('id')
+      .eq('user_id', userId)
+      .eq('fecha_preferida', fecha)
+      .eq('hora_preferida', hora)
+      .neq('estado', 'cancelado')
+      .limit(1)
+
+    const existing = existingRaw as Array<{ id: string }> | null
+    if (existing && existing.length > 0) {
+      return 'Este horario ya está reservado. Por favor, elegí otro horario.'
+    }
+  }
+
+  return null
+}
+
+/**
  * Crea una reserva web de un visitante anónimo.
- * Usa supabaseAdmin para bypassear la autenticación ya que el visitante no tiene sesión.
+ * Valida disponibilidad antes de guardar.
+ * Usa getSupabaseAdmin() para bypassear la autenticación ya que el visitante no tiene sesión.
  * Asocia la reserva al primer admin registrado en site_settings.
  */
 export async function crearReservaWeb(data: ReservaWebInput): Promise<{ success: boolean; error?: string }> {
   try {
+    const adminClient = getSupabaseAdmin()
     // Obtener el user_id del admin desde site_settings
-    const { data: settings, error: settingsError } = await supabaseAdmin
+    const { data: settingsData, error: settingsError } = await adminClient
       .from('site_settings')
       .select('user_id')
       .limit(1)
       .maybeSingle()
 
+    const settings = settingsData as { user_id: string } | null
+
     if (settingsError || !settings?.user_id) {
       return { success: false, error: 'No se encontró la configuración del negocio.' }
     }
 
-    const { error } = await supabaseAdmin.from('reservas_web').insert({
+    // Validar disponibilidad antes de insertar
+    const disponibleError = await verificarDisponibilidad(settings.user_id, data.fecha_preferida, data.hora_preferida)
+    if (disponibleError) {
+      return { success: false, error: disponibleError }
+    }
+
+    const { error } = await (adminClient.from('reservas_web') as any).insert({
       user_id: settings.user_id,
-      ...data,
+      nombre_visitante: data.nombre_visitante,
+      telefono_visitante: data.telefono_visitante,
+      servicio_id: data.servicio_id,
+      servicio_nombre: data.servicio_nombre,
+      servicio_precio: data.servicio_precio,
+      fecha_preferida: data.fecha_preferida,
+      hora_preferida: data.hora_preferida,
+      notas: data.notas,
       estado: 'pendiente',
     })
 
