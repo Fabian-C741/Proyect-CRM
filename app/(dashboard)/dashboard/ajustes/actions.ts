@@ -17,17 +17,38 @@ export async function updateSiteSettings(formData: FormData) {
   const heroSubtitle = formData.get('heroSubtitle') as string
   const heroCtaText = formData.get('heroCtaText') as string
 
-  // Asumimos que siempre hay una fila (el ID no importa si actualizamos todo)
-  const { error } = await supabase
+  // Verificar si ya existe un registro para este usuario
+  const { data: existing } = await supabase
     .from('site_settings')
-    .update({
-      brand_name: brandName,
-      hero_title: heroTitle,
-      hero_subtitle: heroSubtitle,
-      hero_cta_text: heroCtaText,
-      updated_at: new Date().toISOString()
-    })
-    .neq('id', '00000000-0000-0000-0000-000000000000') // Actualiza cualquier fila
+    .select('id')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  let error
+  if (existing) {
+    const { error: updateError } = await supabase
+      .from('site_settings')
+      .update({
+        brand_name: brandName,
+        hero_title: heroTitle,
+        hero_subtitle: heroSubtitle,
+        hero_cta_text: heroCtaText,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', existing.id)
+    error = updateError
+  } else {
+    const { error: insertError } = await supabase
+      .from('site_settings')
+      .insert({
+        user_id: user.id,
+        brand_name: brandName,
+        hero_title: heroTitle,
+        hero_subtitle: heroSubtitle,
+        hero_cta_text: heroCtaText,
+      })
+    error = insertError
+  }
 
   if (error) {
     console.error('Error updating settings:', error)
