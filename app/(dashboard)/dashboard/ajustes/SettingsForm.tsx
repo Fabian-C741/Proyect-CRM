@@ -84,7 +84,48 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
         />
       </div>
 
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem' }}>
+        <p style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', color: 'white' }}>WhatsApp / Contacto</p>
+        <div>
+          <label htmlFor="whatsappNumber" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Número de WhatsApp</label>
+          <input 
+            type="text" 
+            id="whatsappNumber" 
+            name="whatsappNumber" 
+            defaultValue={initialData.whatsapp_number || ''} 
+            className="input-base" 
+            placeholder="Ej: 5491123456789"
+          />
+          <small style={{ color: 'var(--text-muted)' }}>Se usa en todos los botones de WhatsApp de la landing. Sin + ni espacios.</small>
+        </div>
+      </div>
 
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem' }}>
+        <p style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', color: 'white' }}>Sección Sobre Mí</p>
+        <div>
+          <label htmlFor="sobreMiTexto" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Texto</label>
+          <textarea 
+            id="sobreMiTexto" 
+            name="sobreMiTexto" 
+            defaultValue={initialData.sobre_mi_texto || ''} 
+            className="input-base" 
+            rows={4}
+            placeholder="Contá quién sos, tu experiencia, tu enfoque..."
+          />
+        </div>
+        <div style={{ marginTop: '1rem' }}>
+          <label htmlFor="sobreMiImagenUrl" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>URL de tu Foto / Imagen</label>
+          <input 
+            type="text" 
+            id="sobreMiImagenUrl" 
+            name="sobreMiImagenUrl" 
+            defaultValue={initialData.sobre_mi_imagen_url || ''} 
+            className="input-base" 
+            placeholder="https://images.unsplash.com/..."
+          />
+          <small style={{ color: 'var(--text-muted)' }}>Foto tuya o imagen representativa. Se muestra circular.</small>
+        </div>
+      </div>
 
       <div>
         <button

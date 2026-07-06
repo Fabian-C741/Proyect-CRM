@@ -16,11 +16,13 @@ export async function updateSiteSettings(formData: FormData) {
   const heroTitle = formData.get('heroTitle') as string
   const heroSubtitle = formData.get('heroSubtitle') as string
   const heroCtaText = formData.get('heroCtaText') as string
+  const whatsappNumber = (formData.get('whatsappNumber') as string) || null
+  const sobreMiTexto = (formData.get('sobreMiTexto') as string) || null
+  const sobreMiImagenUrl = (formData.get('sobreMiImagenUrl') as string) || null
 
   const admin = getSupabaseAdmin()
   const tbl = admin.from('site_settings') as any
 
-  // Verificar si ya existe un registro
   const { data: existing, error: selError } = await tbl
     .select('id')
     .eq('user_id', user.id)
@@ -31,27 +33,23 @@ export async function updateSiteSettings(formData: FormData) {
     return { success: false, error: 'Error al verificar: ' + selError.message }
   }
 
+  const payload: Record<string, any> = {
+    brand_name: brandName,
+    hero_title: heroTitle,
+    hero_subtitle: heroSubtitle,
+    hero_cta_text: heroCtaText,
+    whatsapp_number: whatsappNumber,
+    sobre_mi_texto: sobreMiTexto,
+    sobre_mi_imagen_url: sobreMiImagenUrl,
+    updated_at: new Date().toISOString(),
+  }
+
   let error
   if (existing) {
-    const { error: updateError } = await tbl
-      .update({
-        brand_name: brandName,
-        hero_title: heroTitle,
-        hero_subtitle: heroSubtitle,
-        hero_cta_text: heroCtaText,
-        updated_at: new Date().toISOString()
-      })
-      .eq('id', existing.id)
+    const { error: updateError } = await tbl.update(payload).eq('id', existing.id)
     error = updateError
   } else {
-    const { error: insertError } = await tbl
-      .insert({
-        user_id: user.id,
-        brand_name: brandName,
-        hero_title: heroTitle,
-        hero_subtitle: heroSubtitle,
-        hero_cta_text: heroCtaText,
-      })
+    const { error: insertError } = await tbl.insert({ user_id: user.id, ...payload })
     error = insertError
   }
 
