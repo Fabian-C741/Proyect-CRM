@@ -10,9 +10,28 @@ import {
   getCursosPublicos,
   getMenuItemsPublicos,
 } from '@/lib/dal/landing'
+import type { Servicio } from '@/lib/definitions'
 
 export const dynamic = 'force-dynamic'
 
+
+const FALLBACK_SERVICIOS = [
+  {
+    id: 'f1', user_id: '', nombre: 'Maquillaje Social', descripcion: 'Look perfecto y duradero para eventos, fiestas y reuniones importantes.',
+    imagen_url: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=800&auto=format&fit=crop',
+    precio: 0, duracion_minutos: 60, orden: 0, activo: true, created_at: ''
+  },
+  {
+    id: 'f2', user_id: '', nombre: 'Maquillaje de Novia', descripcion: 'Prueba y maquillaje para el día más especial, con productos de alta gama.',
+    imagen_url: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?q=80&w=800&auto=format&fit=crop',
+    precio: 0, duracion_minutos: 90, orden: 1, activo: true, created_at: ''
+  },
+  {
+    id: 'f3', user_id: '', nombre: 'Cursos de Automaquillaje', descripcion: 'Aprende a conocer tu rostro y las mejores técnicas para el día a día.',
+    imagen_url: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800&auto=format&fit=crop',
+    precio: 0, duracion_minutos: 120, orden: 2, activo: true, created_at: ''
+  },
+] as Servicio[]
 
 const FALLBACK_PORTFOLIO = [
   { id: 'p1', imagen_url: 'https://images.unsplash.com/photo-1512496015851-a1cbf39a5180?q=80&w=600&auto=format&fit=crop', descripcion: null },
@@ -45,6 +64,7 @@ export default async function LandingPage() {
     sobreMiImg:    settings?.sobre_mi_imagen_url || null,
   }
 
+  const servicios = serviciosDB.length > 0 ? serviciosDB : FALLBACK_SERVICIOS
   const portfolio = portfolioDB.length > 0 ? portfolioDB : FALLBACK_PORTFOLIO
 
   return (
@@ -83,34 +103,32 @@ export default async function LandingPage() {
         </div>
 
         {/* ───── SERVICIOS ───── */}
-        {serviciosDB.length > 0 && (
-          <section id="servicios" style={{ width: '100%', maxWidth: 1000, margin: '0 auto 6rem', textAlign: 'left' }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.75rem', textAlign: 'center' }}>Servicios Destacados</h2>
-            <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '2.5rem' }}>Todo lo que podemos hacer por vos</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
-              {serviciosDB.map((s) => (
-                <div key={s.id} className="card-glass card-hover" style={{ overflow: 'hidden', padding: 0 }}>
-                  <div style={{ height: 200, background: s.imagen_url ? `url(${s.imagen_url}) center/cover` : 'linear-gradient(135deg, rgba(236,72,153,0.15), rgba(168,85,247,0.15))' }} />
-                  <div style={{ padding: '1.5rem' }}>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>{s.nombre}</h3>
-                    {s.descripcion && <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', marginBottom: '1.5rem' }}>{s.descripcion}</p>}
-                    <Link
-                      href={`https://wa.me/${pageConfig.whatsappNumber}?text=Hola! Quiero info sobre ${encodeURIComponent(s.nombre)}`}
-                      target="_blank"
-                      className="btn-secondary"
-                      style={{ width: '100%', justifyContent: 'center' }}
-                    >
-                      Consultar
-                    </Link>
-                  </div>
+        <section id="servicios" style={{ width: '100%', maxWidth: 1000, margin: '0 auto 6rem', textAlign: 'left' }}>
+          <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.75rem', textAlign: 'center' }}>Servicios Destacados</h2>
+          <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '2.5rem' }}>Todo lo que podemos hacer por vos</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
+            {servicios.map((s) => (
+              <div key={s.id} className="card-glass card-hover" style={{ overflow: 'hidden', padding: 0 }}>
+                <div style={{ height: 200, background: s.imagen_url ? `url(${s.imagen_url}) center/cover` : 'linear-gradient(135deg, rgba(236,72,153,0.15), rgba(168,85,247,0.15))' }} />
+                <div style={{ padding: '1.5rem' }}>
+                  <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>{s.nombre}</h3>
+                  {s.descripcion && <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', marginBottom: '1.5rem' }}>{s.descripcion}</p>}
+                  <Link
+                    href={`https://wa.me/${pageConfig.whatsappNumber}?text=Hola! Quiero info sobre ${encodeURIComponent(s.nombre)}`}
+                    target="_blank"
+                    className="btn-secondary"
+                    style={{ width: '100%', justifyContent: 'center' }}
+                  >
+                    Consultar
+                  </Link>
                 </div>
-              ))}
-            </div>
-          </section>
-        )}
+              </div>
+            ))}
+          </div>
+        </section>
 
         {/* ───── RESERVA DE TURNO ───── */}
-        <ReservaSection servicios={serviciosDB} />
+        <ReservaSection servicios={servicios} />
 
         {/* ───── CURSOS / PRODUCTOS ───── */}
         {cursosDB.length > 0 && (
