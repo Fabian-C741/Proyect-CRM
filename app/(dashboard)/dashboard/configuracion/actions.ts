@@ -71,8 +71,10 @@ export async function createServicioAction(formData: FormData) {
     nombre,
     descripcion: (formData.get('descripcion') as string) || null,
     imagen_url: (formData.get('imagen_url') as string) || null,
+    precio: parseFloat((formData.get('precio') as string)) || 0,
+    duracion_minutos: parseInt((formData.get('duracion_minutos') as string)) || null,
     orden: parseInt((formData.get('orden') as string) || '0') || 0,
-    activo: true,
+    activo: formData.get('activo') === 'on',
   })
 
   if (error) return { error: 'Error al crear: ' + error.message }
@@ -92,6 +94,10 @@ export async function updateServicioAction(id: string, formData: FormData) {
       nombre: formData.get('nombre') as string,
       descripcion: (formData.get('descripcion') as string) || null,
       imagen_url: (formData.get('imagen_url') as string) || null,
+      precio: parseFloat((formData.get('precio') as string)) || 0,
+      duracion_minutos: parseInt((formData.get('duracion_minutos') as string)) || null,
+      orden: parseInt((formData.get('orden') as string) || '0') || 0,
+      activo: formData.get('activo') === 'on',
     })
     .eq('id', id)
     .eq('user_id', user.id)

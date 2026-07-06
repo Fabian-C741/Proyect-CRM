@@ -70,7 +70,7 @@ export default function ServiciosEditor({ servicios: initial }: Props) {
           <div key={s.id} className="card-glass p-4">
             {editId === s.id ? (
               <form onSubmit={e => handleEdit(e, s.id)} className="space-y-3">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
                   <div>
                     <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Nombre *</label>
                     <input name="nombre" defaultValue={s.nombre} required className="input-base" />
@@ -80,8 +80,28 @@ export default function ServiciosEditor({ servicios: initial }: Props) {
                     <input name="descripcion" defaultValue={s.descripcion || ''} className="input-base" />
                   </div>
                   <div>
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Precio ($)</label>
+                    <input name="precio" type="number" step="0.01" min="0" defaultValue={s.precio || 0} className="input-base" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Duración (min)</label>
+                    <input name="duracion_minutos" type="number" min="0" defaultValue={s.duracion_minutos || ''} className="input-base" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div>
                     <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">URL de Imagen</label>
                     <input name="imagen_url" defaultValue={s.imagen_url || ''} placeholder="https://..." className="input-base" />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Orden</label>
+                    <input name="orden" type="number" min="0" defaultValue={s.orden || 0} className="input-base" />
+                  </div>
+                  <div className="flex items-end pb-1">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input name="activo" type="checkbox" defaultChecked={s.activo} className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-pink-500 focus:ring-pink-500" />
+                      <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Activo</span>
+                    </label>
                   </div>
                 </div>
                 <div className="flex gap-2 justify-end">
@@ -138,18 +158,38 @@ export default function ServiciosEditor({ servicios: initial }: Props) {
       {adding ? (
         <form onSubmit={handleAdd} className="card-glass p-4 space-y-3">
           <p className="text-sm font-semibold text-white mb-2">Nuevo Servicio</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
             <div>
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Nombre *</label>
               <input name="nombre" required placeholder="ej. Maquillaje Social" className="input-base" />
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Descripción</label>
-              <input name="descripcion" placeholder="Breve descripción del servicio" className="input-base" />
+              <input name="descripcion" placeholder="Breve descripción" className="input-base" />
             </div>
             <div>
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Precio ($)</label>
+              <input name="precio" type="number" step="0.01" min="0" placeholder="0" className="input-base" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Duración (min)</label>
+              <input name="duracion_minutos" type="number" min="0" placeholder="60" className="input-base" />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">URL de Imagen</label>
-              <input name="imagen_url" placeholder={DEFAULT_IMAGES[0]} className="input-base" />
+              <input name="imagen_url" placeholder="https://images.unsplash.com/..." className="input-base" />
+            </div>
+            <div>
+              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Orden</label>
+              <input name="orden" type="number" min="0" placeholder="0" className="input-base" />
+            </div>
+            <div className="flex items-end pb-1">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input name="activo" type="checkbox" defaultChecked className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-pink-500 focus:ring-pink-500" />
+                <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Activo</span>
+              </label>
             </div>
           </div>
           <p className="text-xs text-slate-500">💡 Podés usar imágenes de Unsplash, tu Instagram o cualquier URL pública.</p>
