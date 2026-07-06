@@ -93,73 +93,34 @@ export default function ReservaSection({ servicios }: Props) {
 
       {/* ─── PASO: Elegir servicio ─── */}
       {paso === 'elegir' && (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '1.25rem' }}>
-          {lista.map((s) => (
-            <button
-              key={s.id}
-              onClick={() => seleccionar(s)}
-              style={{
-                background: 'rgba(22,22,42,0.8)',
-                backdropFilter: 'blur(12px)',
-                border: '1px solid rgba(255,255,255,0.06)',
-                borderRadius: 16,
-                padding: '1.5rem',
-                cursor: 'pointer',
-                textAlign: 'left',
-                transition: 'all 0.2s ease',
-                color: 'inherit',
-              }}
-              onMouseEnter={e => {
-                (e.currentTarget as HTMLElement).style.border = '1px solid rgba(236,72,153,0.5)'
-                ;(e.currentTarget as HTMLElement).style.transform = 'translateY(-3px)'
-                ;(e.currentTarget as HTMLElement).style.boxShadow = '0 12px 32px rgba(236,72,153,0.15)'
-              }}
-              onMouseLeave={e => {
-                (e.currentTarget as HTMLElement).style.border = '1px solid rgba(255,255,255,0.06)'
-                ;(e.currentTarget as HTMLElement).style.transform = 'translateY(0)'
-                ;(e.currentTarget as HTMLElement).style.boxShadow = 'none'
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '0.75rem' }}>
-                <div style={{
-                  width: 40, height: 40, borderRadius: 10,
-                  background: 'rgba(236,72,153,0.1)',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.25rem'
-                }}>
-                  💅
-                </div>
-                {s.duracion_minutos && (
-                  <span style={{
-                    padding: '0.2rem 0.5rem', borderRadius: 9999,
-                    background: 'rgba(255,255,255,0.05)', color: 'var(--text-muted)',
-                    fontSize: '0.7rem',
-                  }}>
-                    ⏱ {s.duracion_minutos} min
-                  </span>
-                )}
-              </div>
-              <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginBottom: '0.4rem', color: 'white' }}>
-                {s.nombre}
-              </h3>
-              {s.descripcion && (
-                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '0.75rem', lineHeight: 1.5 }}>
-                  {s.descripcion}
-                </p>
-              )}
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f472b6' }}>
-                  {s.precio > 0 ? `$${s.precio.toLocaleString('es-AR')}` : 'Consultar precio'}
-                </span>
-                <span style={{
-                  padding: '0.35rem 0.85rem', borderRadius: 9999,
-                  background: 'linear-gradient(135deg, #ec4899, #db2777)',
-                  color: 'white', fontSize: '0.8rem', fontWeight: 600,
-                }}>
-                  Reservar →
-                </span>
-              </div>
-            </button>
-          ))}
+        <div className="card-glass" style={{ maxWidth: 480, margin: '0 auto', padding: '2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                Seleccioná un servicio
+              </label>
+              <select
+                className="input-base"
+                onChange={e => {
+                  const s = lista.find(s => s.id === e.target.value)
+                  if (s) seleccionar(s)
+                }}
+                defaultValue=""
+              >
+                <option value="" disabled>— Elegí un servicio —</option>
+                {lista.map(s => (
+                  <option key={s.id} value={s.id}>
+                    {s.nombre}{s.precio > 0 ? ` — $${s.precio.toLocaleString('es-AR')}` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {lista.length === 0 && (
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'center' }}>
+                No hay servicios disponibles por el momento.
+              </p>
+            )}
+          </div>
         </div>
       )}
 
