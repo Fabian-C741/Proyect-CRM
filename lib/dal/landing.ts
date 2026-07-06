@@ -150,9 +150,20 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
 export async function getServiciosPublicos(): Promise<Servicio[]> {
   try {
     const supabase = await createSupabaseServerClient()
+    // Obtener el user_id del admin desde site_settings
+    const { data: adminRow } = await supabase
+      .from('site_settings')
+      .select('user_id')
+      .limit(1)
+      .maybeSingle()
+
+    const adminId = (adminRow as { user_id: string } | null)?.user_id
+    if (!adminId) return []
+
     const { data, error } = await supabase
       .from('servicios')
       .select('*')
+      .eq('user_id', adminId)
       .eq('activo', true)
       .order('orden', { ascending: true })
 
