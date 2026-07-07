@@ -60,9 +60,9 @@ export async function updateSiteSettings(formData: FormData) {
     return { success: false, error: 'Error: ' + error.message }
   }
 
-  // Refrescar caché para que los cambios se vean en la web pública de inmediato
   revalidatePath('/')
-  revalidatePath('/(auth)/login', 'layout') // también el login
+  revalidatePath('/dashboard/ajustes')
+  revalidatePath('/(auth)/login', 'layout')
   
   return { success: true }
 }
