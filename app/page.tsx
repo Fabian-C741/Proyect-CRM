@@ -14,13 +14,6 @@ import {
 export const dynamic = 'force-dynamic'
 
 
-const FALLBACK_PORTFOLIO = [
-  { id: 'p1', imagen_url: 'https://images.unsplash.com/photo-1512496015851-a1cbf39a5180?q=80&w=600&auto=format&fit=crop', descripcion: null },
-  { id: 'p2', imagen_url: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?q=80&w=600&auto=format&fit=crop', descripcion: null },
-  { id: 'p3', imagen_url: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=600&auto=format&fit=crop', descripcion: null },
-  { id: 'p4', imagen_url: 'https://images.unsplash.com/photo-1516975080661-460d3d52c41c?q=80&w=600&auto=format&fit=crop', descripcion: null },
-]
-
 const TIPO_ICONS: Record<string, string> = {
   servicio: '💆', curso: '🎓', pdf: '📄', ebook: '📚',
 }
@@ -45,7 +38,7 @@ export default async function LandingPage() {
     sobreMiImg:    settings?.sobre_mi_imagen_url || null,
   }
 
-  const portfolio = portfolioDB.length > 0 ? portfolioDB : FALLBACK_PORTFOLIO
+  const portfolio = portfolioDB
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden bg-surface-bg">
@@ -189,6 +182,7 @@ export default async function LandingPage() {
         )}
 
         {/* ───── PORTFOLIO ───── */}
+        {portfolio.length > 0 && (
         <section id="galeria" style={{ width: '100%', maxWidth: 1000, margin: '0 auto 6rem' }}>
           <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.75rem', textAlign: 'center' }}>Mis Trabajos</h2>
           <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '2.5rem' }}>Una muestra de los looks que podemos crear juntas</p>
@@ -205,6 +199,7 @@ export default async function LandingPage() {
             ))}
           </div>
         </section>
+        )}
 
         {/* ───── TESTIMONIOS ───── */}
         {testimonios.length > 0 && (
