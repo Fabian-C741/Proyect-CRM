@@ -149,6 +149,27 @@ export async function addPortfolioItemAction(formData: FormData) {
   return { success: true }
 }
 
+export async function updatePortfolioItemAction(id: string, formData: FormData) {
+  const user = await getCurrentUser()
+  if (!user) return { error: 'No autorizado' }
+
+  const supabase = await createSupabaseServerClient()
+  const { error } = await supabase
+    .from('portfolio')
+    .update({
+      imagen_url: (formData.get('imagen_url') as string) || '',
+      descripcion: (formData.get('descripcion') as string) || null,
+      orden: parseInt((formData.get('orden') as string) || '0') || 0,
+    })
+    .eq('id', id)
+    .eq('user_id', user.id)
+
+  if (error) return { error: 'Error al actualizar: ' + error.message }
+  revalidatePath('/')
+  revalidatePath('/dashboard/configuracion')
+  return { success: true }
+}
+
 export async function deletePortfolioItemAction(id: string) {
   const user = await getCurrentUser()
   if (!user) return { error: 'No autorizado' }
