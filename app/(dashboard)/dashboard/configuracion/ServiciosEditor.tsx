@@ -6,13 +6,8 @@ import {
   createServicioAction,
   updateServicioAction,
   deleteServicioAction,
+  seedServiciosAction,
 } from './actions'
-
-const DEFAULT_IMAGES = [
-  'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=800&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1596704017254-9b121068fb31?q=80&w=800&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800&auto=format&fit=crop',
-]
 
 type Props = { servicios: Servicio[] }
 
@@ -148,8 +143,22 @@ export default function ServiciosEditor({ servicios: initial }: Props) {
         ))}
 
         {servicios.length === 0 && !adding && (
-          <div className="card-glass p-6 text-center text-slate-500 text-sm">
-            No tenés servicios cargados. Agregá el primero para que aparezca en tu landing.
+          <div className="card-glass p-6 text-center space-y-4">
+            <p className="text-slate-500 text-sm">No tenés servicios cargados.</p>
+            <button
+              onClick={async () => {
+                setLoading('seed')
+                setError(null)
+                const result = await seedServiciosAction()
+                if (result.error) { setError(result.error); setLoading(null); return }
+                setLoading(null)
+                window.location.reload()
+              }}
+              className="btn-primary text-sm"
+              disabled={loading === 'seed'}
+            >
+              {loading === 'seed' ? 'Creando...' : '✨ Crear servicios de ejemplo'}
+            </button>
           </div>
         )}
       </div>
