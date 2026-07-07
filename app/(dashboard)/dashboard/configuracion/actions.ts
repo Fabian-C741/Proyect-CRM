@@ -108,28 +108,6 @@ export async function updateServicioAction(id: string, formData: FormData) {
   return { success: true }
 }
 
-export async function seedServiciosAction() {
-  const user = await getCurrentUser()
-  if (!user) return { error: 'No autorizado' }
-
-  const supabase = await createSupabaseServerClient()
-
-  const defaults = [
-    { nombre: 'Maquillaje Social', descripcion: 'Look perfecto y duradero para eventos, fiestas y reuniones importantes.', imagen_url: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=800&auto=format&fit=crop', precio: 0, duracion_minutos: 60, orden: 0 },
-    { nombre: 'Maquillaje de Novia', descripcion: 'Prueba y maquillaje para el día más especial, con productos de alta gama.', imagen_url: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?q=80&w=800&auto=format&fit=crop', precio: 0, duracion_minutos: 90, orden: 1 },
-    { nombre: 'Cursos de Automaquillaje', descripcion: 'Aprende a conocer tu rostro y las mejores técnicas para el día a día.', imagen_url: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800&auto=format&fit=crop', precio: 0, duracion_minutos: 120, orden: 2 },
-  ]
-
-  const { error } = await supabase.from('servicios').insert(
-    defaults.map(s => ({ ...s, user_id: user.id, activo: true }))
-  )
-
-  if (error) return { error: 'Error al crear servicios: ' + error.message }
-  revalidatePath('/')
-  revalidatePath('/dashboard/configuracion')
-  return { success: true }
-}
-
 export async function deleteServicioAction(id: string) {
   const user = await getCurrentUser()
   if (!user) return { error: 'No autorizado' }

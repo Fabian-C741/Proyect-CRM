@@ -6,7 +6,6 @@ import {
   createServicioAction,
   updateServicioAction,
   deleteServicioAction,
-  seedServiciosAction,
 } from './actions'
 
 type Props = { servicios: Servicio[] }
@@ -143,22 +142,8 @@ export default function ServiciosEditor({ servicios: initial }: Props) {
         ))}
 
         {servicios.length === 0 && !adding && (
-          <div className="card-glass p-6 text-center space-y-4">
-            <p className="text-slate-500 text-sm">No tenés servicios cargados.</p>
-            <button
-              onClick={async () => {
-                setLoading('seed')
-                setError(null)
-                const result = await seedServiciosAction()
-                if (result.error) { setError(result.error); setLoading(null); return }
-                setLoading(null)
-                window.location.reload()
-              }}
-              className="btn-primary text-sm"
-              disabled={loading === 'seed'}
-            >
-              {loading === 'seed' ? 'Creando...' : '✨ Crear servicios de ejemplo'}
-            </button>
+          <div className="card-glass p-6 text-center text-slate-500 text-sm">
+            No tenés servicios cargados.
           </div>
         )}
       </div>
