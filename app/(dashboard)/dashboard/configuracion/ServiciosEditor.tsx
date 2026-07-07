@@ -1,7 +1,8 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import type { Servicio } from '@/lib/definitions'
+import { uploadImage } from '@/lib/supabase/storage'
 import {
   createServicioAction,
   updateServicioAction,
@@ -16,6 +17,19 @@ export default function ServiciosEditor({ servicios: initial }: Props) {
   const [editId, setEditId] = useState<string | null>(null)
   const [loading, setLoading] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const [uploading, setUploading] = useState(false)
+
+  const handleUpload = async (file: File | undefined, inputName: string) => {
+    if (!file) return
+    setUploading(true)
+    setError(null)
+    const fd = new FormData()
+    fd.append('file', file)
+    const result = await uploadImage(fd)
+    setUploading(false)
+    if (result.error) { setError(result.error); return }
+    return result.url
+  }
 
   const handleAdd = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -50,6 +64,37 @@ export default function ServiciosEditor({ servicios: initial }: Props) {
     setLoading(null)
   }
 
+  function ImageUploader({ defaultValue, inputName }: { defaultValue?: string | null; inputName: string }) {
+    const [preview, setPreview] = useState(defaultValue || '')
+    const hiddenRef = useRef<HTMLInputElement>(null)
+    const [urlInput, setUrlInput] = useState(defaultValue || '')
+
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0]
+      if (!file) return
+      const url = await handleUpload(file, inputName)
+      if (url) { setPreview(url); setUrlInput(url); if (hiddenRef.current) hiddenRef.current.value = url }
+    }
+
+    return (
+      <div className="space-y-2">
+        <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Imagen</label>
+        <input type="file" accept="image/*" onChange={handleFileChange} disabled={uploading} className="text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-pink-500/10 file:text-pink-400 hover:file:bg-pink-500/20 disabled:opacity-50" />
+        <input type="hidden" ref={hiddenRef} name={inputName} value={preview} />
+        <div className="flex gap-2 items-center">
+          <input type="text" placeholder="O pegá una URL..." value={urlInput} onChange={e => { setUrlInput(e.target.value); setPreview(e.target.value); if (hiddenRef.current) hiddenRef.current.value = e.target.value }} className="input-base text-xs flex-1" />
+          {uploading && <span className="text-xs text-pink-400 shrink-0">Subiendo...</span>}
+        </div>
+        {preview && (
+          <div className="relative w-full h-32 rounded-lg overflow-hidden bg-slate-800">
+            <img src={preview} className="w-full h-full object-cover" />
+            <button type="button" onClick={() => { setPreview(''); setUrlInput(''); if (hiddenRef.current) hiddenRef.current.value = '' }} className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-black/80">✕</button>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-4">
       {error && (
@@ -70,10 +115,6 @@ export default function ServiciosEditor({ servicios: initial }: Props) {
                     <input name="nombre" defaultValue={s.nombre} required className="input-base" />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Descripción</label>
-                    <input name="descripcion" defaultValue={s.descripcion || ''} className="input-base" />
-                  </div>
-                  <div>
                     <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Precio ($)</label>
                     <input name="precio" type="number" step="0.01" min="0" defaultValue={s.precio || 0} className="input-base" />
                   </div>
@@ -81,16 +122,17 @@ export default function ServiciosEditor({ servicios: initial }: Props) {
                     <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Duración (min)</label>
                     <input name="duracion_minutos" type="number" min="0" defaultValue={s.duracion_minutos || ''} className="input-base" />
                   </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div>
-                    <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">URL de Imagen</label>
-                    <input name="imagen_url" defaultValue={s.imagen_url || ''} placeholder="https://..." className="input-base" />
-                  </div>
                   <div>
                     <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Orden</label>
                     <input name="orden" type="number" min="0" defaultValue={s.orden || 0} className="input-base" />
                   </div>
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Descripción</label>
+                  <textarea name="descripcion" defaultValue={s.descripcion || ''} rows={4} className="input-base" />
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                  <ImageUploader defaultValue={s.imagen_url} inputName="imagen_url" />
                   <div className="flex items-end pb-1">
                     <label className="flex items-center gap-2 cursor-pointer">
                       <input name="activo" type="checkbox" defaultChecked={s.activo} className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-pink-500 focus:ring-pink-500" />
@@ -158,10 +200,6 @@ export default function ServiciosEditor({ servicios: initial }: Props) {
               <input name="nombre" required placeholder="ej. Maquillaje Social" className="input-base" />
             </div>
             <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Descripción</label>
-              <input name="descripcion" placeholder="Breve descripción" className="input-base" />
-            </div>
-            <div>
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Precio ($)</label>
               <input name="precio" type="number" step="0.01" min="0" placeholder="0" className="input-base" />
             </div>
@@ -169,16 +207,17 @@ export default function ServiciosEditor({ servicios: initial }: Props) {
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Duración (min)</label>
               <input name="duracion_minutos" type="number" min="0" placeholder="60" className="input-base" />
             </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-            <div>
-              <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">URL de Imagen</label>
-              <input name="imagen_url" placeholder="https://images.unsplash.com/..." className="input-base" />
-            </div>
             <div>
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Orden</label>
               <input name="orden" type="number" min="0" placeholder="0" className="input-base" />
             </div>
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Descripción</label>
+            <textarea name="descripcion" rows={4} placeholder="Descripción del servicio..." className="input-base" />
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <ImageUploader inputName="imagen_url" />
             <div className="flex items-end pb-1">
               <label className="flex items-center gap-2 cursor-pointer">
                 <input name="activo" type="checkbox" defaultChecked className="w-4 h-4 rounded border-slate-600 bg-slate-800 text-pink-500 focus:ring-pink-500" />
@@ -186,7 +225,6 @@ export default function ServiciosEditor({ servicios: initial }: Props) {
               </label>
             </div>
           </div>
-          <p className="text-xs text-slate-500">💡 Podés usar imágenes de Unsplash, tu Instagram o cualquier URL pública.</p>
           <div className="flex gap-2 justify-end">
             <button type="button" onClick={() => setAdding(false)} className="btn-secondary text-sm">Cancelar</button>
             <button type="submit" className="btn-primary text-sm" disabled={loading === 'add'}>
