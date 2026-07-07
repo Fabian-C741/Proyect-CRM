@@ -19,6 +19,7 @@ export async function updateSiteSettings(formData: FormData) {
   const whatsappNumber = (formData.get('whatsappNumber') as string) || null
   const sobreMiTexto = (formData.get('sobreMiTexto') as string) || null
   const sobreMiImagenUrl = (formData.get('sobreMiImagenUrl') as string) || null
+  const faviconUrl = (formData.get('faviconUrl') as string) || null
 
   const admin = getSupabaseAdmin()
   const tbl = admin.from('site_settings') as any
@@ -41,6 +42,7 @@ export async function updateSiteSettings(formData: FormData) {
     whatsapp_number: whatsappNumber,
     sobre_mi_texto: sobreMiTexto,
     sobre_mi_imagen_url: sobreMiImagenUrl,
+    favicon_url: faviconUrl,
     updated_at: new Date().toISOString(),
   }
 

@@ -148,6 +148,7 @@ export type SiteSettings = {
   whatsapp_number: string | null
   sobre_mi_texto: string | null
   sobre_mi_imagen_url: string | null
+  favicon_url: string | null
   updated_at: string
 }
 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { updateSiteSettings } from './actions'
+import ImageUploader from '@/app/_components/ImageUploader'
 
 export default function SettingsForm({ initialData }: { initialData: any }) {
   const [loading, setLoading] = useState(false)
@@ -98,6 +99,11 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
           />
           <small style={{ color: 'var(--text-muted)' }}>Se usa en todos los botones de WhatsApp de la landing. Sin + ni espacios.</small>
         </div>
+      </div>
+
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem' }}>
+        <p style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', color: 'white' }}>Favicon (icono de la pestaña)</p>
+        <ImageUploader defaultValue={initialData.favicon_url} inputName="faviconUrl" />
       </div>
 
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem' }}>
