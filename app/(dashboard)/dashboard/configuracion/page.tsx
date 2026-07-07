@@ -1,19 +1,19 @@
 import { getCurrentUser } from '@/lib/dal/auth'
-import { getSupabaseAdmin } from '@/lib/supabase/admin'
+import { createSupabaseServerClient } from '@/lib/supabase/server'
 import type { Servicio, PortfolioItem, Testimonio, MenuItem, BloqueoHorario } from '@/lib/definitions'
 import ConfiguracionClient from './ConfiguracionClient'
 
 async function getConfigData(userId: string) {
-  const admin = getSupabaseAdmin()
-  const tbl = admin.from('site_settings') as any
+  const supabase = await createSupabaseServerClient()
 
-  // Usar admin client para que el usuario vea TODOS los registros, incluidos los creados con otro user_id
+  // Servicios: sin filtro user_id para que el admin vea TODOS (incluidos los creados con otro id)
+  // El resto: filtrados por user_id del usuario actual
   const [serviciosRes, portfolioRes, testimoniosRes, menuItemsRes, bloqueosRes] = await Promise.all([
-    (admin.from('servicios') as any).select('*').order('orden', { ascending: true }),
-    (admin.from('portfolio') as any).select('*').eq('user_id', userId).order('orden', { ascending: true }),
-    (admin.from('testimonios') as any).select('*').eq('user_id', userId).order('created_at', { ascending: false }),
-    (admin.from('menu_items') as any).select('*').eq('user_id', userId).order('orden', { ascending: true }),
-    (admin.from('bloqueos_horarios') as any).select('*').eq('user_id', userId).eq('activo', true).order('fecha', { ascending: false }),
+    supabase.from('servicios').select('*').order('orden', { ascending: true }),
+    supabase.from('portfolio').select('*').eq('user_id', userId).order('orden', { ascending: true }),
+    supabase.from('testimonios').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
+    supabase.from('menu_items').select('*').eq('user_id', userId).order('orden', { ascending: true }),
+    supabase.from('bloqueos_horarios').select('*').eq('user_id', userId).eq('activo', true).order('fecha', { ascending: false }),
   ])
 
   return {
