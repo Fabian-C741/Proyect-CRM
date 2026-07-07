@@ -17,8 +17,8 @@ async function getConfigData(userId: string) {
   ])
 
   let servicios = (serviciosRes.data as Servicio[]) ?? []
+  let portfolio = (portfolioRes.data as PortfolioItem[]) ?? []
 
-  // Auto-crear los 3 servicios por defecto si no hay ninguno
   if (servicios.length === 0) {
     const defaults = [
       { nombre: 'Maquillaje Social', descripcion: 'Look perfecto y duradero para eventos, fiestas y reuniones importantes.', imagen_url: 'https://images.unsplash.com/photo-1487412947147-5cebf100ffc2?q=80&w=800&auto=format&fit=crop', precio: 0, duracion_minutos: 60, orden: 0 },
@@ -31,9 +31,21 @@ async function getConfigData(userId: string) {
     servicios = (inserted as Servicio[]) ?? []
   }
 
+  if (portfolio.length === 0) {
+    const defaults = [
+      { imagen_url: 'https://images.unsplash.com/photo-1512496015851-a1cbf39a5180?q=80&w=600&auto=format&fit=crop', descripcion: 'Maquillaje social de alta duración', orden: 0 },
+      { imagen_url: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?q=80&w=600&auto=format&fit=crop', descripcion: 'Look para novia elegante', orden: 1 },
+      { imagen_url: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=600&auto=format&fit=crop', descripcion: 'Curso de automaquillaje', orden: 2 },
+    ]
+    const { data: inserted } = await (supabase.from('portfolio') as any).insert(
+      defaults.map(s => ({ ...s, user_id: userId }))
+    ).select()
+    portfolio = (inserted as PortfolioItem[]) ?? []
+  }
+
   return {
     servicios,
-    portfolio: (portfolioRes.data as PortfolioItem[]) ?? [],
+    portfolio,
     testimonios: (testimoniosRes.data as Testimonio[]) ?? [],
     menuItems: (menuItemsRes.data as MenuItem[]) ?? [],
     bloqueos: (bloqueosRes.data as BloqueoHorario[]) ?? [],
