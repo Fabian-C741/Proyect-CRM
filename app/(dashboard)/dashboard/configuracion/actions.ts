@@ -2,6 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { getCurrentUser } from '@/lib/dal/auth'
 
 // ─────────────────────────────────────────────
@@ -134,11 +135,12 @@ export async function addPortfolioItemAction(formData: FormData) {
   const imagen_url = formData.get('imagen_url') as string
   if (!imagen_url) return { error: 'La URL de la imagen es obligatoria' }
 
-  const supabase = await createSupabaseServerClient()
-  const { error } = await supabase.rpc('insert_portfolio_item', {
-    p_user_id: user.id,
-    p_imagen_url: imagen_url,
-    p_descripcion: (formData.get('descripcion') as string) || null,
+  const admin = getSupabaseAdmin()
+  const { error } = await (admin.from('portfolio') as any).insert({
+    user_id: user.id,
+    imagen_url,
+    descripcion: (formData.get('descripcion') as string) || null,
+    orden: 0,
   })
 
   if (error) {
