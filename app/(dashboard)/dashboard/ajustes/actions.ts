@@ -20,6 +20,9 @@ export async function updateSiteSettings(formData: FormData) {
   const sobreMiTexto = (formData.get('sobreMiTexto') as string) || null
   const sobreMiImagenUrl = (formData.get('sobreMiImagenUrl') as string) || null
   const faviconUrl = (formData.get('faviconUrl') as string) || null
+  const ctaTitle = (formData.get('ctaTitle') as string) || null
+  const ctaText = (formData.get('ctaText') as string) || null
+  const ctaButtonText = (formData.get('ctaButtonText') as string) || null
 
   const admin = getSupabaseAdmin()
   const tbl = admin.from('site_settings') as any
@@ -43,6 +46,9 @@ export async function updateSiteSettings(formData: FormData) {
     sobre_mi_texto: sobreMiTexto,
     sobre_mi_imagen_url: sobreMiImagenUrl,
     favicon_url: faviconUrl,
+    cta_title: ctaTitle,
+    cta_text: ctaText,
+    cta_button_text: ctaButtonText,
     updated_at: new Date().toISOString(),
   }
 

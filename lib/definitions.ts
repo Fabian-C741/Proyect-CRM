@@ -149,6 +149,9 @@ export type SiteSettings = {
   sobre_mi_texto: string | null
   sobre_mi_imagen_url: string | null
   favicon_url: string | null
+  cta_title: string | null
+  cta_text: string | null
+  cta_button_text: string | null
   updated_at: string
 }
 

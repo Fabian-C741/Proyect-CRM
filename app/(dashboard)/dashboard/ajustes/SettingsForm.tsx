@@ -107,6 +107,22 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
       </div>
 
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem' }}>
+        <p style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', color: 'white' }}>Sección CTA Final (¿Lista para tu transformación?)</p>
+        <div>
+          <label htmlFor="ctaTitle" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Título</label>
+          <input type="text" id="ctaTitle" name="ctaTitle" defaultValue={initialData.cta_title || ''} className="input-base" placeholder="¿Lista para tu transformación?" />
+        </div>
+        <div style={{ marginTop: '1rem' }}>
+          <label htmlFor="ctaText" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Texto</label>
+          <textarea id="ctaText" name="ctaText" defaultValue={initialData.cta_text || ''} rows={3} className="input-base" placeholder="Reservá tu turno hoy y empezá a sentirte increíble..." />
+        </div>
+        <div style={{ marginTop: '1rem' }}>
+          <label htmlFor="ctaButtonText" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Texto del Botón</label>
+          <input type="text" id="ctaButtonText" name="ctaButtonText" defaultValue={initialData.cta_button_text || ''} className="input-base" placeholder="Reservar mi turno" />
+        </div>
+      </div>
+
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem' }}>
         <p style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', color: 'white' }}>Sección Sobre Mí</p>
         <div>
           <label htmlFor="sobreMiTexto" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Texto</label>
