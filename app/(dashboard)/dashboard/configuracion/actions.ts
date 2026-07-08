@@ -2,7 +2,24 @@
 
 import { revalidatePath } from 'next/cache'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { getSupabaseAdmin } from '@/lib/supabase/admin'
 import { getCurrentUser } from '@/lib/dal/auth'
+
+async function withSchemaRetry<T>(fn: () => any): Promise<{ data?: T | null; error?: any }> {
+  const result = await fn() as { data?: T | null; error?: any }
+  if (result.error && (result.error as any)?.message?.includes?.('schema cache')) {
+    try {
+      const admin = getSupabaseAdmin()
+      await admin.rpc('reload_pgrst_schema')
+    } catch {}
+    const retry = await fn()
+    if (retry.error && (retry.error as any)?.message?.includes?.('schema cache')) {
+      return { error: { message: 'Error de caché. Probá recargar la página o esperá unos segundos.' } }
+    }
+    return retry
+  }
+  return result
+}
 
 // ─────────────────────────────────────────────
 // SITE SETTINGS
@@ -66,16 +83,18 @@ export async function createServicioAction(formData: FormData) {
   if (!nombre) return { error: 'El nombre es obligatorio' }
 
   const supabase = await createSupabaseServerClient()
-  const { error } = await supabase.from('servicios').insert({
-    user_id: user.id,
-    nombre,
-    descripcion: (formData.get('descripcion') as string) || null,
-    imagen_url: (formData.get('imagen_url') as string) || null,
-    precio: parseFloat((formData.get('precio') as string)) || 0,
-    duracion_minutos: parseInt((formData.get('duracion_minutos') as string)) || null,
-    orden: parseInt((formData.get('orden') as string) || '0') || 0,
-    activo: formData.get('activo') === 'on',
-  })
+  const { error } = await withSchemaRetry(() =>
+    (supabase.from('servicios') as any).insert({
+      user_id: user.id,
+      nombre,
+      descripcion: (formData.get('descripcion') as string) || null,
+      imagen_url: (formData.get('imagen_url') as string) || null,
+      precio: parseFloat((formData.get('precio') as string)) || 0,
+      duracion_minutos: parseInt((formData.get('duracion_minutos') as string)) || null,
+      orden: parseInt((formData.get('orden') as string) || '0') || 0,
+      activo: formData.get('activo') === 'on',
+    })
+  )
 
   if (error) return { error: 'Error al crear: ' + error.message }
   revalidatePath('/')
@@ -136,12 +155,14 @@ export async function addPortfolioItemAction(formData: FormData) {
   if (!imagen_url) return { error: 'La URL de la imagen es obligatoria' }
 
   const supabase = await createSupabaseServerClient()
-  const { error } = await supabase.from('portfolio').insert({
-    user_id: user.id,
-    imagen_url,
-    descripcion: (formData.get('descripcion') as string) || null,
-    orden: 0,
-  })
+  const { error } = await withSchemaRetry(() =>
+    (supabase.from('portfolio') as any).insert({
+      user_id: user.id,
+      imagen_url,
+      descripcion: (formData.get('descripcion') as string) || null,
+      orden: 0,
+    })
+  )
 
   if (error) return { error: 'Error al agregar: ' + error.message }
   revalidatePath('/')
