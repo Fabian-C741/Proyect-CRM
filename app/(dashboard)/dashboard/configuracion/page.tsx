@@ -25,10 +25,12 @@ async function getConfigData(userId: string) {
       { nombre: 'Maquillaje de Novia', descripcion: 'Prueba y maquillaje para el día más especial, con productos de alta gama.', imagen_url: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?q=80&w=800&auto=format&fit=crop', precio: 0, duracion_minutos: 90, orden: 1 },
       { nombre: 'Cursos de Automaquillaje', descripcion: 'Aprende a conocer tu rostro y las mejores técnicas para el día a día.', imagen_url: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=800&auto=format&fit=crop', precio: 0, duracion_minutos: 120, orden: 2 },
     ]
-    const { data: inserted } = await (supabase.from('servicios') as any).insert(
-      defaults.map(s => ({ ...s, user_id: userId, activo: true }))
-    ).select()
-    servicios = (inserted as Servicio[]) ?? []
+    const results: Servicio[] = []
+    for (const s of defaults) {
+      const { data } = await supabase.rpc('insert_servicio', { p_user_id: userId, p_nombre: s.nombre, p_descripcion: s.descripcion, p_imagen_url: s.imagen_url, p_precio: s.precio, p_duracion_minutos: s.duracion_minutos, p_orden: s.orden })
+      if (data) results.push(data as any)
+    }
+    servicios = results
   }
 
   if (portfolio.length === 0) {
@@ -37,10 +39,12 @@ async function getConfigData(userId: string) {
       { imagen_url: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?q=80&w=600&auto=format&fit=crop', descripcion: 'Look para novia elegante', orden: 1 },
       { imagen_url: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?q=80&w=600&auto=format&fit=crop', descripcion: 'Curso de automaquillaje', orden: 2 },
     ]
-    const { data: inserted } = await (supabase.from('portfolio') as any).insert(
-      defaults.map(s => ({ ...s, user_id: userId }))
-    ).select()
-    portfolio = (inserted as PortfolioItem[]) ?? []
+    const results: PortfolioItem[] = []
+    for (const p of defaults) {
+      const { data } = await supabase.rpc('insert_portfolio_item', { p_user_id: userId, p_imagen_url: p.imagen_url, p_descripcion: p.descripcion })
+      if (data) results.push(data as any)
+    }
+    portfolio = results
   }
 
   return {
