@@ -142,10 +142,7 @@ export async function addPortfolioItemAction(formData: FormData) {
   })
 
   if (error) {
-    if ((error as any)?.message?.includes?.('does not exist')) {
-      return { error: 'Error de base de datos. Corré la migración SQL más reciente en Supabase.' }
-    }
-    return { error: 'Error al agregar: ' + error.message }
+    return { error: 'Error al agregar: ' + ((error as any)?.message || JSON.stringify(error)) }
   }
   revalidatePath('/')
   revalidatePath('/dashboard/configuracion')
