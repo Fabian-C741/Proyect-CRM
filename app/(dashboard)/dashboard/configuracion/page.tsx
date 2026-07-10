@@ -3,6 +3,21 @@ import { createSupabaseServerClient } from '@/lib/supabase/server'
 import type { Servicio, PortfolioItem, Testimonio, MenuItem, BloqueoHorario } from '@/lib/definitions'
 import ConfiguracionClient from './ConfiguracionClient'
 
+const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || ''
+
+async function restInsert(table: string, body: any) {
+  const res = await fetch(`${supabaseUrl}/rest/v1/${table}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'apikey': anonKey, 'Authorization': `Bearer ${serviceKey}`, 'Prefer': 'return=representation' },
+    body: JSON.stringify(body),
+  })
+  if (!res.ok) return null
+  const json = await res.json()
+  return json?.[0]?.id ?? null
+}
+
 async function getConfigData(userId: string) {
   const supabase = await createSupabaseServerClient()
 
@@ -27,8 +42,8 @@ async function getConfigData(userId: string) {
     ]
     const ids: string[] = []
     for (const s of defaults) {
-      const { data, error } = await supabase.rpc('insert_servicio', { p_user_id: userId, p_nombre: s.nombre, p_descripcion: s.descripcion, p_imagen_url: s.imagen_url, p_precio: s.precio, p_duracion_minutos: s.duracion_minutos, p_orden: s.orden })
-      if (data) ids.push(data as string)
+      const id = await restInsert('servicios', { user_id: userId, ...s })
+      if (id) ids.push(id)
     }
     if (ids.length > 0) {
       const { data: fetched } = await supabase.from('servicios').select('*').in('id', ids)
@@ -44,8 +59,8 @@ async function getConfigData(userId: string) {
     ]
     const ids: string[] = []
     for (const p of defaults) {
-      const { data, error } = await supabase.rpc('insert_portfolio_item', { p_user_id: userId, p_imagen_url: p.imagen_url, p_descripcion: p.descripcion })
-      if (data) ids.push(data as string)
+      const id = await restInsert('portfolio', { user_id: userId, ...p })
+      if (id) ids.push(id)
     }
     if (ids.length > 0) {
       const { data: fetched } = await supabase.from('portfolio').select('*').in('id', ids)

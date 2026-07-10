@@ -66,18 +66,19 @@ export async function createServicioAction(formData: FormData) {
   const nombre = formData.get('nombre') as string
   if (!nombre) return { error: 'El nombre es obligatorio' }
 
-  const supabase = await createSupabaseServerClient()
-  const { error } = await supabase.rpc('insert_servicio', {
-    p_user_id: user.id,
-    p_nombre: nombre,
-    p_descripcion: (formData.get('descripcion') as string) || null,
-    p_imagen_url: (formData.get('imagen_url') as string) || null,
-    p_precio: parseFloat((formData.get('precio') as string)) || 0,
-    p_duracion_minutos: parseInt((formData.get('duracion_minutos') as string)) || null,
-    p_orden: parseInt((formData.get('orden') as string) || '0') || 0,
-  })
-
-  if (error) return { error: 'Error al crear: ' + error.message }
+  try {
+    await restFetch('/rest/v1/servicios', 'POST', {
+      user_id: user.id,
+      nombre,
+      descripcion: (formData.get('descripcion') as string) || null,
+      imagen_url: (formData.get('imagen_url') as string) || null,
+      precio: parseFloat((formData.get('precio') as string)) || 0,
+      duracion_minutos: parseInt((formData.get('duracion_minutos') as string)) || null,
+      orden: parseInt((formData.get('orden') as string) || '0') || 0,
+    })
+  } catch (e: any) {
+    return { error: 'Error al crear: ' + (e?.message || String(e)) }
+  }
   revalidatePath('/')
   revalidatePath('/dashboard/configuracion')
   return { success: true }
@@ -135,38 +136,70 @@ export async function addPortfolioItemAction(formData: FormData) {
   const imagen_url = formData.get('imagen_url') as string
   if (!imagen_url) return { error: 'La URL de la imagen es obligatoria' }
 
-  const admin = getSupabaseAdmin()
-  const { error } = await (admin.from('portfolio') as any).insert({
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  const payload = {
     user_id: user.id,
     imagen_url,
     descripcion: (formData.get('descripcion') as string) || null,
     orden: 0,
+  }
+
+  const res = await fetch(`${supabaseUrl}/rest/v1/portfolio`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+      'Authorization': `Bearer ${serviceKey}`,
+      'Prefer': 'return=representation',
+    },
+    body: JSON.stringify(payload),
   })
 
-  if (error) {
-    return { error: 'Error al agregar: ' + ((error as any)?.message || JSON.stringify(error)) }
+  if (!res.ok) {
+    const text = await res.text()
+    return { error: 'Error al agregar: ' + text }
   }
   revalidatePath('/')
   revalidatePath('/dashboard/configuracion')
   return { success: true }
 }
 
+async function restFetch(path: string, method: string, body?: any) {
+  const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || ''
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
+  const res = await fetch(`${supabaseUrl}${path}`, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+      'apikey': process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || '',
+      'Authorization': `Bearer ${serviceKey}`,
+      'Prefer': 'return=representation',
+    },
+    body: body ? JSON.stringify(body) : undefined,
+  })
+  if (!res.ok) {
+    const text = await res.text()
+    throw new Error(text)
+  }
+  return res
+}
+
 export async function updatePortfolioItemAction(id: string, formData: FormData) {
   const user = await getCurrentUser()
   if (!user) return { error: 'No autorizado' }
 
-  const supabase = await createSupabaseServerClient()
-  const { error } = await supabase
-    .from('portfolio')
-    .update({
-      imagen_url: (formData.get('imagen_url') as string) || '',
-      descripcion: (formData.get('descripcion') as string) || null,
-      orden: parseInt((formData.get('orden') as string) || '0') || 0,
-    })
-    .eq('id', id)
-    .eq('user_id', user.id)
+  const body: any = {
+    imagen_url: (formData.get('imagen_url') as string) || '',
+    descripcion: (formData.get('descripcion') as string) || null,
+    orden: parseInt((formData.get('orden') as string) || '0') || 0,
+  }
 
-  if (error) return { error: 'Error al actualizar: ' + error.message }
+  try {
+    await restFetch(`/rest/v1/portfolio?id=eq.${id}&user_id=eq.${user.id}`, 'PATCH', body)
+  } catch (e: any) {
+    return { error: 'Error al actualizar: ' + (e?.message || String(e)) }
+  }
   revalidatePath('/')
   revalidatePath('/dashboard/configuracion')
   return { success: true }
@@ -176,14 +209,11 @@ export async function deletePortfolioItemAction(id: string) {
   const user = await getCurrentUser()
   if (!user) return { error: 'No autorizado' }
 
-  const supabase = await createSupabaseServerClient()
-  const { error } = await supabase
-    .from('portfolio')
-    .delete()
-    .eq('id', id)
-    .eq('user_id', user.id)
-
-  if (error) return { error: 'Error al eliminar: ' + error.message }
+  try {
+    await restFetch(`/rest/v1/portfolio?id=eq.${id}&user_id=eq.${user.id}`, 'DELETE')
+  } catch (e: any) {
+    return { error: 'Error al eliminar: ' + (e?.message || String(e)) }
+  }
   revalidatePath('/')
   revalidatePath('/dashboard/configuracion')
   return { success: true }
