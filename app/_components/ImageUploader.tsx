@@ -46,9 +46,9 @@ export default function ImageUploader({ defaultValue, inputName }: Props) {
       </div>
       {error && <p className="text-xs text-red-400">{error}</p>}
       {preview && (
-        <div className="relative w-full h-32 rounded-lg overflow-hidden bg-slate-800">
+        <div className="relative w-full rounded-lg overflow-hidden bg-slate-800">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={preview} alt="" className="w-full h-full object-cover" />
+          <img src={preview} alt="" style={{ width: '100%', display: 'block', maxHeight: 300 }} />
           <button type="button" onClick={() => { setPreview(''); setUrlInput(''); if (hiddenRef.current) hiddenRef.current.value = ''; if (fileRef.current) fileRef.current.value = '' }} className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-black/80">✕</button>
         </div>
       )}

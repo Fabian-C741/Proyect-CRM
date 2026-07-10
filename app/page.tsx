@@ -192,7 +192,8 @@ export default async function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem' }}>
             {portfolio.map((item) => (
               <div key={item.id} style={{ position: 'relative', borderRadius: 12, overflow: 'hidden' }}>
-                <div style={{ height: 260, background: `url(${item.imagen_url}) center/cover` }} className="card-hover" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={item.imagen_url} alt="" style={{ width: '100%', display: 'block' }} className="card-hover" />
                 {item.descripcion && (
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.7))', padding: '1rem 0.75rem 0.75rem', color: 'white', fontSize: '0.8rem' }}>
                     {item.descripcion}
