@@ -59,6 +59,20 @@ export async function saveSiteSettingsAction(formData: FormData) {
 // ─────────────────────────────────────────────
 // SERVICIOS
 // ─────────────────────────────────────────────
+async function uploadFileIfPresent(formData: FormData): Promise<{ url?: string; error?: string }> {
+  const file = formData.get('imagen_file') as File | null
+  if (!file || file.size === 0) return {}
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+  const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+  const admin = getSupabaseAdmin()
+  const { data, error } = await admin.storage
+    .from('servicios')
+    .upload(fileName, file, { contentType: file.type, upsert: false })
+  if (error) return { error: 'Error al subir imagen: ' + error.message }
+  const { data: { publicUrl } } = admin.storage.from('servicios').getPublicUrl(data.path)
+  return { url: publicUrl }
+}
+
 export async function createServicioAction(formData: FormData) {
   const user = await getCurrentUser()
   if (!user) return { error: 'No autorizado' }
@@ -66,12 +80,19 @@ export async function createServicioAction(formData: FormData) {
   const nombre = formData.get('nombre') as string
   if (!nombre) return { error: 'El nombre es obligatorio' }
 
+  let imagen_url = (formData.get('imagen_url') as string) || ''
+  if (!imagen_url) {
+    const up = await uploadFileIfPresent(formData)
+    if (up.error) return { error: up.error }
+    if (up.url) imagen_url = up.url
+  }
+
   try {
     await restFetch('/rest/v1/servicios', 'POST', {
       user_id: user.id,
       nombre,
       descripcion: (formData.get('descripcion') as string) || null,
-      imagen_url: (formData.get('imagen_url') as string) || null,
+      imagen_url: imagen_url || null,
       precio: parseFloat((formData.get('precio') as string)) || 0,
       duracion_minutos: parseInt((formData.get('duracion_minutos') as string)) || null,
       orden: parseInt((formData.get('orden') as string) || '0') || 0,
@@ -88,13 +109,20 @@ export async function updateServicioAction(id: string, formData: FormData) {
   const user = await getCurrentUser()
   if (!user) return { error: 'No autorizado' }
 
+  let imagen_url = (formData.get('imagen_url') as string) || ''
+  if (!imagen_url) {
+    const up = await uploadFileIfPresent(formData)
+    if (up.error) return { error: up.error }
+    if (up.url) imagen_url = up.url
+  }
+
   const supabase = await createSupabaseServerClient()
   const { error } = await supabase
     .from('servicios')
     .update({
       nombre: formData.get('nombre') as string,
       descripcion: (formData.get('descripcion') as string) || null,
-      imagen_url: (formData.get('imagen_url') as string) || null,
+      ...(imagen_url ? { imagen_url } : {}),
       precio: parseFloat((formData.get('precio') as string)) || 0,
       duracion_minutos: parseInt((formData.get('duracion_minutos') as string)) || null,
       orden: parseInt((formData.get('orden') as string) || '0') || 0,
@@ -134,20 +162,11 @@ export async function addPortfolioItemAction(formData: FormData) {
   if (!user) return { error: 'No autorizado' }
 
   let imagen_url = (formData.get('imagen_url') as string) || ''
-
-  // Si no hay URL pero hay un archivo, subirlo primero
   if (!imagen_url) {
-    const file = formData.get('imagen_file') as File | null
-    if (!file || file.size === 0) return { error: 'Seleccioná una imagen o pegá una URL' }
-    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
-    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
-    const admin = getSupabaseAdmin()
-    const { data: uploadData, error: uploadError } = await admin.storage
-      .from('servicios')
-      .upload(fileName, file, { contentType: file.type, upsert: false })
-    if (uploadError) return { error: 'Error al subir imagen: ' + uploadError.message }
-    const { data: { publicUrl } } = admin.storage.from('servicios').getPublicUrl(uploadData.path)
-    imagen_url = publicUrl
+    const up = await uploadFileIfPresent(formData)
+    if (up.error) return { error: up.error }
+    if (!up.url) return { error: 'Seleccioná una imagen o pegá una URL' }
+    imagen_url = up.url
   }
 
   const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || ''
@@ -203,11 +222,18 @@ export async function updatePortfolioItemAction(id: string, formData: FormData) 
   const user = await getCurrentUser()
   if (!user) return { error: 'No autorizado' }
 
+  let imagen_url = (formData.get('imagen_url') as string) || ''
+  if (!imagen_url) {
+    const up = await uploadFileIfPresent(formData)
+    if (up.error) return { error: up.error }
+    if (up.url) imagen_url = up.url
+  }
+
   const body: any = {
-    imagen_url: (formData.get('imagen_url') as string) || '',
     descripcion: (formData.get('descripcion') as string) || null,
     orden: parseInt((formData.get('orden') as string) || '0') || 0,
   }
+  if (imagen_url) body.imagen_url = imagen_url
 
   try {
     await restFetch(`/rest/v1/portfolio?id=eq.${id}&user_id=eq.${user.id}`, 'PATCH', body)
