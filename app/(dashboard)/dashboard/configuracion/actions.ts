@@ -133,8 +133,22 @@ export async function addPortfolioItemAction(formData: FormData) {
   const user = await getCurrentUser()
   if (!user) return { error: 'No autorizado' }
 
-  const imagen_url = formData.get('imagen_url') as string
-  if (!imagen_url) return { error: 'La URL de la imagen es obligatoria' }
+  let imagen_url = (formData.get('imagen_url') as string) || ''
+
+  // Si no hay URL pero hay un archivo, subirlo primero
+  if (!imagen_url) {
+    const file = formData.get('imagen_file') as File | null
+    if (!file || file.size === 0) return { error: 'Seleccioná una imagen o pegá una URL' }
+    const ext = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const admin = getSupabaseAdmin()
+    const { data: uploadData, error: uploadError } = await admin.storage
+      .from('servicios')
+      .upload(fileName, file, { contentType: file.type, upsert: false })
+    if (uploadError) return { error: 'Error al subir imagen: ' + uploadError.message }
+    const { data: { publicUrl } } = admin.storage.from('servicios').getPublicUrl(uploadData.path)
+    imagen_url = publicUrl
+  }
 
   const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL || ''
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY || ''
