@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { crearReservaWebAction } from '@/app/(dashboard)/dashboard/ajustes/actions'
+import { useState, useEffect, useRef } from 'react'
+import { crearReservaWebAction, checkFechaBloqueadaAction } from '@/app/(dashboard)/dashboard/ajustes/actions'
 import type { Servicio } from '@/lib/definitions'
 
 const FALLBACK_SERVICIOS: Pick<Servicio, 'id' | 'nombre' | 'descripcion' | 'precio' | 'duracion_minutos'>[] = [
@@ -30,6 +30,26 @@ export default function ReservaSection({ servicios }: Props) {
   const [fecha, setFecha] = useState('')
   const [hora, setHora] = useState('')
   const [notas, setNotas] = useState('')
+  const [fechaBloqueada, setFechaBloqueada] = useState(false)
+  const [checkingFecha, setCheckingFecha] = useState(false)
+  const timerRef = useRef<ReturnType<typeof setTimeout>>()
+
+  useEffect(() => {
+    if (timerRef.current) clearTimeout(timerRef.current)
+    if (!fecha) { setFechaBloqueada(false); return }
+    setCheckingFecha(true)
+    timerRef.current = setTimeout(async () => {
+      const res = await checkFechaBloqueadaAction(fecha)
+      setFechaBloqueada(res.bloqueada)
+      if (res.bloqueada) {
+        setErrorMsg('Este día no está disponible para reservas.')
+      } else {
+        setErrorMsg(prev => prev === 'Este día no está disponible para reservas.' ? '' : prev)
+      }
+      setCheckingFecha(false)
+    }, 500)
+    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+  }, [fecha])
 
   const seleccionar = (s: Servicio) => {
     setServicioSeleccionado(s)
@@ -176,8 +196,19 @@ export default function ReservaSection({ servicios }: Props) {
                 <input
                   type="date" className="input-base"
                   min={fechaMin}
+                  style={fechaBloqueada ? { borderColor: '#f87171' } : {}}
                   value={fecha} onChange={e => setFecha(e.target.value)} required
                 />
+                {fechaBloqueada && (
+                  <p style={{ color: '#f87171', fontSize: '0.75rem', marginTop: '0.3rem' }}>
+                    Este día no está disponible. Elegí otra fecha.
+                  </p>
+                )}
+                {checkingFecha && fecha && !fechaBloqueada && (
+                  <p style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '0.3rem' }}>
+                    Verificando disponibilidad...
+                  </p>
+                )}
               </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -219,8 +250,8 @@ export default function ReservaSection({ servicios }: Props) {
               <button
                 type="submit"
                 className="btn-primary"
-                disabled={loading}
-                style={{ flex: 2 }}
+                disabled={loading || fechaBloqueada}
+                style={{ flex: 2, opacity: fechaBloqueada ? 0.5 : 1 }}
               >
                 {loading ? 'Enviando...' : '✨ Confirmar reserva'}
               </button>
