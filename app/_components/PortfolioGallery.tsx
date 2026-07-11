@@ -38,35 +38,39 @@ export default function PortfolioGallery({ items }: Props) {
       {selected && (
         <div
           onClick={close}
-          style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '2rem' }}
+          style={{ position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(0,0,0,0.85)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '1rem' }}
         >
           <div
             onClick={e => e.stopPropagation()}
-            style={{ maxWidth: 700, width: '100%', background: '#1e293b', borderRadius: 16, overflow: 'hidden' }}
+            style={{ maxWidth: 700, width: '100%', maxHeight: '90vh', background: '#1e293b', borderRadius: 16, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}
           >
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={selected.imagen_url} alt="" style={{ width: '100%', display: 'block' }} />
-            <div style={{ padding: '1.5rem' }}>
+            <div style={{ flex: '0 0 auto', maxHeight: '60vh', overflow: 'hidden', background: '#0f172a', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={selected.imagen_url} alt="" style={{ maxWidth: '100%', maxHeight: '60vh', display: 'block', objectFit: 'contain' }} />
+            </div>
+            <div style={{ padding: '1.25rem 1.5rem', flex: '0 0 auto', overflowY: 'auto' }}>
               {selected.descripcion && (
-                <p style={{ color: '#cbd5e1', fontSize: '0.9375rem', marginBottom: '1.25rem' }}>{selected.descripcion}</p>
+                <p style={{ color: '#cbd5e1', fontSize: '0.9375rem', marginBottom: '1.25rem', lineHeight: 1.5 }}>{selected.descripcion}</p>
               )}
-              {selected.boton_texto && selected.boton_enlace && (
-                <a
-                  href={selected.boton_enlace}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="btn-primary"
-                  style={{ display: 'inline-block', textDecoration: 'none', fontSize: '0.9375rem' }}
+              <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                {selected.boton_texto && selected.boton_enlace && (
+                  <a
+                    href={selected.boton_enlace}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary"
+                    style={{ display: 'inline-block', textDecoration: 'none', fontSize: '0.9375rem' }}
+                  >
+                    {selected.boton_texto}
+                  </a>
+                )}
+                <button
+                  onClick={close}
+                  style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '0.875rem', padding: '0.5rem 0' }}
                 >
-                  {selected.boton_texto}
-                </a>
-              )}
-              <button
-                onClick={close}
-                style={{ display: 'block', marginTop: '1rem', background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: '0.875rem' }}
-              >
-                Cerrar
-              </button>
+                  Cerrar
+                </button>
+              </div>
             </div>
           </div>
         </div>
