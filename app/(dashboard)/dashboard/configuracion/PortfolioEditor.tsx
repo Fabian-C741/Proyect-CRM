@@ -62,6 +62,14 @@ export default function PortfolioEditor({ items: initial }: Props) {
                   <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Descripción</label>
                   <textarea name="descripcion" defaultValue={item.descripcion || ''} rows={3} className="input-base" />
                 </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Texto del botón (opcional)</label>
+                  <input type="text" name="boton_texto" defaultValue={item.boton_texto || ''} placeholder="ej. Ver más" className="input-base" />
+                </div>
+                <div>
+                  <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Enlace del botón (opcional)</label>
+                  <input type="text" name="boton_enlace" defaultValue={item.boton_enlace || ''} placeholder="ej. https://wa.me/..." className="input-base" />
+                </div>
                 <div className="flex gap-2 justify-end">
                   <button type="button" onClick={() => setEditId(null)} className="btn-secondary text-xs">Cancelar</button>
                   <button type="submit" className="btn-primary text-xs" disabled={loading === item.id}>
@@ -100,6 +108,14 @@ export default function PortfolioEditor({ items: initial }: Props) {
           <div>
             <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Descripción</label>
             <textarea name="descripcion" rows={3} placeholder="ej. Maquillaje para novia 2024" className="input-base" />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Texto del botón (opcional)</label>
+            <input type="text" name="boton_texto" placeholder="ej. Ver más" className="input-base" />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Enlace del botón (opcional)</label>
+            <input type="text" name="boton_enlace" placeholder="ej. https://wa.me/..." className="input-base" />
           </div>
           <div className="flex gap-2 justify-end">
             <button type="button" onClick={() => setAdding(false)} className="btn-secondary text-sm">Cancelar</button>

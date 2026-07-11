@@ -143,6 +143,8 @@ export async function addPortfolioItemAction(formData: FormData) {
     user_id: user.id,
     imagen_url,
     descripcion: (formData.get('descripcion') as string) || null,
+    boton_texto: (formData.get('boton_texto') as string) || null,
+    boton_enlace: (formData.get('boton_enlace') as string) || null,
     orden: 0,
   }
 
@@ -194,6 +196,8 @@ export async function updatePortfolioItemAction(id: string, formData: FormData) 
 
   const body: any = {
     descripcion: (formData.get('descripcion') as string) || null,
+    boton_texto: (formData.get('boton_texto') as string) || null,
+    boton_enlace: (formData.get('boton_enlace') as string) || null,
     orden: parseInt((formData.get('orden') as string) || '0') || 0,
   }
   if (imagen_url) body.imagen_url = imagen_url

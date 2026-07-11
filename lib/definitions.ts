@@ -124,6 +124,8 @@ export type PortfolioItem = {
   user_id: string
   imagen_url: string
   descripcion: string | null
+  boton_texto: string | null
+  boton_enlace: string | null
   orden: number
   created_at: string
 }

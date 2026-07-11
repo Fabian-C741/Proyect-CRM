@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Navbar from './_components/Navbar'
 import Footer from './_components/Footer'
 import ReservaSection from './_components/ReservaSection'
+import PortfolioGallery from './_components/PortfolioGallery'
 import {
   getSiteSettings,
   getServiciosPublicos,
@@ -189,21 +190,7 @@ export default async function LandingPage() {
         <section id="galeria" style={{ width: '100%', maxWidth: 1000, margin: '0 auto 6rem' }}>
           <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.75rem', textAlign: 'center' }}>Mis Trabajos</h2>
           <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '2.5rem' }}>Una muestra de los looks que podemos crear juntas</p>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem' }}>
-            {portfolio.map((item) => (
-              <div key={item.id} style={{ position: 'relative', borderRadius: 12, overflow: 'hidden' }}>
-                <div style={{ width: '100%', aspectRatio: '4/3', background: '#1e293b' }}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.imagen_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} className="card-hover" />
-                </div>
-                {item.descripcion && (
-                  <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.7))', padding: '1rem 0.75rem 0.75rem', color: 'white', fontSize: '0.8rem' }}>
-                    {item.descripcion}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
+          <PortfolioGallery items={portfolio} />
         </section>
         )}
 
