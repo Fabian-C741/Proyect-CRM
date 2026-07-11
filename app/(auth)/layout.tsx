@@ -13,11 +13,9 @@ export default async function AuthLayout({
   let brandName = 'CRM Maquilladora'
   try {
     const supabase = await createSupabaseServerClient()
-    const { data } = await supabase.from('site_settings').select('brand_name').single()
-    brandName = data?.brand_name || brandName
-  } catch {
-    // Supabase no disponible — usa el nombre por defecto
-  }
+    const { data } = await supabase.from('site_settings').select('brand_name').limit(1).maybeSingle()
+    brandName = (data as { brand_name?: string } | null)?.brand_name || brandName
+  } catch {}
 
   return (
     <div
@@ -172,7 +170,7 @@ export default async function AuthLayout({
             color: 'var(--text-muted)',
           }}
         >
-          © {new Date().getFullYear()} CRM Maquilladora. Todos los derechos
+          © {new Date().getFullYear()} {brandName}. Todos los derechos
           reservados.
         </p>
       </div>

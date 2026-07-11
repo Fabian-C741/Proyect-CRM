@@ -29,8 +29,13 @@ export default async function RootLayout({
   let faviconUrl: string | null = null
   try {
     const supabase = await createSupabaseServerClient()
-    const { data } = await supabase.from('site_settings').select('favicon_url').limit(1).maybeSingle()
-    faviconUrl = (data as { favicon_url: string | null } | null)?.favicon_url || null
+    const { data } = await supabase
+      .from('site_settings')
+      .select('favicon_url')
+      .not('favicon_url', 'is', null)
+      .limit(1)
+      .maybeSingle()
+    faviconUrl = (data as { favicon_url: string } | null)?.favicon_url || null
   } catch {}
 
   return (
