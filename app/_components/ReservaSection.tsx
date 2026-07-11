@@ -36,7 +36,9 @@ export default function ReservaSection({ servicios }: Props) {
   useEffect(() => {
     if (!fecha) { setFechaBloqueada(false); return }
     setCheckingFecha(true)
+    let cancel = false
     checkFechaBloqueadaAction(fecha).then(res => {
+      if (cancel) return
       setFechaBloqueada(res.bloqueada)
       if (res.bloqueada) {
         setErrorMsg(res.mensaje || 'Este día no está disponible.')
@@ -45,6 +47,7 @@ export default function ReservaSection({ servicios }: Props) {
       }
       setCheckingFecha(false)
     })
+    return () => { cancel = true }
   }, [fecha])
 
   const seleccionar = (s: Servicio) => {
