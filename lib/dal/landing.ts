@@ -76,26 +76,15 @@ async function verificarDisponibilidad(userId: string, fecha: string, hora: stri
  */
 export async function crearReservaWeb(data: ReservaWebInput): Promise<{ success: boolean; error?: string }> {
   try {
-    // Usar server client para leer site_settings (tiene política pública de lectura)
-    const supabase = await createSupabaseServerClient()
-    const { data: settingsRow, error: settingsError } = await supabase
-      .from('site_settings')
+    const admin = getSupabaseAdmin()
+    const { data: settingsRow } = await (admin.from('site_settings') as any)
       .select('user_id')
       .limit(1)
       .maybeSingle()
 
-    if (settingsError) {
-      return { success: false, error: 'Error de BD: ' + settingsError.message }
-    }
-
-    let adminId: string | null = settingsRow?.user_id || null
+    const adminId: string | null = settingsRow?.user_id || null
     if (!adminId) {
-      const admin = getSupabaseAdmin()
-      const { data: adminRow } = await (admin.from('site_settings') as any).select('user_id').limit(1).maybeSingle()
-      adminId = adminRow?.user_id || null
-      if (!adminId) {
-        return { success: false, error: 'No hay configuración del negocio. Entrá al Dashboard > Ajustes y guardá los datos.' }
-      }
+      return { success: false, error: 'No hay configuración del negocio. Entrá al Dashboard > Ajustes y guardá los datos.' }
     }
 
     // Validar disponibilidad antes de insertar
