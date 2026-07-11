@@ -77,12 +77,29 @@ async function verificarDisponibilidad(userId: string, fecha: string, hora: stri
 export async function crearReservaWeb(data: ReservaWebInput): Promise<{ success: boolean; error?: string }> {
   try {
     const admin = getSupabaseAdmin()
-    const { data: settingsRow } = await (admin.from('site_settings') as any)
+    const { data: settingsRow, error: adminErr } = await (admin.from('site_settings') as any)
       .select('user_id')
       .limit(1)
       .maybeSingle()
 
-    const adminId: string | null = settingsRow?.user_id || null
+    if (adminErr) console.error('[crearReservaWeb] admin client error:', adminErr)
+    console.error('[crearReservaWeb] admin client result:', JSON.stringify(settingsRow))
+
+    // Fallback: intentar con server client (puede que el admin client apunte a otro proyecto)
+    let adminId: string | null = settingsRow?.user_id || null
+    if (!adminId) {
+      console.error('[crearReservaWeb] admin client returned no rows, trying server client')
+      const supabase = await createSupabaseServerClient()
+      const { data: serverRow, error: serverErr } = await supabase
+        .from('site_settings')
+        .select('user_id')
+        .limit(1)
+        .maybeSingle()
+      if (serverErr) console.error('[crearReservaWeb] server client error:', serverErr)
+      console.error('[crearReservaWeb] server client result:', JSON.stringify(serverRow))
+      adminId = serverRow?.user_id || null
+    }
+
     if (!adminId) {
       return { success: false, error: 'No hay configuración del negocio. Entrá al Dashboard > Ajustes y guardá los datos.' }
     }
