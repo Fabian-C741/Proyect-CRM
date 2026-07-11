@@ -32,14 +32,11 @@ export default function ReservaSection({ servicios }: Props) {
   const [notas, setNotas] = useState('')
   const [fechaBloqueada, setFechaBloqueada] = useState(false)
   const [checkingFecha, setCheckingFecha] = useState(false)
-  const timerRef = useRef<ReturnType<typeof setTimeout>>()
 
   useEffect(() => {
-    if (timerRef.current) clearTimeout(timerRef.current)
     if (!fecha) { setFechaBloqueada(false); return }
     setCheckingFecha(true)
-    timerRef.current = setTimeout(async () => {
-      const res = await checkFechaBloqueadaAction(fecha)
+    checkFechaBloqueadaAction(fecha).then(res => {
       setFechaBloqueada(res.bloqueada)
       if (res.bloqueada) {
         setErrorMsg('Este día no está disponible para reservas.')
@@ -47,8 +44,7 @@ export default function ReservaSection({ servicios }: Props) {
         setErrorMsg(prev => prev === 'Este día no está disponible para reservas.' ? '' : prev)
       }
       setCheckingFecha(false)
-    }, 500)
-    return () => { if (timerRef.current) clearTimeout(timerRef.current) }
+    })
   }, [fecha])
 
   const seleccionar = (s: Servicio) => {
