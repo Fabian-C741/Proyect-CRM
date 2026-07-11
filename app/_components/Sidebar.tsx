@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { headers } from 'next/headers'
+import InstallPWA from './InstallPWA'
 
 export default async function Sidebar() {
   const reqHeaders = await headers()
@@ -60,6 +61,10 @@ export default async function Sidebar() {
           )
         })}
       </nav>
+
+      <div className="px-3 pb-4">
+        <InstallPWA />
+      </div>
     </div>
   )
 }
