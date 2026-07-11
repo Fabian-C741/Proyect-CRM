@@ -83,13 +83,14 @@ export async function checkFechaBloqueadaAction(fecha: string): Promise<{ bloque
   // Buscar cualquier bloqueo activo para esa fecha (sin importar user_id)
   try {
     const { data: bloqueos, error } = await (admin.from('bloqueos_horarios') as any)
-      .select('id')
+      .select('motivo')
       .eq('fecha', fecha)
       .eq('activo', true)
       .limit(1)
     if (error) console.error('[checkFechaBloqueada] error:', error)
     if (bloqueos && bloqueos.length > 0) {
-      return { bloqueada: true, mensaje: 'Este día no está disponible para reservas.' }
+      const motivo = bloqueos[0]?.motivo
+      return { bloqueada: true, mensaje: motivo || 'Este día no está disponible para reservas.' }
     }
   } catch (e) {
     console.error('[checkFechaBloqueada] exception:', e)

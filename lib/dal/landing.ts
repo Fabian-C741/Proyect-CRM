@@ -24,18 +24,18 @@ async function verificarDisponibilidad(userId: string, fecha: string, hora: stri
   // 1. Verificar bloqueos del admin (día completo o franja horaria)
   const { data: bloqueosRaw, error: blkErr } = await (adminClient
     .from('bloqueos_horarios') as any)
-    .select('hora_inicio, hora_fin')
+    .select('hora_inicio, hora_fin, motivo')
     .eq('user_id', userId)
     .eq('activo', true)
     .eq('fecha', fecha)
 
-  const bloqueos = bloqueosRaw as Array<{ hora_inicio: string | null; hora_fin: string | null }> | null
+  const bloqueos = bloqueosRaw as Array<{ hora_inicio: string | null; hora_fin: string | null; motivo: string | null }> | null
 
   if (!blkErr && bloqueos && bloqueos.length > 0) {
     for (const b of bloqueos) {
       const bloqueaDiaCompleto = !b.hora_inicio && !b.hora_fin
       if (bloqueaDiaCompleto) {
-        return 'Lo sentimos, este día no está disponible para reservas.'
+        return b.motivo || 'Lo sentimos, este día no está disponible para reservas.'
       }
       if (hora && b.hora_inicio && b.hora_fin) {
         const hh = hora.slice(0, 5)
