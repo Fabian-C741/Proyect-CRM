@@ -39,9 +39,9 @@ export default function ReservaSection({ servicios }: Props) {
     checkFechaBloqueadaAction(fecha).then(res => {
       setFechaBloqueada(res.bloqueada)
       if (res.bloqueada) {
-        setErrorMsg('Este día no está disponible para reservas.')
+        setErrorMsg(res.mensaje || 'Este día no está disponible.')
       } else {
-        setErrorMsg(prev => prev === 'Este día no está disponible para reservas.' ? '' : prev)
+        setErrorMsg('')
       }
       setCheckingFecha(false)
     })
