@@ -54,7 +54,7 @@ export async function updateSiteSettings(formData: FormData) {
 
   let error
   if (existing) {
-    const { error: updateError } = await tbl.update(payload).eq('id', existing.id)
+    const { error: updateError } = await tbl.update({ user_id: user.id, ...payload }).eq('id', existing.id)
     error = updateError
   } else {
     const { error: insertError } = await tbl.insert({ user_id: user.id, ...payload })
