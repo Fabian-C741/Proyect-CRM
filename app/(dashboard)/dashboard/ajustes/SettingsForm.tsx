@@ -136,16 +136,9 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
           />
         </div>
         <div style={{ marginTop: '1rem' }}>
-          <label htmlFor="sobreMiImagenUrl" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>URL de tu Foto / Imagen</label>
-          <input 
-            type="text" 
-            id="sobreMiImagenUrl" 
-            name="sobreMiImagenUrl" 
-            defaultValue={initialData.sobre_mi_imagen_url || ''} 
-            className="input-base" 
-            placeholder="https://images.unsplash.com/..."
-          />
-          <small style={{ color: 'var(--text-muted)' }}>Foto tuya o imagen representativa. Se muestra circular.</small>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Foto / Imagen (subí o pegá una URL)</label>
+          <ImageUploader defaultValue={initialData.sobre_mi_imagen_url} inputName="sobreMiImagenUrl" />
+          <small style={{ color: 'var(--text-muted)', marginTop: '0.25rem', display: 'block' }}>Foto tuya o imagen representativa. Se muestra circular.</small>
         </div>
       </div>
 
