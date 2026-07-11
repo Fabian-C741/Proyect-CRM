@@ -107,6 +107,12 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
       </div>
 
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem' }}>
+        <p style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', color: 'white' }}>Ícono App (PWA / APK)</p>
+        <ImageUploader defaultValue={initialData.pwa_icon_url} inputName="pwaIconUrl" />
+        <small style={{ color: 'var(--text-muted)' }}>Imagen cuadrada, mínimo 512x512. Se usará como ícono de la app instalada.</small>
+      </div>
+
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem' }}>
         <p style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', color: 'white' }}>Sección CTA Final (¿Lista para tu transformación?)</p>
         <div>
           <label htmlFor="ctaTitle" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Título</label>

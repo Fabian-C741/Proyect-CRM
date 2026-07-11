@@ -23,6 +23,7 @@ export async function updateSiteSettings(formData: FormData) {
   const ctaTitle = (formData.get('ctaTitle') as string) || null
   const ctaText = (formData.get('ctaText') as string) || null
   const ctaButtonText = (formData.get('ctaButtonText') as string) || null
+  const pwaIconUrl = (formData.get('pwaIconUrl') as string) || null
 
   const admin = getSupabaseAdmin()
   const tbl = admin.from('site_settings') as any
@@ -49,6 +50,7 @@ export async function updateSiteSettings(formData: FormData) {
     cta_title: ctaTitle,
     cta_text: ctaText,
     cta_button_text: ctaButtonText,
+    pwa_icon_url: pwaIconUrl,
     updated_at: new Date().toISOString(),
   }
 

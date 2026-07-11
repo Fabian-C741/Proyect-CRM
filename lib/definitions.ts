@@ -154,6 +154,7 @@ export type SiteSettings = {
   cta_title: string | null
   cta_text: string | null
   cta_button_text: string | null
+  pwa_icon_url: string | null
   updated_at: string
 }
 

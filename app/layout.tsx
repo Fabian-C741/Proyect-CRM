@@ -37,9 +37,15 @@ export default async function RootLayout({
     <html lang="es" className={`${inter.variable} h-full`}>
       <head>
         {faviconUrl && <link rel="icon" href={faviconUrl} />}
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#ec4899" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
       </head>
       <body className="h-full bg-neutral-950 font-sans antialiased">
         {children}
+        <script dangerouslySetInnerHTML={{
+          __html: `if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}`,
+        }} />
       </body>
     </html>
   )
