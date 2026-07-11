@@ -86,7 +86,7 @@ export default async function LandingPage() {
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
               {serviciosDB.map((s) => (
                 <div key={s.id} className="card-glass card-hover" style={{ overflow: 'hidden', padding: 0 }}>
-                  <div style={{ height: 200, background: s.imagen_url ? `url(${s.imagen_url}) center/cover` : 'linear-gradient(135deg, rgba(236,72,153,0.15), rgba(168,85,247,0.15))' }} />
+                  <div style={{ width: '100%', aspectRatio: '4/3', overflow: 'hidden', background: s.imagen_url ? `url(${s.imagen_url}) center/cover` : 'linear-gradient(135deg, rgba(236,72,153,0.15), rgba(168,85,247,0.15))' }} />
                   <div style={{ padding: '1.5rem' }}>
                     <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>{s.nombre}</h3>
                     {s.descripcion && <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', marginBottom: '1.5rem' }}>{s.descripcion}</p>}
@@ -192,8 +192,10 @@ export default async function LandingPage() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: '1rem' }}>
             {portfolio.map((item) => (
               <div key={item.id} style={{ position: 'relative', borderRadius: 12, overflow: 'hidden' }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={item.imagen_url} alt="" style={{ width: '100%', display: 'block' }} className="card-hover" />
+                <div style={{ width: '100%', aspectRatio: '4/3', background: '#1e293b' }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={item.imagen_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} className="card-hover" />
+                </div>
                 {item.descripcion && (
                   <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, background: 'linear-gradient(transparent, rgba(0,0,0,0.7))', padding: '1rem 0.75rem 0.75rem', color: 'white', fontSize: '0.8rem' }}>
                     {item.descripcion}

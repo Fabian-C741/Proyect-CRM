@@ -71,8 +71,10 @@ export default function PortfolioEditor({ items: initial }: Props) {
               </form>
             ) : (
               <div>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={item.imagen_url} alt="" style={{ width: '100%', display: 'block', borderRadius: 8, marginBottom: '0.5rem' }} />
+                <div style={{ width: '100%', aspectRatio: '4/3', borderRadius: 8, overflow: 'hidden', marginBottom: '0.5rem', background: '#1e293b' }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={item.imagen_url} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
                 {item.descripcion && <p className="text-xs text-slate-400 truncate mb-2">{item.descripcion}</p>}
                 <div className="flex gap-2">
                   <button onClick={() => setEditId(item.id)} className="btn-secondary text-xs py-1 px-2">✏️ Editar</button>
