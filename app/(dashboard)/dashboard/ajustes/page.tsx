@@ -1,4 +1,5 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server'
+import { getCurrentUser } from '@/lib/dal/auth'
 import SettingsForm from './SettingsForm'
 
 export const metadata = {
@@ -6,10 +7,16 @@ export const metadata = {
 }
 
 export default async function AjustesPage() {
+  const user = await getCurrentUser()
+  if (!user) return null
+
   const supabase = await createSupabaseServerClient()
   
-  // Obtener configuración actual
-  const { data: settings } = await supabase.from('site_settings').select('*').single()
+  const { data: settings } = await supabase
+    .from('site_settings')
+    .select('*')
+    .eq('user_id', user.id)
+    .maybeSingle()
 
   return (
     <div style={{ animation: 'authFadeUp 0.4s ease-out forwards' }}>
