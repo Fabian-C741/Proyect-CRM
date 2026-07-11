@@ -80,22 +80,19 @@ export async function crearReservaWebAction(data: any) {
 
 export async function checkFechaBloqueadaAction(fecha: string): Promise<{ bloqueada: boolean; mensaje?: string }> {
   const admin = getSupabaseAdmin()
-  const { data } = await (admin.from('site_settings') as any)
-    .select('user_id')
-    .not('user_id', 'is', null)
-    .limit(1)
-    .maybeSingle()
-  if (!data?.user_id) return { bloqueada: false }
-
-  const { data: bloqueos } = await (admin.from('bloqueos_horarios') as any)
-    .select('id')
-    .eq('user_id', data.user_id)
-    .eq('fecha', fecha)
-    .eq('activo', true)
-    .limit(1)
-
-  if (bloqueos && bloqueos.length > 0) {
-    return { bloqueada: true, mensaje: 'Este día no está disponible para reservas.' }
+  // Buscar cualquier bloqueo activo para esa fecha (sin importar user_id)
+  try {
+    const { data: bloqueos, error } = await (admin.from('bloqueos_horarios') as any)
+      .select('id')
+      .eq('fecha', fecha)
+      .eq('activo', true)
+      .limit(1)
+    if (error) console.error('[checkFechaBloqueada] error:', error)
+    if (bloqueos && bloqueos.length > 0) {
+      return { bloqueada: true, mensaje: 'Este día no está disponible para reservas.' }
+    }
+  } catch (e) {
+    console.error('[checkFechaBloqueada] exception:', e)
   }
   return { bloqueada: false }
 }
