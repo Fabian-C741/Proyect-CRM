@@ -50,9 +50,6 @@ export default async function DashboardLayout({
           {children}
         </main>
       </div>
-      <script dangerouslySetInnerHTML={{
-        __html: `if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}`,
-      }} />
     </div>
   )
 }

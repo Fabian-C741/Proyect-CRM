@@ -9,6 +9,6 @@ self.addEventListener('install', (e) => {
 self.addEventListener('fetch', (e) => {
   if (e.request.method !== 'GET') return
   e.respondWith(
-    fetch(e.request).catch(() => caches.match(e.request).then((r) => r || caches.match('/')))
+    fetch(e.request).catch(() => caches.match(e.request).then((r) => r || caches.match('/offline')))
   )
 })

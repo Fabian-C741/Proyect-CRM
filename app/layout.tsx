@@ -48,6 +48,9 @@ export default async function RootLayout({
       </head>
       <body className="h-full bg-neutral-950 font-sans antialiased">
         {children}
+        <script dangerouslySetInnerHTML={{
+          __html: `if('serviceWorker' in navigator){navigator.serviceWorker.register('/sw.js')}`,
+        }} />
       </body>
     </html>
   )
