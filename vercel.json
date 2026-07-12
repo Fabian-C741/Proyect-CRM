@@ -1,21 +1,14 @@
 {
-  "headers": [
+  "redirects": [
     {
       "source": "/sw.js",
-      "headers": [
-        { "key": "Content-Type", "value": "application/javascript" },
-        { "key": "Cache-Control", "value": "no-cache" }
-      ]
-    }
-  ],
-  "redirects": [
+      "destination": "/sw",
+      "permanent": true
+    },
     {
       "source": "/manifest.json",
       "destination": "/api/manifest",
       "permanent": true
     }
-  ],
-  "overrides": {
-    "sw.js": { "contentType": "application/javascript" }
-  }
+  ]
 }
