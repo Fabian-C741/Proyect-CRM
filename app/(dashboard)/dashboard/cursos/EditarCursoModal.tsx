@@ -80,7 +80,7 @@ export default function EditarCursoModal({ curso, onClose }: Props) {
             </div>
             <div>
               <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Duración (Horas)</label>
-              <input name="duracion" type="number" step="0.5" min="0" defaultValue={curso.duracion_horas || ''} className="input-base" />
+              <input name="duracion" type="number" step="0.5" min="0" max="999" defaultValue={curso.duracion_horas || ''} className="input-base" />
             </div>
           </div>
 

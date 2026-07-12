@@ -96,7 +96,7 @@ export default function NuevoCursoModal() {
                 </div>
                 <div>
                   <label htmlFor="new-duracion" className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Duración (Horas)</label>
-                  <input id="new-duracion" name="duracion" type="number" step="0.5" min="0" placeholder="ej. 2.5" className="input-base" />
+                  <input id="new-duracion" name="duracion" type="number" step="0.5" min="0" max="999" placeholder="ej. 2.5" className="input-base" />
                 </div>
               </div>
 

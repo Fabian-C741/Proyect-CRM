@@ -26,7 +26,7 @@ create table if not exists public.cursos (
     nombre text not null,
     descripcion text,
     precio numeric(10,2) not null default 0,
-    duracion_horas numeric(4,2),
+    duracion_horas numeric(5,2),
     activo boolean default true not null,
     imagen_url text,
     tipo text default 'servicio' check (tipo in ('servicio', 'curso', 'pdf', 'ebook')),

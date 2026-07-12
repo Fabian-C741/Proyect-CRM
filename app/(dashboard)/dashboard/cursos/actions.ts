@@ -34,8 +34,8 @@ export async function createCursoAction(formData: FormData) {
   if (duracionRaw) {
     const parsedDuracion = parseFloat(duracionRaw)
     if (!isNaN(parsedDuracion)) {
-      if (parsedDuracion < 0 || parsedDuracion > 99) {
-        return { error: 'La duración debe ser un número válido entre 0 y 99 horas' }
+      if (parsedDuracion < 0 || parsedDuracion > 999) {
+        return { error: 'La duración debe ser un número válido entre 0 y 999 horas' }
       }
       duracion_horas = parseFloat(parsedDuracion.toFixed(2))
     }
@@ -84,7 +84,7 @@ export async function updateCursoAction(id: string, formData: FormData) {
   let duracion_horas: number | null = null
   if (duracionRaw) {
     const p = parseFloat(duracionRaw)
-    if (!isNaN(p) && p >= 0) duracion_horas = parseFloat(p.toFixed(2))
+    if (!isNaN(p) && p >= 0 && p <= 999) duracion_horas = parseFloat(p.toFixed(2))
   }
 
   const supabase = await createSupabaseServerClient()
