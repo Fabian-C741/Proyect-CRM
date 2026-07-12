@@ -15,7 +15,6 @@ async function getSettings() {
     const { data } = await supabase
       .from('site_settings')
       .select('favicon_url, brand_name')
-      .not('favicon_url', 'is', null)
       .limit(1)
       .maybeSingle()
     return data as { favicon_url: string; brand_name: string } | null

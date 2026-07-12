@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { createCursoAction } from './actions'
+import ImageUploader from '@/app/_components/ImageUploader'
 
 const TIPOS = [
   { value: 'servicio', label: '💆 Servicio (maquillaje, etc.)' },
@@ -101,10 +102,7 @@ export default function NuevoCursoModal() {
               </div>
 
               {/* Imagen */}
-              <div>
-                <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">URL de Imagen</label>
-                <input name="imagen_url" type="text" placeholder="https://... (foto del producto/curso)" className="input-base" />
-              </div>
+              <ImageUploader inputName="imagen_url" />
 
               {/* Modo de Venta */}
               <div>

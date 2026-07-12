@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import type { Curso } from '@/lib/definitions'
 import { updateCursoAction } from './actions'
+import ImageUploader from '@/app/_components/ImageUploader'
 
 const TIPOS = [
   { value: 'servicio', label: '💆 Servicio' },
@@ -84,10 +85,7 @@ export default function EditarCursoModal({ curso, onClose }: Props) {
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">URL de Imagen</label>
-            <input name="imagen_url" type="text" defaultValue={curso.imagen_url || ''} placeholder="https://..." className="input-base" />
-          </div>
+          <ImageUploader inputName="imagen_url" defaultValue={curso.imagen_url} />
 
           <div>
             <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">¿Cómo se compra?</label>
