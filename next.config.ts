@@ -18,17 +18,22 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // --- Headers de seguridad (solo rutas sin extensión, no afecta archivos estáticos) ---
+  // --- Headers de seguridad solo para rutas de dashboard y auth ---
   async headers() {
     return [
-      {
-        source: '/:path((?!.*\\..*).*)',
-        headers: [
+      { source: '/dashboard/:path*', headers: [
           { key: 'X-Frame-Options', value: 'DENY' },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-        ],
-      },
+      ]},
+      { source: '/login', headers: [
+          { key: 'X-Frame-Options', value: 'DENY' },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+      ]},
+      { source: '/api/:path*', headers: [
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+      ]},
     ]
   },
 }
