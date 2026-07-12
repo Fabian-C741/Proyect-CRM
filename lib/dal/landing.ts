@@ -208,11 +208,10 @@ export async function getCursosPublicos(): Promise<Curso[]> {
       .from('cursos')
       .select('*')
       .eq('activo', true)
-      .eq('mostrar_en_landing', true)
       .order('created_at', { ascending: false })
 
-    if (error) return []
-    return (data ?? []) as Curso[]
+    if (error || !data) return []
+    return (data as Curso[]).filter(c => c.mostrar_en_landing !== false)
   } catch {
     return []
   }
