@@ -45,7 +45,7 @@ export default async function DashboardLayout({
       <Sidebar brandName={brandName} navItems={navItems} />
       <div className="flex flex-col flex-1 overflow-hidden relative">
         <Topbar userNombre={user.nombre} />
-        <main className="flex-1 overflow-y-auto p-8 animate-fade-in relative z-0">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 animate-fade-in relative z-0">
           <div className="absolute top-0 left-1/4 w-1/2 h-96 bg-pink-500/10 blur-[120px] rounded-full pointer-events-none -z-10" />
           {children}
         </main>

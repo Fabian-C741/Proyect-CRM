@@ -22,7 +22,7 @@ export async function GET() {
     name: brandName,
     short_name: brandName,
     description: 'Sistema de gestión y reservas para maquilladora profesional.',
-    start_url: '/',
+    start_url: '/dashboard',
     display: 'standalone',
     background_color: '#0f172a',
     theme_color: '#ec4899',

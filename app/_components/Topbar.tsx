@@ -14,10 +14,10 @@ export default function Topbar({ userNombre }: { userNombre: string }) {
   }
 
   return (
-    <header className="h-16 flex items-center justify-between px-8 bg-surface-950/50 backdrop-blur-md border-b border-white/5 sticky top-0 z-10">
+    <header className="h-16 flex items-center justify-between pl-16 md:pl-8 pr-4 sm:pr-6 lg:pr-8 bg-surface-950/50 backdrop-blur-md border-b border-white/5 sticky top-0 z-10">
       <div className="flex items-center gap-2 text-sm text-slate-400">
         <span>Hola,</span>
-        <span className="font-medium text-slate-200">{userNombre}</span>
+        <span className="font-medium text-slate-200 truncate max-w-[120px] sm:max-w-none">{userNombre}</span>
       </div>
 
       <button

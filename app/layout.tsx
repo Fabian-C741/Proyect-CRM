@@ -44,6 +44,7 @@ export default async function RootLayout({
     <html lang="es" className={`${inter.variable} h-full`}>
       <head>
         {faviconUrl && <link rel="icon" href={faviconUrl} />}
+        <link rel="manifest" href="/manifest.json" />
       </head>
       <body className="h-full bg-neutral-950 font-sans antialiased">
         {children}

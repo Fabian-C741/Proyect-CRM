@@ -15,7 +15,7 @@ export default async function ClientesPage() {
         <NuevoClienteModal />
       </div>
 
-      <div className="card-glass overflow-hidden">
+      <div className="card-glass overflow-x-auto">
         {clientes.length === 0 ? (
           <div className="p-8 text-center text-slate-400">
             No tienes clientes registrados aún.
@@ -33,9 +33,9 @@ export default async function ClientesPage() {
             <tbody className="divide-y divide-white/5">
               {clientes.map((cliente) => (
                 <tr key={cliente.id} className="hover:bg-white/5 transition-colors">
-                  <td className="px-6 py-4 font-medium text-white">{cliente.nombre}</td>
-                  <td className="px-6 py-4">{cliente.email || '-'}</td>
-                  <td className="px-6 py-4">{cliente.telefono || '-'}</td>
+                  <td className="px-6 py-4 font-medium text-white whitespace-nowrap">{cliente.nombre}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{cliente.email || '-'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{cliente.telefono || '-'}</td>
                   <td className="px-6 py-4">
                     <Link
                       href={`/dashboard/clientes/${cliente.id}`}
