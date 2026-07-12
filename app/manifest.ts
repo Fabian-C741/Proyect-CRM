@@ -10,8 +10,8 @@ export default function manifest(): MetadataRoute.Manifest {
     background_color: '#0f172a',
     theme_color: '#ec4899',
     icons: [
-      { src: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=512&h=512&fit=crop&auto=format', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
-      { src: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=192&h=192&fit=crop&auto=format', sizes: '192x192', type: 'image/png' },
+      { src: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=512&h=512&fit=crop&auto=format', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+      { src: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=192&h=192&fit=crop&auto=format', sizes: '192x192', type: 'image/png', purpose: 'any' },
     ],
   }
 }
