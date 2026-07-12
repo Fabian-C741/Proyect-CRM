@@ -49,7 +49,7 @@ export default async function RootLayout({
       <body className="h-full bg-neutral-950 font-sans antialiased">
         {children}
         <script dangerouslySetInnerHTML={{
-          __html: `if('serviceWorker' in navigator){navigator.serviceWorker.register('/api/sw')}`,
+          __html: `if('serviceWorker' in navigator){navigator.serviceWorker.register('/api/sw',{scope:'/'})}`,
         }} />
       </body>
     </html>
