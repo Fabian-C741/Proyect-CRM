@@ -1,0 +1,21 @@
+export const dynamic = 'force-dynamic'
+
+export async function GET() {
+  const manifest = {
+    name: 'Mar-Makeup',
+    short_name: 'Mar-Makeup',
+    description: 'Sistema de gestión y reservas para maquilladora profesional.',
+    start_url: '/dashboard',
+    display: 'standalone',
+    background_color: '#0f172a',
+    theme_color: '#ec4899',
+    icons: [
+      { src: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=512&h=512&fit=crop&auto=format', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
+      { src: 'https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=192&h=192&fit=crop&auto=format', sizes: '192x192', type: 'image/png' },
+    ],
+  }
+
+  return new Response(JSON.stringify(manifest), {
+    headers: { 'Content-Type': 'application/manifest+json; charset=utf-8' },
+  })
+}
