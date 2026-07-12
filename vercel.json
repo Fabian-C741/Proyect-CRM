@@ -1,0 +1,21 @@
+{
+  "headers": [
+    {
+      "source": "/sw.js",
+      "headers": [
+        { "key": "Content-Type", "value": "application/javascript" },
+        { "key": "Cache-Control", "value": "no-cache" }
+      ]
+    }
+  ],
+  "redirects": [
+    {
+      "source": "/manifest.json",
+      "destination": "/api/manifest",
+      "permanent": true
+    }
+  ],
+  "overrides": {
+    "sw.js": { "contentType": "application/javascript" }
+  }
+}

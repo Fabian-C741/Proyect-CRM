@@ -39,7 +39,6 @@ export default async function DashboardLayout({
 
   return (
     <div className="flex h-screen overflow-hidden bg-surface-950">
-      <link rel="manifest" href="/manifest.json" />
       <meta name="theme-color" content="#ec4899" />
       <meta name="apple-mobile-web-app-capable" content="yes" />
       <Sidebar brandName={brandName} navItems={navItems} />
