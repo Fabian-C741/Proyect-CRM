@@ -18,24 +18,8 @@ const nextConfig: NextConfig = {
     ],
   },
 
-  // --- Headers de seguridad solo para rutas de dashboard y auth ---
-  async headers() {
-    return [
-      { source: '/dashboard/:path*', headers: [
-          { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-      ]},
-      { source: '/login', headers: [
-          { key: 'X-Frame-Options', value: 'DENY' },
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-      ]},
-      { source: '/api/:path*', headers: [
-          { key: 'X-Content-Type-Options', value: 'nosniff' },
-      ]},
-    ]
-  },
+  // Silenciar advertencia de Taint API — no tiene efecto en producción
+  // (headers se eliminaron porque interferían con route handlers en Vercel)
 }
 
 export default nextConfig
