@@ -1,14 +1,1 @@
-{
-  "redirects": [
-    {
-      "source": "/sw.js",
-      "destination": "/sw",
-      "permanent": true
-    },
-    {
-      "source": "/manifest.json",
-      "destination": "/api/manifest",
-      "permanent": true
-    }
-  ]
-}
+{}
