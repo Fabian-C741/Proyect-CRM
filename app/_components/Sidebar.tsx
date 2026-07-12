@@ -29,7 +29,7 @@ export default function Sidebar({ brandName = 'CRM Beauty', navItems }: Props) {
 
       <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
         {navItems.map((item) => {
-          const isActive = pathname === item.href || (pathname.startsWith(item.href) && item.href !== '/dashboard')
+          const isActive = pathname === item.href || ((pathname || '').startsWith(item.href) && item.href !== '/dashboard')
           return (
             <Link
               key={item.name}
