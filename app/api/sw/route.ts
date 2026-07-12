@@ -8,6 +8,9 @@ self.addEventListener('activate',(e)=>{e.waitUntil(caches.keys().then((k)=>Promi
 `
 
   return new Response(sw, {
-    headers: { 'Content-Type': 'application/javascript; charset=utf-8' },
+    headers: {
+      'Content-Type': 'application/javascript; charset=utf-8',
+      'Service-Worker-Allowed': '/',
+    },
   })
 }
