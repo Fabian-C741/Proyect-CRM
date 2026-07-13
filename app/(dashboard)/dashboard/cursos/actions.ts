@@ -2,13 +2,11 @@
 
 import { revalidatePath } from 'next/cache'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
-import { getCurrentUser } from '@/lib/dal/auth'
 
 export async function createCursoAction(formData: FormData) {
-  const user = await getCurrentUser()
-  if (!user) {
-    return { error: 'No autorizado' }
-  }
+  const supabase = await createSupabaseServerClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'No autorizado' }
 
   const nombre = formData.get('nombre') as string
   const descripcion = formData.get('descripcion') as string
@@ -22,9 +20,7 @@ export async function createCursoAction(formData: FormData) {
   const mostrar_en_landing = formData.get('mostrar_en_landing') === 'true'
   const ordenRaw = formData.get('orden') as string
 
-  if (!nombre) {
-    return { error: 'El nombre del curso es obligatorio' }
-  }
+  if (!nombre) return { error: 'El nombre del curso es obligatorio' }
 
   const precio = parseFloat(parseFloat(precioRaw).toFixed(2))
   if (isNaN(precio) || precio < 0 || precio > 99999999) {
@@ -44,7 +40,6 @@ export async function createCursoAction(formData: FormData) {
 
   const orden = ordenRaw ? parseInt(ordenRaw) || 0 : 0
 
-  const supabase = await createSupabaseServerClient()
   const { error } = await supabase.from('cursos').insert({
     user_id: user.id,
     nombre,
@@ -73,7 +68,8 @@ export async function createCursoAction(formData: FormData) {
 }
 
 export async function updateCursoAction(id: string, formData: FormData) {
-  const user = await getCurrentUser()
+  const supabase = await createSupabaseServerClient()
+  const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'No autorizado' }
 
   const nombre = formData.get('nombre') as string
@@ -91,7 +87,6 @@ export async function updateCursoAction(id: string, formData: FormData) {
     if (!isNaN(p) && p >= 0 && p <= 999) duracion_horas = parseFloat(p.toFixed(2))
   }
 
-  const supabase = await createSupabaseServerClient()
   const { error } = await supabase
     .from('cursos')
     .update({
@@ -118,10 +113,10 @@ export async function updateCursoAction(id: string, formData: FormData) {
 }
 
 export async function deleteCursoAction(id: string) {
-  const user = await getCurrentUser()
+  const supabase = await createSupabaseServerClient()
+  const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'No autorizado' }
 
-  const supabase = await createSupabaseServerClient()
   const { error } = await supabase
     .from('cursos')
     .update({ activo: false })
