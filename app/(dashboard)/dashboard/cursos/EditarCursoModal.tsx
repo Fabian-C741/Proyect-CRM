@@ -109,7 +109,6 @@ export default function EditarCursoModal({ curso, onClose }: Props) {
           )}
 
           <div className="flex items-center gap-3 p-3 bg-white/5 rounded-xl">
-            <input type="hidden" name="mostrar_en_landing" value="false" />
             <input
               id="edit-landing"
               name="mostrar_en_landing"
