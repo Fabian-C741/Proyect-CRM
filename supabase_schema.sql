@@ -34,6 +34,7 @@ create table if not exists public.cursos (
     link_externo text,
     mensaje_whatsapp text,
     mostrar_en_landing boolean default true not null,
+    orden int default 0 not null,
     created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
@@ -62,18 +63,6 @@ create table if not exists public.site_settings (
     sobre_mi_imagen_url text,
     updated_at timestamp with time zone default timezone('utc'::text, now()) not null,
     unique(user_id)
-);
-
--- Tabla: servicios (tarjetas de servicios en la landing)
-create table if not exists public.servicios (
-    id uuid default uuid_generate_v4() primary key,
-    user_id uuid not null references auth.users(id) on delete cascade,
-    nombre text not null,
-    descripcion text,
-    imagen_url text,
-    orden int default 0,
-    activo boolean default true,
-    created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
 -- Tabla: portfolio (galería de trabajos)
@@ -129,7 +118,7 @@ alter table public.clientes enable row level security;
 alter table public.cursos enable row level security;
 alter table public.agenda enable row level security;
 alter table public.site_settings enable row level security;
-alter table public.servicios enable row level security;
+-- (servicios table was merged into cursos)
 alter table public.portfolio enable row level security;
 alter table public.testimonios enable row level security;
 alter table public.menu_items enable row level security;
@@ -172,12 +161,6 @@ create policy "Lectura pública de site_settings"
 create policy "Usuarios gestionan sus settings"
   on public.site_settings for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
--- Políticas para Servicios (lectura pública, write privado)
-create policy "Lectura pública de servicios activos"
-  on public.servicios for select using (activo = true);
-create policy "Usuarios gestionan sus servicios"
-  on public.servicios for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
-
 -- Políticas para Portfolio (lectura pública, write privado)
 create policy "Lectura pública de portfolio"
   on public.portfolio for select using (true);
@@ -202,7 +185,7 @@ create index if not exists idx_cursos_user_id on public.cursos(user_id);
 create index if not exists idx_cursos_landing on public.cursos(activo, mostrar_en_landing);
 create index if not exists idx_agenda_user_id_fecha on public.agenda(user_id, fecha);
 create index if not exists idx_agenda_cliente_id on public.agenda(cliente_id);
-create index if not exists idx_servicios_user_id on public.servicios(user_id, orden);
+create index if not exists idx_cursos_orden on public.cursos(user_id, orden);
 create index if not exists idx_portfolio_user_id on public.portfolio(user_id, orden);
 create index if not exists idx_testimonios_user_id on public.testimonios(user_id);
 create index if not exists idx_menu_items_user_id on public.menu_items(user_id, orden);

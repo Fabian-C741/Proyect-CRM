@@ -75,6 +75,7 @@ export type Curso = {
   link_externo: string | null
   mensaje_whatsapp: string | null
   mostrar_en_landing: boolean
+  orden: number
   created_at: string
 }
 
@@ -89,19 +90,6 @@ export type Agenda = {
   created_at: string
   clientes?: Pick<Cliente, 'id' | 'nombre' | 'telefono'>
   cursos?: Pick<Curso, 'id' | 'nombre' | 'precio'>
-}
-
-export type Servicio = {
-  id: string
-  user_id: string
-  nombre: string
-  descripcion: string | null
-  imagen_url: string | null
-  precio: number
-  duracion_minutos: number | null
-  orden: number
-  activo: boolean
-  created_at: string
 }
 
 export type ReservaWeb = {

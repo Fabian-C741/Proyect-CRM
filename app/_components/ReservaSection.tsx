@@ -2,25 +2,25 @@
 
 import { useState, useEffect, useRef } from 'react'
 import { crearReservaWebAction, checkFechaBloqueadaAction } from '@/app/(dashboard)/dashboard/ajustes/actions'
-import type { Servicio } from '@/lib/definitions'
+import type { Curso } from '@/lib/definitions'
 
-const FALLBACK_SERVICIOS: Pick<Servicio, 'id' | 'nombre' | 'descripcion' | 'precio' | 'duracion_minutos'>[] = [
-  { id: 'f1', nombre: 'Maquillaje Social', descripcion: 'Look perfecto para eventos y fiestas', precio: 0, duracion_minutos: 60 },
-  { id: 'f2', nombre: 'Maquillaje de Novia', descripcion: 'Para el día más especial con productos premium', precio: 0, duracion_minutos: 90 },
-  { id: 'f3', nombre: 'Automaquillaje', descripcion: 'Aprendé técnicas para tu día a día', precio: 0, duracion_minutos: 120 },
+const FALLBACK_PRODUCTOS: Pick<Curso, 'id' | 'nombre' | 'descripcion' | 'precio'>[] = [
+  { id: 'f1', nombre: 'Maquillaje Social', descripcion: 'Look perfecto para eventos y fiestas', precio: 0 },
+  { id: 'f2', nombre: 'Maquillaje de Novia', descripcion: 'Para el día más especial con productos premium', precio: 0 },
+  { id: 'f3', nombre: 'Automaquillaje', descripcion: 'Aprendé técnicas para tu día a día', precio: 0 },
 ]
 
 interface Props {
-  servicios: Servicio[]
+  productos: Curso[]
 }
 
 type Paso = 'elegir' | 'formulario' | 'exito'
 
-export default function ReservaSection({ servicios }: Props) {
-  const lista = servicios.length > 0 ? servicios : FALLBACK_SERVICIOS as Servicio[]
+export default function ReservaSection({ productos }: Props) {
+  const lista = productos.length > 0 ? productos : FALLBACK_PRODUCTOS as Curso[]
 
   const [paso, setPaso] = useState<Paso>('elegir')
-  const [servicioSeleccionado, setServicioSeleccionado] = useState<Servicio | null>(null)
+  const [servicioSeleccionado, setServicioSeleccionado] = useState<Curso | null>(null)
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
@@ -50,7 +50,7 @@ export default function ReservaSection({ servicios }: Props) {
     return () => { cancel = true }
   }, [fecha])
 
-  const seleccionar = (s: Servicio) => {
+  const seleccionar = (s: Curso) => {
     setServicioSeleccionado(s)
     setPaso('formulario')
     setErrorMsg('')

@@ -5,10 +5,9 @@ import ReservaSection from './_components/ReservaSection'
 import PortfolioGallery from './_components/PortfolioGallery'
 import {
   getSiteSettings,
-  getServiciosPublicos,
+  getProductosPublicos,
   getPortfolioPublico,
   getTestimoniosPublicos,
-  getCursosPublicos,
   getMenuItemsPublicos,
 } from '@/lib/dal/landing'
 
@@ -20,12 +19,11 @@ const TIPO_ICONS: Record<string, string> = {
 }
 
 export default async function LandingPage() {
-  const [settings, serviciosDB, portfolioDB, testimonios, cursosDB, menuItems] = await Promise.all([
+  const [settings, productos, portfolioDB, testimonios, menuItems] = await Promise.all([
     getSiteSettings(),
-    getServiciosPublicos(),
+    getProductosPublicos(),
     getPortfolioPublico(),
     getTestimoniosPublicos(),
-    getCursosPublicos(),
     getMenuItemsPublicos(),
   ])
 
@@ -73,49 +71,19 @@ export default async function LandingPage() {
               </svg>
               {pageConfig.heroCtaText}
             </Link>
-            <a href="#servicios" className="btn-secondary" style={{ padding: '1rem 2rem', fontSize: '1rem', borderRadius: 14 }}>
-              Ver servicios
+            <a href="#servicios-productos" className="btn-secondary" style={{ padding: '1rem 2rem', fontSize: '1rem', borderRadius: 14 }}>
+              Ver servicios y productos
             </a>
           </div>
         </div>
 
-        {/* ───── SERVICIOS ───── */}
-        {serviciosDB.length > 0 && (
-          <section id="servicios" style={{ width: '100%', maxWidth: 1000, margin: '0 auto 6rem', textAlign: 'left' }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.75rem', textAlign: 'center' }}>Servicios Destacados</h2>
-            <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '2.5rem' }}>Todo lo que podemos hacer por vos</p>
+        {/* ───── SERVICIOS Y PRODUCTOS (UNIFICADO) ───── */}
+        {productos.length > 0 && (
+          <section id="servicios-productos" style={{ width: '100%', maxWidth: 1000, margin: '0 auto 6rem', textAlign: 'left' }}>
+            <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.75rem', textAlign: 'center' }}>Servicios y Productos</h2>
+            <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '2.5rem' }}>Todo lo que ofrecemos para vos</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
-              {serviciosDB.map((s) => (
-                <div key={s.id} className="card-glass card-hover" style={{ overflow: 'hidden', padding: 0 }}>
-                  <div style={{ width: '100%', aspectRatio: '4/3', overflow: 'hidden', background: s.imagen_url ? `url(${s.imagen_url}) center/cover` : 'linear-gradient(135deg, rgba(236,72,153,0.15), rgba(168,85,247,0.15))' }} />
-                  <div style={{ padding: '1.5rem' }}>
-                    <h3 style={{ fontSize: '1.25rem', fontWeight: 600, marginBottom: '0.5rem' }}>{s.nombre}</h3>
-                    {s.descripcion && <p style={{ color: 'var(--text-secondary)', fontSize: '0.9375rem', marginBottom: '1.5rem' }}>{s.descripcion}</p>}
-                    <Link
-                      href={`https://wa.me/${pageConfig.whatsappNumber}?text=Hola! Quiero info sobre ${encodeURIComponent(s.nombre)}`}
-                      target="_blank"
-                      className="btn-secondary"
-                      style={{ width: '100%', justifyContent: 'center' }}
-                    >
-                      Consultar
-                    </Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* ───── RESERVA DE TURNO ───── */}
-        <ReservaSection servicios={serviciosDB} />
-
-        {/* ───── CURSOS / PRODUCTOS ───── */}
-        {cursosDB.length > 0 && (
-          <section id="cursos" style={{ width: '100%', maxWidth: 1000, margin: '0 auto 6rem', textAlign: 'left' }}>
-            <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.75rem', textAlign: 'center' }}>Cursos y Productos</h2>
-            <p style={{ color: 'var(--text-secondary)', textAlign: 'center', marginBottom: '2.5rem' }}>Aprendé desde donde estés o descargá material exclusivo</p>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '2rem' }}>
-              {cursosDB.map((c) => {
+              {productos.map((c) => {
                 const waMsg = c.mensaje_whatsapp || `Hola! Quiero info sobre ${c.nombre}`
                 const icon = TIPO_ICONS[c.tipo || 'servicio'] || '📦'
                 return (
@@ -156,7 +124,7 @@ export default async function LandingPage() {
                             className="btn-primary"
                             style={{ width: '100%', justifyContent: 'center' }}
                           >
-                            💬 {c.modo_venta === 'mensaje' ? 'Consultar' : 'Quiero este curso'}
+                            💬 {c.modo_venta === 'mensaje' ? 'Consultar' : 'Quiero este servicio'}
                           </Link>
                         )}
                       </div>
@@ -167,6 +135,9 @@ export default async function LandingPage() {
             </div>
           </section>
         )}
+
+        {/* ───── RESERVA DE TURNO ───── */}
+        <ReservaSection productos={productos} />
 
         {/* ───── SOBRE MÍ ───── */}
         {(pageConfig.sobreMiTexto || pageConfig.sobreMiImg) && (

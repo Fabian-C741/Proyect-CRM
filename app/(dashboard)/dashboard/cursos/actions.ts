@@ -20,6 +20,7 @@ export async function createCursoAction(formData: FormData) {
   const link_externo = (formData.get('link_externo') as string) || null
   const mensaje_whatsapp = (formData.get('mensaje_whatsapp') as string) || null
   const mostrar_en_landing = formData.get('mostrar_en_landing') === 'true'
+  const ordenRaw = formData.get('orden') as string
 
   if (!nombre) {
     return { error: 'El nombre del curso es obligatorio' }
@@ -41,6 +42,8 @@ export async function createCursoAction(formData: FormData) {
     }
   }
 
+  const orden = ordenRaw ? parseInt(ordenRaw) || 0 : 0
+
   const supabase = await createSupabaseServerClient()
   const { error } = await supabase.from('cursos').insert({
     user_id: user.id,
@@ -55,6 +58,7 @@ export async function createCursoAction(formData: FormData) {
     link_externo,
     mensaje_whatsapp,
     mostrar_en_landing,
+    orden,
   })
 
   if (error) {
@@ -101,6 +105,7 @@ export async function updateCursoAction(id: string, formData: FormData) {
       link_externo: (formData.get('link_externo') as string) || null,
       mensaje_whatsapp: (formData.get('mensaje_whatsapp') as string) || null,
       mostrar_en_landing: formData.get('mostrar_en_landing') === 'true',
+      orden: parseInt((formData.get('orden') as string) || '0') || 0,
     })
     .eq('id', id)
     .eq('user_id', user.id)

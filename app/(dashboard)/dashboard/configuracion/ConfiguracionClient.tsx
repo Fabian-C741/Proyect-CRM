@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import type { Servicio, PortfolioItem, Testimonio, BloqueoHorario } from '@/lib/definitions'
-import ServiciosEditor from './ServiciosEditor'
+import type { PortfolioItem, Testimonio, BloqueoHorario } from '@/lib/definitions'
 import PortfolioEditor from './PortfolioEditor'
 import TestimoniosEditor from './TestimoniosEditor'
 import MenuEditor from './MenuEditor'
@@ -12,7 +11,6 @@ import type { MenuItem } from '@/lib/definitions'
 
 type Props = {
   user: { id: string; email: string | undefined }
-  servicios: Servicio[]
   portfolio: PortfolioItem[]
   testimonios: Testimonio[]
   menuItems: MenuItem[]
@@ -21,14 +19,13 @@ type Props = {
 
 const TABS = [
   { id: 'menu', label: '⚓ Menú Superior', description: 'Navegación dinámica' },
-  { id: 'servicios', label: '💄 Servicios', description: 'Tarjetas de servicios' },
   { id: 'portfolio', label: '📸 Portfolio', description: 'Galería de trabajos' },
   { id: 'testimonios', label: '⭐ Testimonios', description: 'Reseñas de clientes' },
   { id: 'bloqueos', label: '🔒 Bloq. Horarios', description: 'Días no disponibles' },
   { id: 'cuenta', label: '👤 Cuenta', description: 'Tu perfil y sesión' },
 ]
 
-export default function ConfiguracionClient({ user, servicios, portfolio, testimonios, menuItems, bloqueos }: Props) {
+export default function ConfiguracionClient({ user, portfolio, testimonios, menuItems, bloqueos }: Props) {
   const [activeTab, setActiveTab] = useState('menu')
 
 
@@ -87,16 +84,6 @@ export default function ConfiguracionClient({ user, servicios, portfolio, testim
           </div>
         )}
 
-
-        {activeTab === 'servicios' && (
-          <div>
-            <h2 className="text-lg font-semibold text-white mb-1">Servicios Destacados</h2>
-            <p className="text-slate-400 text-sm mb-6">
-              Aparecen en la sección &quot;Servicios&quot; de tu landing. Cada tarjeta tiene un botón de consulta por WhatsApp.
-            </p>
-            <ServiciosEditor servicios={servicios} />
-          </div>
-        )}
 
         {activeTab === 'portfolio' && (
           <div>

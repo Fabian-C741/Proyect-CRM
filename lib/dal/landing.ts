@@ -1,7 +1,7 @@
 import 'server-only'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { getSupabaseAdmin } from '@/lib/supabase/admin'
-import type { Servicio, PortfolioItem, Testimonio, SiteSettings, Curso, MenuItem } from '@/lib/definitions'
+import type { PortfolioItem, Testimonio, SiteSettings, Curso, MenuItem } from '@/lib/definitions'
 
 export interface ReservaWebInput {
   nombre_visitante: string
@@ -135,28 +135,43 @@ export async function getSiteSettings(): Promise<SiteSettings | null> {
       .limit(1)
       .maybeSingle()
 
-    if (error) return null
+    if (error) {
+      console.error('[DAL:landing] getSiteSettings error:', error.message, error.code)
+      return null
+    }
     return data
-  } catch {
+  } catch (e) {
+    console.error('[DAL:landing] getSiteSettings excepción:', e)
     return null
   }
 }
 
+// ─────────────────────────────────────────────
+// FUNCIONES PÚBLICAS (landing page) ───────────
+// ─────────────────────────────────────────────
+
 /**
- * Obtiene los servicios activos para la landing (público).
+ * Obtiene todos los productos/servicios activos para la landing (público).
+ * Tabla unificada: incluye servicios, cursos, PDFs y eBooks.
  */
-export async function getServiciosPublicos(): Promise<Servicio[]> {
+export async function getProductosPublicos(): Promise<Curso[]> {
   try {
     const supabase = await createSupabaseServerClient()
     const { data, error } = await supabase
-      .from('servicios')
+      .from('cursos')
       .select('*')
       .eq('activo', true)
-      .order('orden', { ascending: true })
+      .order('orden', { ascending: true, nullsFirst: false })
+      .order('created_at', { ascending: false })
 
-    if (error) return []
-    return data ?? []
-  } catch {
+    if (error) {
+      console.error('[DAL:landing] getProductosPublicos error:', error.message, error.code, error.details, error.hint)
+      return []
+    }
+    if (!data) return []
+    return (data as Curso[]).filter(c => c.mostrar_en_landing !== false)
+  } catch (e) {
+    console.error('[DAL:landing] getProductosPublicos excepción:', e)
     return []
   }
 }
@@ -172,9 +187,13 @@ export async function getPortfolioPublico(): Promise<PortfolioItem[]> {
       .select('*')
       .order('orden', { ascending: true })
 
-    if (error) return []
+    if (error) {
+      console.error('[DAL:landing] getPortfolioPublico error:', error.message, error.code)
+      return []
+    }
     return data ?? []
-  } catch {
+  } catch (e) {
+    console.error('[DAL:landing] getPortfolioPublico excepción:', e)
     return []
   }
 }
@@ -191,28 +210,13 @@ export async function getTestimoniosPublicos(): Promise<Testimonio[]> {
       .eq('activo', true)
       .order('created_at', { ascending: false })
 
-    if (error) return []
+    if (error) {
+      console.error('[DAL:landing] getTestimoniosPublicos error:', error.message, error.code)
+      return []
+    }
     return data ?? []
-  } catch {
-    return []
-  }
-}
-
-/**
- * Obtiene los cursos/productos activos para la landing (público).
- */
-export async function getCursosPublicos(): Promise<Curso[]> {
-  try {
-    const supabase = await createSupabaseServerClient()
-    const { data, error } = await supabase
-      .from('cursos')
-      .select('*')
-      .eq('activo', true)
-      .order('created_at', { ascending: false })
-
-    if (error || !data) return []
-    return (data as Curso[]).filter(c => c.mostrar_en_landing !== false)
-  } catch {
+  } catch (e) {
+    console.error('[DAL:landing] getTestimoniosPublicos excepción:', e)
     return []
   }
 }
@@ -229,7 +233,11 @@ export async function getMenuItemsPublicos(): Promise<MenuItem[]> {
       .eq('activo', true)
       .order('orden', { ascending: true })
 
-    if (error || !data) return []
+    if (error) {
+      console.error('[DAL:landing] getMenuItemsPublicos error:', error.message, error.code)
+      return []
+    }
+    if (!data) return []
 
     const items = data as MenuItem[]
     const roots = items.filter((item) => !item.parent_id)
@@ -239,7 +247,8 @@ export async function getMenuItemsPublicos(): Promise<MenuItem[]> {
     })
 
     return roots
-  } catch {
+  } catch (e) {
+    console.error('[DAL:landing] getMenuItemsPublicos excepción:', e)
     return []
   }
 }

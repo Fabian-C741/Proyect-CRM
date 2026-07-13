@@ -34,11 +34,10 @@ export default function Navbar({ brandName, menuItems }: Props) {
 
   // Fallback si no hay elementos guardados en la DB
   const links = menuItems.length > 0 ? menuItems : [
-    { id: 'f1', label: 'Servicios', href: '#servicios', parent_id: null },
-    { id: 'f2', label: 'Cursos', href: '#cursos', parent_id: null },
-    { id: 'f3', label: 'Galería', href: '#galeria', parent_id: null },
-    { id: 'f4', label: 'Opiniones', href: '#testimonios', parent_id: null },
-    { id: 'f5', label: 'Sobre Mí', href: '#sobre-mi', parent_id: null },
+    { id: 'f1', label: 'Servicios', href: '#servicios-productos', parent_id: null },
+    { id: 'f2', label: 'Galería', href: '#galeria', parent_id: null },
+    { id: 'f3', label: 'Opiniones', href: '#testimonios', parent_id: null },
+    { id: 'f4', label: 'Sobre Mí', href: '#sobre-mi', parent_id: null },
   ] as MenuItem[]
 
   return (
