@@ -3,7 +3,7 @@ import Footer from './_components/Footer'
 import ReservaSection from './_components/ReservaSection'
 import PortfolioGallery from './_components/PortfolioGallery'
 import HeroSection from './_components/sections/HeroSection'
-import CategorySection from './_components/sections/CategorySection'
+import ProductGridSection from './_components/sections/ProductGridSection'
 import SobreMiSection from './_components/sections/SobreMiSection'
 import TestimoniosSection from './_components/sections/TestimoniosSection'
 import CTASection from './_components/sections/CTASection'
@@ -39,11 +39,6 @@ export default async function LandingPage() {
     ctaButtonText:  settings?.cta_button_text || 'Reservar mi turno',
   }
 
-  const servicios = productos.filter(c => c.tipo === 'servicio')
-  const cursos    = productos.filter(c => c.tipo === 'curso')
-  const pdfs      = productos.filter(c => c.tipo === 'pdf')
-  const ebooks    = productos.filter(c => c.tipo === 'ebook')
-
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden bg-surface-bg">
       <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: 800, height: 800, borderRadius: '50%', background: 'radial-gradient(circle, rgba(236,72,153,0.08) 0%, transparent 60%)', pointerEvents: 'none', filter: 'blur(40px)', zIndex: 0 }} />
@@ -59,10 +54,7 @@ export default async function LandingPage() {
           whatsappNumber={pageConfig.whatsappNumber}
         />
 
-        <CategorySection tipo="servicio" items={servicios} whatsappNumber={pageConfig.whatsappNumber} />
-        <CategorySection tipo="curso" items={cursos} whatsappNumber={pageConfig.whatsappNumber} />
-        <CategorySection tipo="pdf" items={pdfs} whatsappNumber={pageConfig.whatsappNumber} />
-        <CategorySection tipo="ebook" items={ebooks} whatsappNumber={pageConfig.whatsappNumber} />
+        <ProductGridSection productos={productos} whatsappNumber={pageConfig.whatsappNumber} />
 
         <ReservaSection productos={productos} />
 

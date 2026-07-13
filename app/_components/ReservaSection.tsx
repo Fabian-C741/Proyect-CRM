@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { crearReservaWebAction, checkFechaBloqueadaAction } from '@/app/(dashboard)/dashboard/ajustes/actions'
 import type { Curso } from '@/lib/definitions'
 
@@ -16,10 +16,6 @@ interface Props {
 
 type Paso = 'elegir' | 'formulario' | 'exito'
 
-const TIPO_ICON: Record<string, string> = {
-  servicio: '💆', curso: '🎓', pdf: '📄', ebook: '📚',
-}
-
 export default function ReservaSection({ productos }: Props) {
   const lista = productos.length > 0 ? productos : FALLBACK_PRODUCTOS as Curso[]
 
@@ -28,6 +24,7 @@ export default function ReservaSection({ productos }: Props) {
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState('')
 
+  // Campos del formulario
   const [nombre, setNombre] = useState('')
   const [telefono, setTelefono] = useState('')
   const [fecha, setFecha] = useState('')
@@ -98,12 +95,14 @@ export default function ReservaSection({ productos }: Props) {
     setErrorMsg('')
   }
 
+  // Fecha mínima = mañana
   const hoy = new Date()
   hoy.setDate(hoy.getDate() + 1)
   const fechaMin = hoy.toISOString().split('T')[0]
 
   return (
     <section id="reservar" style={{ width: '100%', maxWidth: 900, margin: '0 auto 6rem' }}>
+      {/* Encabezado */}
       <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '0.75rem', textAlign: 'center' }}>
         Reservá tu turno
       </h2>
@@ -113,49 +112,41 @@ export default function ReservaSection({ productos }: Props) {
 
       {/* ─── PASO: Elegir servicio ─── */}
       {paso === 'elegir' && (
-        <div style={{ maxWidth: 700, margin: '0 auto' }}>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', justifyContent: 'center' }}>
-            {lista.map((s) => {
-              const icon = TIPO_ICON[s.tipo || 'servicio'] || '📦'
-              return (
-                <button
-                  key={s.id}
-                  onClick={() => seleccionar(s)}
-                  className="card-glass card-hover"
-                  style={{
-                    padding: '1rem 1.25rem',
-                    borderRadius: 14,
-                    border: '1px solid rgba(255,255,255,0.06)',
-                    cursor: 'pointer',
-                    textAlign: 'left',
-                    minWidth: 180,
-                    flex: '1 0 auto',
-                    maxWidth: 280,
-                    display: 'flex',
-                    flexDirection: 'column',
-                    gap: '0.35rem',
-                  }}
-                >
-                  <span style={{ fontSize: '1.25rem' }}>{icon}</span>
-                  <strong style={{ color: 'white', fontSize: '0.9375rem' }}>{s.nombre}</strong>
-                  <span style={{ color: '#f472b6', fontWeight: 700, fontSize: '0.875rem' }}>
-                    {s.precio > 0 ? `$${s.precio.toLocaleString('es-AR')}` : 'Consultar'}
-                  </span>
-                </button>
-              )
-            })}
+        <div className="card-glass" style={{ maxWidth: 480, margin: '0 auto', padding: '2rem' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.85rem', fontWeight: 600, color: 'var(--text-secondary)' }}>
+                Seleccioná un servicio
+              </label>
+              <select
+                className="input-base"
+                onChange={e => {
+                  const s = lista.find(s => s.id === e.target.value)
+                  if (s) seleccionar(s)
+                }}
+                defaultValue=""
+              >
+                <option value="" disabled>— Elegí un servicio —</option>
+                {lista.map(s => (
+                  <option key={s.id} value={s.id}>
+                    {s.nombre}{s.precio > 0 ? ` — $${s.precio.toLocaleString('es-AR')}` : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {lista.length === 0 && (
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'center' }}>
+                No hay servicios disponibles por el momento.
+              </p>
+            )}
           </div>
-          {lista.length === 0 && (
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', textAlign: 'center' }}>
-              No hay servicios disponibles por el momento.
-            </p>
-          )}
         </div>
       )}
 
       {/* ─── PASO: Formulario ─── */}
       {paso === 'formulario' && (
         <div className="card-glass" style={{ maxWidth: 560, margin: '0 auto', padding: '2rem' }}>
+          {/* Servicio seleccionado */}
           <div style={{
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             padding: '0.75rem 1rem', borderRadius: 12,
@@ -180,30 +171,52 @@ export default function ReservaSection({ productos }: Props) {
               <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Nombre completo *
               </label>
-              <input type="text" className="input-base" placeholder="Tu nombre" value={nombre} onChange={e => setNombre(e.target.value)} required />
+              <input
+                type="text" className="input-base" placeholder="Tu nombre"
+                value={nombre} onChange={e => setNombre(e.target.value)} required
+              />
             </div>
 
             <div>
               <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Teléfono / WhatsApp *
               </label>
-              <input type="tel" className="input-base" placeholder="Ej: 011 1234-5678" value={telefono} onChange={e => setTelefono(e.target.value)} required />
+              <input
+                type="tel" className="input-base" placeholder="Ej: 011 1234-5678"
+                value={telefono} onChange={e => setTelefono(e.target.value)} required
+              />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '0.75rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '0.75rem' }} className="sm:grid-cols-2">
               <div>
                 <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Fecha preferida *
                 </label>
-                <input type="date" className="input-base" min={fechaMin} style={fechaBloqueada ? { borderColor: '#f87171' } : {}} value={fecha} onChange={e => setFecha(e.target.value)} required />
-                {fechaBloqueada && <p style={{ color: '#f87171', fontSize: '0.75rem', marginTop: '0.3rem' }}>Este día no está disponible. Elegí otra fecha.</p>}
-                {checkingFecha && fecha && !fechaBloqueada && <p style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '0.3rem' }}>Verificando disponibilidad...</p>}
+                <input
+                  type="date" className="input-base"
+                  min={fechaMin}
+                  style={fechaBloqueada ? { borderColor: '#f87171' } : {}}
+                  value={fecha} onChange={e => setFecha(e.target.value)} required
+                />
+                {fechaBloqueada && (
+                  <p style={{ color: '#f87171', fontSize: '0.75rem', marginTop: '0.3rem' }}>
+                    Este día no está disponible. Elegí otra fecha.
+                  </p>
+                )}
+                {checkingFecha && fecha && !fechaBloqueada && (
+                  <p style={{ color: '#94a3b8', fontSize: '0.75rem', marginTop: '0.3rem' }}>
+                    Verificando disponibilidad...
+                  </p>
+                )}
               </div>
               <div>
                 <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                   Hora preferida
                 </label>
-                <input type="time" className="input-base" value={hora} onChange={e => setHora(e.target.value)} />
+                <input
+                  type="time" className="input-base"
+                  value={hora} onChange={e => setHora(e.target.value)}
+                />
               </div>
             </div>
 
@@ -211,7 +224,11 @@ export default function ReservaSection({ productos }: Props) {
               <label style={{ display: 'block', marginBottom: '0.4rem', fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
                 Nota adicional
               </label>
-              <textarea className="input-base" rows={2} placeholder="Algo que quieras avisarnos..." value={notas} onChange={e => setNotas(e.target.value)} />
+              <textarea
+                className="input-base" rows={2}
+                placeholder="Algo que quieras avisarnos..."
+                value={notas} onChange={e => setNotas(e.target.value)}
+              />
             </div>
 
             {errorMsg && (
@@ -221,8 +238,20 @@ export default function ReservaSection({ productos }: Props) {
             )}
 
             <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
-              <button type="button" onClick={reiniciar} className="btn-secondary" style={{ flex: 1 }}>← Volver</button>
-              <button type="submit" className="btn-primary" disabled={loading || fechaBloqueada} style={{ flex: 2, opacity: fechaBloqueada ? 0.5 : 1 }}>
+              <button
+                type="button"
+                onClick={reiniciar}
+                className="btn-secondary"
+                style={{ flex: 1 }}
+              >
+                ← Volver
+              </button>
+              <button
+                type="submit"
+                className="btn-primary"
+                disabled={loading || fechaBloqueada}
+                style={{ flex: 2, opacity: fechaBloqueada ? 0.5 : 1 }}
+              >
                 {loading ? 'Enviando...' : '✨ Confirmar reserva'}
               </button>
             </div>
@@ -232,8 +261,15 @@ export default function ReservaSection({ productos }: Props) {
 
       {/* ─── PASO: Éxito ─── */}
       {paso === 'exito' && (
-        <div className="card-glass" style={{ maxWidth: 480, margin: '0 auto', padding: '3rem 2rem', textAlign: 'center' }}>
-          <div style={{ width: 72, height: 72, borderRadius: '50%', background: 'rgba(34,197,94,0.15)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', margin: '0 auto 1.5rem' }}>
+        <div className="card-glass" style={{
+          maxWidth: 480, margin: '0 auto', padding: '3rem 2rem', textAlign: 'center',
+        }}>
+          <div style={{
+            width: 72, height: 72, borderRadius: '50%',
+            background: 'rgba(34,197,94,0.15)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            fontSize: '2rem', margin: '0 auto 1.5rem',
+          }}>
             ✅
           </div>
           <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '0.75rem', color: 'white' }}>
