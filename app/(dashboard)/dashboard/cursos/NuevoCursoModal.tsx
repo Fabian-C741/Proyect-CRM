@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { createCursoAction } from './actions'
 import ImageUploader from '@/app/_components/ImageUploader'
+import FileUploader from '@/app/_components/FileUploader'
 
 const TIPOS = [
   { value: 'servicio', label: '💆 Servicio (maquillaje, etc.)' },
@@ -22,6 +23,7 @@ export default function NuevoCursoModal() {
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [modoVenta, setModoVenta] = useState('whatsapp')
+  const [tipo, setTipo] = useState<'servicio' | 'curso' | 'pdf' | 'ebook'>('servicio')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -72,7 +74,7 @@ export default function NuevoCursoModal() {
               {/* Tipo */}
               <div>
                 <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tipo de Producto *</label>
-                <select name="tipo" className="input-base">
+                <select name="tipo" className="input-base" value={tipo} onChange={e => setTipo(e.target.value as 'servicio' | 'curso' | 'pdf' | 'ebook')}>
                   {TIPOS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
                 </select>
               </div>
@@ -103,6 +105,9 @@ export default function NuevoCursoModal() {
 
               {/* Imagen */}
               <ImageUploader inputName="imagen_url" />
+
+              {/* Archivo PDF (solo si es tipo PDF) */}
+              {tipo === 'pdf' && <FileUploader inputName="archivo_url" label="Archivo PDF" />}
 
               {/* Modo de Venta */}
               <div>

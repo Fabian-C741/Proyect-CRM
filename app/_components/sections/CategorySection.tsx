@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import type { Curso } from '@/lib/definitions'
+import CompraPdfModal from '../CompraPdfModal'
 
 const TIPO_CONFIG: Record<string, { icon: string; label: string; desc: string }> = {
   servicio: { icon: '💆', label: 'Servicios', desc: 'Maquillaje y tratamientos profesionales' },
@@ -21,6 +22,7 @@ type Props = {
 
 export default function CategorySection({ tipo, items, whatsappNumber }: Props) {
   const [cantidad, setCantidad] = useState(ITEMS_POR_PAGINA)
+  const [comprandoPdf, setComprandoPdf] = useState<Curso | null>(null)
   const config = TIPO_CONFIG[tipo]
   const visibles = items.slice(0, cantidad)
   const hayMas = cantidad < items.length
@@ -28,6 +30,7 @@ export default function CategorySection({ tipo, items, whatsappNumber }: Props) 
   if (items.length === 0) return null
 
   return (
+    <>
     <section id={tipo === 'servicio' ? 'servicios-productos' : tipo + 's'} style={{ width: '100%', maxWidth: 1000, margin: '0 auto 4rem', textAlign: 'left' }}>
       <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.25rem' }}>{config.icon} {config.label}</h2>
       <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>{config.desc}</p>
@@ -56,7 +59,15 @@ export default function CategorySection({ tipo, items, whatsappNumber }: Props) 
                   <p style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f472b6', marginBottom: '0.75rem' }}>
                     ${c.precio.toLocaleString('es-AR')}
                   </p>
-                  {c.modo_venta === 'link_externo' && c.link_externo ? (
+                  {c.tipo === 'pdf' && c.archivo_url ? (
+                    <button
+                      onClick={() => setComprandoPdf(c)}
+                      className="btn-primary"
+                      style={{ width: '100%', justifyContent: 'center', padding: '0.5rem 1rem', fontSize: '0.8125rem', border: 'none', cursor: 'pointer' }}
+                    >
+                      🛒 Comprar ahora
+                    </button>
+                  ) : c.modo_venta === 'link_externo' && c.link_externo ? (
                     <Link href={c.link_externo} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '0.5rem 1rem', fontSize: '0.8125rem' }}>
                       🛒 Comprar ahora
                     </Link>
@@ -89,5 +100,10 @@ export default function CategorySection({ tipo, items, whatsappNumber }: Props) 
         </div>
       )}
     </section>
+
+    {comprandoPdf && (
+      <CompraPdfModal curso={comprandoPdf} onClose={() => setComprandoPdf(null)} />
+    )}
+    </>
   )
 }

@@ -148,6 +148,34 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
         </div>
       </div>
 
+      <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem' }}>
+        <p style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', color: 'white' }}>Configuración de Email (SMTP)</p>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', marginBottom: '1rem' }}>Necesario para enviar links de descarga de PDFs a los compradores.</p>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="smtpHost" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Servidor SMTP</label>
+            <input type="text" id="smtpHost" name="smtpHost" defaultValue={initialData.smtp_host || ''} className="input-base" placeholder="smtp.gmail.com" />
+          </div>
+          <div>
+            <label htmlFor="smtpPort" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Puerto</label>
+            <input type="number" id="smtpPort" name="smtpPort" defaultValue={initialData.smtp_port || 587} className="input-base" placeholder="587" />
+          </div>
+        </div>
+        <div style={{ marginTop: '1rem' }}>
+          <label htmlFor="smtpUser" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Usuario</label>
+          <input type="text" id="smtpUser" name="smtpUser" defaultValue={initialData.smtp_user || ''} className="input-base" placeholder="tu@email.com" />
+        </div>
+        <div style={{ marginTop: '1rem' }}>
+          <label htmlFor="smtpPass" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Contraseña</label>
+          <input type="password" id="smtpPass" name="smtpPass" defaultValue={initialData.smtp_pass || ''} className="input-base" placeholder="••••••••" />
+        </div>
+        <div style={{ marginTop: '1rem' }}>
+          <label htmlFor="smtpFromEmail" style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Email Remitente</label>
+          <input type="email" id="smtpFromEmail" name="smtpFromEmail" defaultValue={initialData.smtp_from_email || ''} className="input-base" placeholder="tunegocio@email.com" />
+          <small style={{ color: 'var(--text-muted)' }}>El email desde el cual se enviarán los links de descarga.</small>
+        </div>
+      </div>
+
       <div>
         <button
           type="submit"

@@ -4,6 +4,7 @@ import { useState } from 'react'
 import type { Curso } from '@/lib/definitions'
 import { updateCursoAction } from './actions'
 import ImageUploader from '@/app/_components/ImageUploader'
+import FileUploader from '@/app/_components/FileUploader'
 
 const TIPOS = [
   { value: 'servicio', label: '💆 Servicio' },
@@ -24,6 +25,7 @@ export default function EditarCursoModal({ curso, onClose }: Props) {
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [modoVenta, setModoVenta] = useState<'whatsapp' | 'link_externo' | 'mensaje'>(curso.modo_venta || 'whatsapp')
+  const [tipo, setTipo] = useState<'servicio' | 'curso' | 'pdf' | 'ebook'>(curso.tipo || 'servicio')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -59,7 +61,7 @@ export default function EditarCursoModal({ curso, onClose }: Props) {
 
           <div>
             <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tipo</label>
-            <select name="tipo" defaultValue={curso.tipo || 'servicio'} className="input-base">
+            <select name="tipo" className="input-base" value={tipo} onChange={e => setTipo(e.target.value as 'servicio' | 'curso' | 'pdf' | 'ebook')}>
               {TIPOS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
             </select>
           </div>
@@ -86,6 +88,8 @@ export default function EditarCursoModal({ curso, onClose }: Props) {
           </div>
 
           <ImageUploader inputName="imagen_url" defaultValue={curso.imagen_url} />
+
+          {tipo === 'pdf' && <FileUploader inputName="archivo_url" defaultValue={curso.archivo_url} label="Archivo PDF" />}
 
           <div>
             <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">¿Cómo se compra?</label>

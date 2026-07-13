@@ -13,6 +13,7 @@ export async function createCursoAction(formData: FormData) {
   const precioRaw = formData.get('precio') as string
   const duracionRaw = formData.get('duracion') as string
   const imagen_url = (formData.get('imagen_url') as string) || null
+  const archivo_url = (formData.get('archivo_url') as string) || null
   const tipo = (formData.get('tipo') as string) || 'servicio'
   const modo_venta = (formData.get('modo_venta') as string) || 'whatsapp'
   const link_externo = (formData.get('link_externo') as string) || null
@@ -48,6 +49,7 @@ export async function createCursoAction(formData: FormData) {
     duracion_horas,
     activo: true,
     imagen_url,
+    archivo_url,
     tipo,
     modo_venta,
     link_externo,
@@ -95,6 +97,7 @@ export async function updateCursoAction(id: string, formData: FormData) {
       precio,
       duracion_horas,
       imagen_url: (formData.get('imagen_url') as string) || null,
+      archivo_url: (formData.get('archivo_url') as string) || null,
       tipo: (formData.get('tipo') as string) || 'servicio',
       modo_venta: (formData.get('modo_venta') as string) || 'whatsapp',
       link_externo: (formData.get('link_externo') as string) || null,

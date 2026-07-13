@@ -24,6 +24,11 @@ export async function updateSiteSettings(formData: FormData) {
   const ctaText = (formData.get('ctaText') as string) || null
   const ctaButtonText = (formData.get('ctaButtonText') as string) || null
   const pwaIconUrl = (formData.get('pwaIconUrl') as string) || null
+  const smtpHost = (formData.get('smtpHost') as string) || null
+  const smtpPortStr = formData.get('smtpPort') as string
+  const smtpUser = (formData.get('smtpUser') as string) || null
+  const smtpPass = (formData.get('smtpPass') as string) || null
+  const smtpFromEmail = (formData.get('smtpFromEmail') as string) || null
 
   const admin = getSupabaseAdmin()
   const tbl = admin.from('site_settings') as any
@@ -51,6 +56,11 @@ export async function updateSiteSettings(formData: FormData) {
     cta_text: ctaText,
     cta_button_text: ctaButtonText,
     pwa_icon_url: pwaIconUrl,
+    smtp_host: smtpHost,
+    smtp_port: smtpPortStr ? parseInt(smtpPortStr) || null : null,
+    smtp_user: smtpUser,
+    smtp_pass: smtpPass,
+    smtp_from_email: smtpFromEmail,
     updated_at: new Date().toISOString(),
   }
 

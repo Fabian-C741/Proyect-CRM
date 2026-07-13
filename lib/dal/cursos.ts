@@ -14,7 +14,7 @@ export const getCursos = cache(async (): Promise<Curso[]> => {
   const supabase = await createSupabaseServerClient()
   const { data, error } = await supabase
     .from('cursos')
-    .select('id, user_id, nombre, descripcion, precio, duracion_horas, activo, imagen_url, tipo, modo_venta, link_externo, mensaje_whatsapp, mostrar_en_landing, orden, created_at')
+    .select('id, user_id, nombre, descripcion, precio, duracion_horas, activo, imagen_url, archivo_url, tipo, modo_venta, link_externo, mensaje_whatsapp, mostrar_en_landing, orden, created_at')
     .eq('activo', true)
     .order('orden', { ascending: true, nullsFirst: false })
     .order('nombre', { ascending: true })
@@ -38,7 +38,7 @@ export const getCurso = cache(async (id: string): Promise<Curso | null> => {
   const supabase = await createSupabaseServerClient()
   const { data, error } = await supabase
     .from('cursos')
-    .select('id, user_id, nombre, descripcion, precio, duracion_horas, activo, imagen_url, tipo, modo_venta, link_externo, mensaje_whatsapp, mostrar_en_landing, orden, created_at')
+    .select('id, user_id, nombre, descripcion, precio, duracion_horas, activo, imagen_url, archivo_url, tipo, modo_venta, link_externo, mensaje_whatsapp, mostrar_en_landing, orden, created_at')
     .eq('id', id)
     .single()
 

@@ -70,6 +70,7 @@ export type Curso = {
   duracion_horas: number | null
   activo: boolean
   imagen_url: string | null
+  archivo_url: string | null
   tipo: 'servicio' | 'curso' | 'pdf' | 'ebook'
   modo_venta: 'whatsapp' | 'link_externo' | 'mensaje'
   link_externo: string | null
@@ -143,6 +144,11 @@ export type SiteSettings = {
   cta_text: string | null
   cta_button_text: string | null
   pwa_icon_url: string | null
+  smtp_host: string | null
+  smtp_port: number | null
+  smtp_user: string | null
+  smtp_pass: string | null
+  smtp_from_email: string | null
   updated_at: string
 }
 
