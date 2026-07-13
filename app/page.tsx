@@ -77,10 +77,6 @@ export default async function LandingPage() {
           </div>
         </div>
 
-        {/* ───── DEBUG TEMPORAL ───── */}
-        <div style={{ display: 'none' }} data-productos={productos.length} />
-        <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: `console.log('[LANDING] productos count:', ${productos.length})` }} />
-
         {/* ───── SERVICIOS Y PRODUCTOS (UNIFICADO) ───── */}
         {productos.length > 0 && (
           <section id="servicios-productos" style={{ width: '100%', maxWidth: 1000, margin: '0 auto 6rem', textAlign: 'left' }}>
