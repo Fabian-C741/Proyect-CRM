@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import { motion } from 'framer-motion'
 import type { Curso } from '@/lib/definitions'
 import CompraPdfModal from '../CompraPdfModal'
 
@@ -20,6 +21,14 @@ type Props = {
   whatsappNumber: string
 }
 
+const cardVariants = {
+  hidden: { opacity: 0, y: 40 },
+  visible: (i: number) => ({
+    opacity: 1, y: 0,
+    transition: { duration: 0.5, delay: i * 0.1, ease: 'easeOut' as const },
+  }),
+}
+
 export default function CategorySection({ tipo, items, whatsappNumber }: Props) {
   const [cantidad, setCantidad] = useState(ITEMS_POR_PAGINA)
   const [comprandoPdf, setComprandoPdf] = useState<Curso | null>(null)
@@ -31,15 +40,32 @@ export default function CategorySection({ tipo, items, whatsappNumber }: Props) 
 
   return (
     <>
-    <section id={tipo === 'servicio' ? 'servicios-productos' : tipo + 's'} style={{ width: '100%', maxWidth: 1000, margin: '0 auto 4rem', textAlign: 'left' }}>
+    <motion.section
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-80px' }}
+      transition={{ duration: 0.6 }}
+      id={tipo === 'servicio' ? 'servicios-productos' : tipo + 's'}
+      style={{ width: '100%', maxWidth: 1000, margin: '0 auto 4rem', textAlign: 'left' }}
+    >
       <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.25rem' }}>{config.icon} {config.label}</h2>
       <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>{config.desc}</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem' }}>
-        {visibles.map((c) => {
+        {visibles.map((c, idx) => {
           const waMsg = c.mensaje_whatsapp || `Hola! Quiero info sobre ${c.nombre}`
           return (
-            <div key={c.id} className="card-glass card-hover" style={{ overflow: 'hidden', padding: 0, display: 'flex', flexDirection: 'column' }}>
+            <motion.div
+              key={c.id}
+              variants={cardVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={{ once: true, margin: '-40px' }}
+              custom={idx}
+              whileHover={{ y: -6, transition: { duration: 0.2 } }}
+              className="card-glass card-hover"
+              style={{ overflow: 'hidden', padding: 0, display: 'flex', flexDirection: 'column' }}
+            >
               {c.imagen_url ? (
                 <div style={{ height: 160, background: `url(${c.imagen_url}) center/cover`, flexShrink: 0 }} />
               ) : (
@@ -83,7 +109,7 @@ export default function CategorySection({ tipo, items, whatsappNumber }: Props) 
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
           )
         })}
       </div>
@@ -99,7 +125,7 @@ export default function CategorySection({ tipo, items, whatsappNumber }: Props) 
           </button>
         </div>
       )}
-    </section>
+    </motion.section>
 
     {comprandoPdf && (
       <CompraPdfModal curso={comprandoPdf} onClose={() => setComprandoPdf(null)} />
