@@ -46,7 +46,13 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl
   const isAuthRoute = pathname.startsWith('/login')
-  const isPublicAsset = pathname.startsWith('/_next') || pathname.startsWith('/api/auth')
+  const isPublicAsset =
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/api/auth') ||
+    pathname.startsWith('/api/sw') ||          // Service worker (PWA/APK)
+    pathname === '/manifest.json' ||           // Manifest PWA
+    pathname === '/manifest.webmanifest' ||    // Manifest PWA (metadata route)
+    pathname.startsWith('/offline')            // Página offline del SW
   const isDashboardRoute = !isAuthRoute && !isPublicAsset && pathname !== '/'
 
   // Si no hay credenciales configuradas, permitir la landing page pero bloquear el dashboard
@@ -130,9 +136,10 @@ export const config = {
      * - _next/static (archivos estáticos)
      * - _next/image (optimización de imágenes)
      * - favicon.ico
+     * - manifest PWA y service worker (los pide PWABuilder/crawlers sin sesión)
      */
     {
-      source: '/((?!_next/static|_next/image|favicon.ico).*)',
+      source: '/((?!_next/static|_next/image|favicon.ico|manifest.json|manifest.webmanifest|api/sw).*)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' },
