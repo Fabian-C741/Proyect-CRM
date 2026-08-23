@@ -1,10 +1,10 @@
 import 'server-only'
+import { obtenerTokenMP } from '@/lib/dal/pagosConfig'
 
 const MP_API = 'https://api.mercadopago.com'
-const ACCESS_TOKEN = process.env.MERCADOPAGO_ACCESS_TOKEN || ''
 
-export function mercadoPagoHabilitado(): boolean {
-  return ACCESS_TOKEN.length > 0
+export async function mercadoPagoHabilitado(): Promise<boolean> {
+  return (await obtenerTokenMP()).length > 0
 }
 
 export type PreferenciaResult = {
@@ -21,14 +21,15 @@ export async function crearPreferencia(params: {
   backUrls: { success: string; pending: string; failure: string }
   notificationUrl: string
 }): Promise<PreferenciaResult> {
-  if (!mercadoPagoHabilitado()) {
-    throw new Error('MercadoPago no está configurado (falta MERCADOPAGO_ACCESS_TOKEN)')
+  if (!(await mercadoPagoHabilitado())) {
+    throw new Error('MercadoPago no está configurado (falta el token de acceso)')
   }
+  const accessToken = await obtenerTokenMP()
 
   const res = await fetch(`${MP_API}/checkout/preferences`, {
     method: 'POST',
     headers: {
-      Authorization: `Bearer ${ACCESS_TOKEN}`,
+      Authorization: `Bearer ${accessToken}`,
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
@@ -71,8 +72,9 @@ export type EstadoPagoMP = {
 }
 
 export async function obtenerPago(paymentId: string): Promise<EstadoPagoMP> {
+  const accessToken = await obtenerTokenMP()
   const res = await fetch(`${MP_API}/v1/payments/${paymentId}`, {
-    headers: { Authorization: `Bearer ${ACCESS_TOKEN}` },
+    headers: { Authorization: `Bearer ${accessToken}` },
   })
   if (!res.ok) {
     const text = await res.text()

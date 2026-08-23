@@ -6,7 +6,7 @@ import { crearPedido, obtenerPorPreference } from '@/lib/dal/pedidos'
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || ''
 
 export async function POST(req: NextRequest) {
-  if (!mercadoPagoHabilitado()) {
+  if (!(await mercadoPagoHabilitado())) {
     return NextResponse.json({ error: 'MercadoPago no está configurado' }, { status: 500 })
   }
 

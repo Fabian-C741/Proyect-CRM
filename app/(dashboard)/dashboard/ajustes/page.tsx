@@ -1,5 +1,6 @@
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { getCurrentUser } from '@/lib/dal/auth'
+import { tokenMPConfigurado } from '@/lib/dal/pagosConfig'
 import SettingsForm from './SettingsForm'
 
 export const metadata = {
@@ -18,6 +19,11 @@ export default async function AjustesPage() {
     .eq('user_id', user.id)
     .maybeSingle()
 
+  let mpConfigured = false
+  try {
+    mpConfigured = await tokenMPConfigurado()
+  } catch {}
+
   return (
     <div style={{ animation: 'authFadeUp 0.4s ease-out forwards' }}>
       <header style={{ marginBottom: '2rem' }}>
@@ -27,7 +33,7 @@ export default async function AjustesPage() {
         </p>
       </header>
       
-      <SettingsForm initialData={settings || {}} />
+      <SettingsForm initialData={settings || {}} mpConfigured={mpConfigured} />
     </div>
   )
 }

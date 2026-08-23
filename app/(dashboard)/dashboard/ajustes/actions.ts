@@ -29,6 +29,11 @@ export async function updateSiteSettings(formData: FormData) {
   const smtpUser = (formData.get('smtpUser') as string) || null
   const smtpPass = (formData.get('smtpPass') as string) || null
   const smtpFromEmail = (formData.get('smtpFromEmail') as string) || null
+  const cbu = (formData.get('cbu') as string) || null
+  const aliasCbu = (formData.get('aliasCbu') as string) || null
+  const banco = (formData.get('banco') as string) || null
+  const titularCuenta = (formData.get('titularCuenta') as string) || null
+  const mpAccessToken = ((formData.get('mpAccessToken') as string) || '').trim()
 
   const admin = getSupabaseAdmin()
   const tbl = admin.from('site_settings') as any
@@ -61,6 +66,10 @@ export async function updateSiteSettings(formData: FormData) {
     smtp_user: smtpUser,
     smtp_pass: smtpPass,
     smtp_from_email: smtpFromEmail,
+    cbu,
+    alias_cbu: aliasCbu,
+    banco,
+    titular_cuenta: titularCuenta,
     updated_at: new Date().toISOString(),
   }
 
@@ -76,6 +85,16 @@ export async function updateSiteSettings(formData: FormData) {
   if (error) {
     console.error('Error updating settings:', error)
     return { success: false, error: 'Error: ' + error.message }
+  }
+
+  if (mpAccessToken) {
+    const { error: mpErr } = await ((admin.from('pagos_config') as any)
+      .update({ mp_access_token: mpAccessToken, updated_at: new Date().toISOString() })
+      .eq('id', 1))
+    if (mpErr) {
+      console.error('Error saving MP token:', mpErr)
+      return { success: false, error: 'Los ajustes se guardaron, pero hubo un error con el token de MercadoPago. ¿Ejecutaste supabase_migration_pagos_config.sql? (' + mpErr.message + ')' }
+    }
   }
 
   revalidatePath('/')
