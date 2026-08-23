@@ -53,7 +53,8 @@ export async function proxy(request: NextRequest) {
     pathname === '/manifest.json' ||           // Manifest PWA
     pathname === '/manifest.webmanifest' ||    // Manifest PWA (metadata route)
     pathname.startsWith('/offline') ||         // Página offline del SW
-    pathname === '/p' || pathname.startsWith('/p/') // Páginas personalizadas públicas
+    pathname === '/p' || pathname.startsWith('/p/') || // Páginas personalizadas públicas
+    /\.(png|jpe?g|gif|svg|webp|ico|css|js|txt|xml|woff2?|ttf|eot)$/i.test(pathname) // Archivos estáticos de public/
   const isDashboardRoute = !isAuthRoute && !isPublicAsset && pathname !== '/'
 
   // Si no hay credenciales configuradas, permitir la landing page pero bloquear el dashboard
@@ -140,7 +141,7 @@ export const config = {
      * - manifest PWA y service worker (los pide PWABuilder/crawlers sin sesión)
      */
     {
-      source: '/((?!_next/static|_next/image|favicon.ico|manifest.json|manifest.webmanifest|api/sw).*)',
+      source: '/((?!_next/static|_next/image|favicon.ico|manifest.json|manifest.webmanifest|api/sw|.*\\.(?:png|jpe?g|gif|svg|webp|ico|css|js|txt|xml|woff2?|ttf|eot)$).*)',
       missing: [
         { type: 'header', key: 'next-router-prefetch' },
         { type: 'header', key: 'purpose', value: 'prefetch' },

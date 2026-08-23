@@ -23,9 +23,9 @@ async function getPwaData(): Promise<{ name: string; icono: string | null }> {
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
   const { name, icono } = await getPwaData()
 
-    // Si hay ícono personalizado se usa para todo; si no, fallback a los
-    // íconos locales generados (siempre cuadrados y PNG válidos).
-    const base = icono || '/icon-512.png'
+    // Íconos locales SIEMPRE (cuadrados PNG válidos). PWABuilder rechaza
+    // fotos JPG rectangulares; si más adelante se sube un ícono cuadrado
+    // propio, se puede reactivar el fallback a pwa_icon_url aquí.
     return {
       name,
       short_name: name,
@@ -35,9 +35,9 @@ export default async function manifest(): Promise<MetadataRoute.Manifest> {
       background_color: '#0f172a',
       theme_color: '#ec4899',
       icons: [
-        { src: icono || '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
-        { src: base, sizes: '512x512', type: 'image/png', purpose: 'any' },
-        { src: base, sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+        { src: '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+        { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+        { src: '/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
       ],
     }
 }
