@@ -33,7 +33,7 @@ export default async function PaginaDinamica({ params }: Props) {
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden bg-surface-bg">
-      <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: 800, height: 800, borderRadius: '50%', background: 'radial-gradient(circle, rgba(236,72,153,0.08) 0%, transparent 60%)', pointerEvents: 'none', filter: 'blur(40px)', zIndex: 0 }} />
+      <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: 800, height: 800, borderRadius: '50%', background: 'radial-gradient(circle, rgba(236,72,153,0.08) 0%, transparent 60%)', pointerEvents: 'none', zIndex: 0 }} />
 
       <Navbar brandName={brandName} menuItems={menuItems} />
 
