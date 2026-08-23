@@ -7,6 +7,12 @@ type BeforeInstallPromptEvent = Event & {
   userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>
 }
 
+declare global {
+  interface Window {
+    __pwaPrompt?: BeforeInstallPromptEvent | null
+  }
+}
+
 export default function InstallPWA() {
   const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null)
   const [isIOS, setIsIOS] = useState(false)
@@ -28,6 +34,12 @@ export default function InstallPWA() {
       setDeferredPrompt(e as BeforeInstallPromptEvent)
     }
     window.addEventListener('beforeinstallprompt', handler)
+
+    // Recuperar el evento si se disparó antes de que React hidrate
+    if (window.__pwaPrompt) {
+      setDeferredPrompt(window.__pwaPrompt)
+    }
+
     return () => window.removeEventListener('beforeinstallprompt', handler)
   }, [])
 
