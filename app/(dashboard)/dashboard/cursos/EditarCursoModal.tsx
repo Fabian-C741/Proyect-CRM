@@ -43,8 +43,8 @@ export default function EditarCursoModal({ curso, tiposDisponibles, onClose }: P
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
-      <div className="w-full max-w-lg bg-surface-800 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
-        <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center">
+      <form onSubmit={handleSubmit} className="flex flex-col w-full max-w-lg max-h-[90vh] bg-surface-800 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
+        <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center shrink-0">
           <h2 className="text-lg font-semibold text-white">Editar Producto</h2>
           <button onClick={onClose} className="text-slate-400 hover:text-white transition-colors" type="button">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -53,7 +53,7 @@ export default function EditarCursoModal({ curso, tiposDisponibles, onClose }: P
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="p-6 space-y-4 max-h-[80vh] overflow-y-auto">
+        <div className="p-6 space-y-4 overflow-y-auto flex-1">
           {error && (
             <div className="p-3 bg-red-500/10 border border-red-500/20 text-red-400 text-sm rounded-lg">{error}</div>
           )}
@@ -127,15 +127,15 @@ export default function EditarCursoModal({ curso, tiposDisponibles, onClose }: P
               Mostrar en mi landing pública
             </label>
           </div>
+        </div>
 
-          <div className="pt-2 flex justify-end gap-3">
-            <button type="button" onClick={onClose} className="btn-secondary" disabled={isPending}>Cancelar</button>
-            <button type="submit" className="btn-primary" disabled={isPending}>
-              {isPending ? 'Guardando...' : 'Guardar Cambios'}
-            </button>
-          </div>
-        </form>
-      </div>
+        <div className="px-6 py-4 border-t border-white/5 flex justify-end gap-3 shrink-0">
+          <button type="button" onClick={onClose} className="btn-secondary" disabled={isPending}>Cancelar</button>
+          <button type="submit" className="btn-primary" disabled={isPending}>
+            {isPending ? 'Guardando...' : 'Guardar Cambios'}
+          </button>
+        </div>
+      </form>
     </div>
   )
 }
