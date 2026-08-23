@@ -380,6 +380,34 @@ function parseBloques(raw: FormDataEntryValue | null): PaginaBloque[] {
   }
 }
 
+function imagenesDesdeBloques(bloques: unknown): string[] {
+  if (!Array.isArray(bloques)) return []
+  return bloques
+    .filter((b: any) => b && b.tipo === 'imagen' && typeof b.url === 'string' && b.url)
+    .map((b: any) => b.url as string)
+}
+
+function pathDesdeUrlPublica(url: string): string | null {
+  const marker = '/public/servicios/'
+  const idx = url.indexOf(marker)
+  if (idx === -1) return null
+  return url.slice(idx + marker.length)
+}
+
+async function borrarImagenesStorage(urls: string[]) {
+  const paths = urls
+    .map(pathDesdeUrlPublica)
+    .filter((p): p is string => typeof p === 'string' && p.length > 0)
+  if (paths.length === 0) return
+  for (const path of paths) {
+    try {
+      await restFetch(`/storage/v1/object/servicios/${path}`, 'DELETE')
+    } catch (e) {
+      console.error('[borrarImagenesStorage] no se pudo borrar', path, e)
+    }
+  }
+}
+
 export async function createPaginaAction(formData: FormData) {
   const user = await getCurrentUser()
   if (!user) return { error: 'No autorizado' }
@@ -455,6 +483,15 @@ export async function updatePaginaAction(id: string, formData: FormData) {
 
   const supabase = await createSupabaseServerClient()
 
+  // Imágenes previas para detectar las que se quitaron y borrarlas del Storage
+  const { data: existente } = await supabase
+    .from('paginas')
+    .select('bloques')
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .maybeSingle()
+  const urlsPrevias = imagenesDesdeBloques(existente?.bloques)
+
   const payload: Record<string, unknown> = { titulo, contenido }
   const bloques = formData.get('bloques')
   if (bloques !== null) payload.bloques = parseBloques(bloques)
@@ -469,6 +506,11 @@ export async function updatePaginaAction(id: string, formData: FormData) {
     .maybeSingle()
 
   if (!actualizada) return { error: 'No se pudo actualizar la página' }
+
+  // Borrar del Storage las imágenes que ya no están en la página
+  const urlsNuevas = imagenesDesdeBloques(payload.bloques)
+  const quitadas = urlsPrevias.filter(u => !urlsNuevas.includes(u))
+  if (quitadas.length) await borrarImagenesStorage(quitadas)
 
   // Mantener sincronizada la etiqueta del menú
   await supabase
@@ -491,18 +533,29 @@ export async function deletePaginaAction(id: string) {
 
   const { data: pagina } = await supabase
     .from('paginas')
-    .delete()
+    .select('slug, bloques')
     .eq('id', id)
     .eq('user_id', user.id)
-    .select('slug')
     .maybeSingle()
 
-  if (pagina?.slug) {
+  if (pagina) {
+    // Borrar las imágenes del Storage antes de eliminar la fila
+    const urls = imagenesDesdeBloques(pagina.bloques)
+    if (urls.length) await borrarImagenesStorage(urls)
+
     await supabase
-      .from('menu_items')
+      .from('paginas')
       .delete()
+      .eq('id', id)
       .eq('user_id', user.id)
-      .eq('href', `/p/${pagina.slug}`)
+
+    if (pagina.slug) {
+      await supabase
+        .from('menu_items')
+        .delete()
+        .eq('user_id', user.id)
+        .eq('href', `/p/${pagina.slug}`)
+    }
   }
 
   revalidatePath('/')
