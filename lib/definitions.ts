@@ -61,6 +61,24 @@ export type Cliente = {
   updated_at: string
 }
 
+export type TipoProducto = 'servicio' | 'curso' | 'pdf' | 'ebook'
+
+export type SeccionLandingConfig = {
+  visible?: boolean
+  titulo?: string
+  descripcion?: string
+}
+
+export type SeccionesLanding = Partial<Record<TipoProducto, SeccionLandingConfig>>
+
+// Textos por defecto de las secciones de la landing (usados si no hay config guardada)
+export const TIPOS_PRODUCTO_INFO: Record<TipoProducto, { icon: string; label: string; desc: string }> = {
+  servicio: { icon: '💆', label: 'Servicios', desc: 'Maquillaje y tratamientos profesionales' },
+  curso:    { icon: '🎓', label: 'Cursos', desc: 'Aprendé desde donde estés' },
+  pdf:      { icon: '📄', label: 'PDFs', desc: 'Material descargable exclusivo' },
+  ebook:    { icon: '📚', label: 'eBooks', desc: 'Guías completas para potenciar tu look' },
+}
+
 export type Curso = {
   id: string
   user_id: string
@@ -71,7 +89,7 @@ export type Curso = {
   activo: boolean
   imagen_url: string | null
   archivo_url: string | null
-  tipo: 'servicio' | 'curso' | 'pdf' | 'ebook'
+  tipo: TipoProducto
   modo_venta: 'whatsapp' | 'link_externo' | 'mensaje'
   link_externo: string | null
   mensaje_whatsapp: string | null
@@ -149,6 +167,7 @@ export type SiteSettings = {
   smtp_user: string | null
   smtp_pass: string | null
   smtp_from_email: string | null
+  secciones_config?: SeccionesLanding | null
   updated_at: string
 }
 

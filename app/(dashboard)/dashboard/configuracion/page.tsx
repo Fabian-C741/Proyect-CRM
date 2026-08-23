@@ -1,16 +1,17 @@
 import { getCurrentUser } from '@/lib/dal/auth'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
-import type { PortfolioItem, Testimonio, MenuItem, BloqueoHorario } from '@/lib/definitions'
+import type { PortfolioItem, Testimonio, MenuItem, BloqueoHorario, SeccionesLanding } from '@/lib/definitions'
 import ConfiguracionClient from './ConfiguracionClient'
 
 async function getConfigData(userId: string) {
   const supabase = await createSupabaseServerClient()
 
-  const [portfolioRes, testimoniosRes, menuItemsRes, bloqueosRes] = await Promise.all([
+  const [portfolioRes, testimoniosRes, menuItemsRes, bloqueosRes, settingsRes] = await Promise.all([
     supabase.from('portfolio').select('*').eq('user_id', userId).order('orden', { ascending: true }),
     supabase.from('testimonios').select('*').eq('user_id', userId).order('created_at', { ascending: false }),
     supabase.from('menu_items').select('*').eq('user_id', userId).order('orden', { ascending: true }),
     supabase.from('bloqueos_horarios').select('*').eq('user_id', userId).eq('activo', true).order('fecha', { ascending: false }),
+    supabase.from('site_settings').select('secciones_config').eq('user_id', userId).maybeSingle(),
   ])
 
   let portfolio = (portfolioRes.data as PortfolioItem[]) ?? []
@@ -36,6 +37,7 @@ async function getConfigData(userId: string) {
     testimonios: (testimoniosRes.data as Testimonio[]) ?? [],
     menuItems: (menuItemsRes.data as MenuItem[]) ?? [],
     bloqueos: (bloqueosRes.data as BloqueoHorario[]) ?? [],
+    seccionesConfig: (settingsRes.data as { secciones_config?: SeccionesLanding } | null)?.secciones_config ?? null,
   }
 }
 
@@ -52,7 +54,9 @@ export default async function ConfiguracionPage() {
       testimonios={data.testimonios}
       menuItems={data.menuItems}
       bloqueos={data.bloqueos}
+      seccionesConfig={data.seccionesConfig}
     />
   )
 }
+
 

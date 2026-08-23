@@ -56,6 +56,80 @@ export async function saveSiteSettingsAction(formData: FormData) {
 }
 
 // ─────────────────────────────────────────────
+// SECCIONES LANDING (títulos/desc/visibilidad)
+// ─────────────────────────────────────────────
+const TIPOS_VALIDOS = ['servicio', 'curso', 'pdf', 'ebook'] as const
+
+function sanitizeSecciones(raw: unknown): Record<string, { visible: boolean; titulo: string; descripcion: string }> | null {
+  if (!raw || typeof raw !== 'object') return null
+  const entrada = raw as Record<string, unknown>
+  const salida: Record<string, { visible: boolean; titulo: string; descripcion: string }> = {}
+  for (const tipo of TIPOS_VALIDOS) {
+    const s = entrada[tipo]
+    if (!s || typeof s !== 'object') continue
+    const o = s as Record<string, unknown>
+    salida[tipo] = {
+      visible: o.visible !== false,
+      titulo: typeof o.titulo === 'string' ? o.titulo.trim().slice(0, 120) : '',
+      descripcion: typeof o.descripcion === 'string' ? o.descripcion.trim().slice(0, 400) : '',
+    }
+  }
+  return salida
+}
+
+export async function saveSeccionesAction(formData: FormData) {
+  const user = await getCurrentUser()
+  if (!user) return { error: 'No autorizado' }
+
+  let parsed: unknown
+  try {
+    parsed = JSON.parse((formData.get('secciones') as string) || '{}')
+  } catch {
+    return { error: 'Datos inválidos' }
+  }
+
+  const secciones = sanitizeSecciones(parsed)
+  if (!secciones) return { error: 'Datos inválidos' }
+
+  const supabase = await createSupabaseServerClient()
+
+  const { data: existing } = await supabase
+    .from('site_settings')
+    .select('id')
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  let error
+  if (existing) {
+    const res = await supabase
+      .from('site_settings')
+      .update({ secciones_config: secciones, updated_at: new Date().toISOString() })
+      .eq('id', existing.id)
+    error = res.error
+  } else {
+    const res = await supabase
+      .from('site_settings')
+      .insert({ user_id: user.id, secciones_config: secciones })
+    error = res.error
+  }
+
+  if (error) {
+    console.error('[saveSeccionesAction] error:', error.message, error.code, error.details, error.hint)
+    const columnaFalta =
+      error.code === 'PGRST204' ||
+      (error.message || '').toLowerCase().includes('secciones_config')
+    if (columnaFalta) {
+      return { error: '⚠️ Falta la migración en Supabase: abrí el archivo supabase_migration_secciones_landing.sql y ejecutalo en SQL Editor. Después volvé a intentar guardar.' }
+    }
+    return { error: 'Error al guardar: ' + error.message }
+  }
+
+  revalidatePath('/')
+  revalidatePath('/dashboard/configuracion')
+  return { success: true }
+}
+
+// ─────────────────────────────────────────────
 // PORTFOLIO
 // ─────────────────────────────────────────────
 export async function addPortfolioItemAction(formData: FormData) {

@@ -6,8 +6,9 @@ import PortfolioEditor from './PortfolioEditor'
 import TestimoniosEditor from './TestimoniosEditor'
 import MenuEditor from './MenuEditor'
 import BloqueosEditor from './BloqueosEditor'
+import SeccionesEditor from './SeccionesEditor'
 import { logoutAction } from '@/app/(auth)/login/logoutAction'
-import type { MenuItem } from '@/lib/definitions'
+import type { MenuItem, SeccionesLanding } from '@/lib/definitions'
 
 type Props = {
   user: { id: string; email: string | undefined }
@@ -15,9 +16,11 @@ type Props = {
   testimonios: Testimonio[]
   menuItems: MenuItem[]
   bloqueos: BloqueoHorario[]
+  seccionesConfig: SeccionesLanding | null
 }
 
 const TABS = [
+  { id: 'secciones', label: '🗂 Secciones Landing', description: 'Títulos y visibilidad' },
   { id: 'menu', label: '⚓ Menú Superior', description: 'Navegación dinámica' },
   { id: 'portfolio', label: '📸 Portfolio', description: 'Galería de trabajos' },
   { id: 'testimonios', label: '⭐ Testimonios', description: 'Reseñas de clientes' },
@@ -25,8 +28,8 @@ const TABS = [
   { id: 'cuenta', label: '👤 Cuenta', description: 'Tu perfil y sesión' },
 ]
 
-export default function ConfiguracionClient({ user, portfolio, testimonios, menuItems, bloqueos }: Props) {
-  const [activeTab, setActiveTab] = useState('menu')
+export default function ConfiguracionClient({ user, portfolio, testimonios, menuItems, bloqueos, seccionesConfig }: Props) {
+  const [activeTab, setActiveTab] = useState('secciones')
 
 
   return (
@@ -74,6 +77,16 @@ export default function ConfiguracionClient({ user, portfolio, testimonios, menu
 
       {/* Contenido del tab activo */}
       <div className="card-glass p-6">
+        {activeTab === 'secciones' && (
+          <div>
+            <h2 className="text-lg font-semibold text-white mb-1">Secciones de la Landing</h2>
+            <p className="text-slate-400 text-sm mb-6">
+              Elegí qué secciones mostrar y con qué textos: Servicios, Cursos, PDFs y eBooks.
+            </p>
+            <SeccionesEditor configInicial={seccionesConfig} />
+          </div>
+        )}
+
         {activeTab === 'menu' && (
           <div>
             <h2 className="text-lg font-semibold text-white mb-1">Menú de Navegación Superior</h2>

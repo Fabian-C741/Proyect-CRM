@@ -13,6 +13,7 @@ import {
   getTestimoniosPublicos,
   getMenuItemsPublicos,
 } from '@/lib/dal/landing'
+import type { SeccionesLanding } from '@/lib/definitions'
 
 export const dynamic = 'force-dynamic'
 
@@ -43,6 +44,19 @@ export default async function LandingPage() {
   const pdfs      = productos.filter(c => c.tipo === 'pdf')
   const ebooks    = productos.filter(c => c.tipo === 'ebook')
 
+  const secciones: SeccionesLanding = settings?.secciones_config || {}
+  const seccion = (tipo: 'servicio' | 'curso' | 'pdf' | 'ebook') => {
+    if (secciones[tipo]?.visible === false) return null
+    return {
+      titulo: secciones[tipo]?.titulo || undefined,
+      descripcion: secciones[tipo]?.descripcion || undefined,
+    }
+  }
+  const cfgServicio = seccion('servicio')
+  const cfgCurso = seccion('curso')
+  const cfgPdf = seccion('pdf')
+  const cfgEbook = seccion('ebook')
+
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden bg-surface-bg">
       <div style={{ position: 'absolute', top: '-10%', left: '-5%', width: 800, height: 800, borderRadius: '50%', background: 'radial-gradient(circle, rgba(236,72,153,0.08) 0%, transparent 60%)', pointerEvents: 'none', filter: 'blur(40px)', zIndex: 0 }} />
@@ -58,10 +72,10 @@ export default async function LandingPage() {
           whatsappNumber={pageConfig.whatsappNumber}
         />
 
-        <CategorySection tipo="servicio" items={servicios} whatsappNumber={pageConfig.whatsappNumber} />
-        <CategorySection tipo="curso" items={cursos} whatsappNumber={pageConfig.whatsappNumber} />
-        <CategorySection tipo="pdf" items={pdfs} whatsappNumber={pageConfig.whatsappNumber} />
-        <CategorySection tipo="ebook" items={ebooks} whatsappNumber={pageConfig.whatsappNumber} />
+        {cfgServicio && <CategorySection tipo="servicio" items={servicios} whatsappNumber={pageConfig.whatsappNumber} titulo={cfgServicio.titulo} descripcion={cfgServicio.descripcion} />}
+        {cfgCurso && <CategorySection tipo="curso" items={cursos} whatsappNumber={pageConfig.whatsappNumber} titulo={cfgCurso.titulo} descripcion={cfgCurso.descripcion} />}
+        {cfgPdf && <CategorySection tipo="pdf" items={pdfs} whatsappNumber={pageConfig.whatsappNumber} titulo={cfgPdf.titulo} descripcion={cfgPdf.descripcion} />}
+        {cfgEbook && <CategorySection tipo="ebook" items={ebooks} whatsappNumber={pageConfig.whatsappNumber} titulo={cfgEbook.titulo} descripcion={cfgEbook.descripcion} />}
 
         <SobreMiSection texto={pageConfig.sobreMiTexto} imagenUrl={pageConfig.sobreMiImg} />
 

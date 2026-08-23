@@ -4,14 +4,8 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import type { Curso } from '@/lib/definitions'
+import { TIPOS_PRODUCTO_INFO } from '@/lib/definitions'
 import CompraPdfModal from '../CompraPdfModal'
-
-const TIPO_CONFIG: Record<string, { icon: string; label: string; desc: string }> = {
-  servicio: { icon: '💆', label: 'Servicios', desc: 'Maquillaje y tratamientos profesionales' },
-  curso:    { icon: '🎓', label: 'Cursos', desc: 'Aprendé desde donde estés' },
-  pdf:      { icon: '📄', label: 'PDFs', desc: 'Material descargable exclusivo' },
-  ebook:    { icon: '📚', label: 'eBooks', desc: 'Guías completas para potenciar tu look' },
-}
 
 const ITEMS_POR_PAGINA = 4
 
@@ -19,6 +13,8 @@ type Props = {
   tipo: 'servicio' | 'curso' | 'pdf' | 'ebook'
   items: Curso[]
   whatsappNumber: string
+  titulo?: string
+  descripcion?: string
 }
 
 const cardVariants = {
@@ -29,10 +25,12 @@ const cardVariants = {
   }),
 }
 
-export default function CategorySection({ tipo, items, whatsappNumber }: Props) {
+export default function CategorySection({ tipo, items, whatsappNumber, titulo, descripcion }: Props) {
   const [cantidad, setCantidad] = useState(ITEMS_POR_PAGINA)
   const [comprandoPdf, setComprandoPdf] = useState<Curso | null>(null)
-  const config = TIPO_CONFIG[tipo]
+  const info = TIPOS_PRODUCTO_INFO[tipo]
+  const tituloFinal = titulo?.trim() || info.label
+  const descFinal = descripcion?.trim() || info.desc
   const visibles = items.slice(0, cantidad)
   const hayMas = cantidad < items.length
 
@@ -48,8 +46,8 @@ export default function CategorySection({ tipo, items, whatsappNumber }: Props) 
       id={tipo === 'servicio' ? 'servicios-productos' : tipo + 's'}
       style={{ width: '100%', maxWidth: 1000, margin: '0 auto 4rem', textAlign: 'left' }}
     >
-      <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.25rem' }}>{config.icon} {config.label}</h2>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>{config.desc}</p>
+      <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.25rem' }}>{info.icon} {tituloFinal}</h2>
+      <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>{descFinal}</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem' }}>
         {visibles.map((c, idx) => {
@@ -70,7 +68,7 @@ export default function CategorySection({ tipo, items, whatsappNumber }: Props) 
                 <div style={{ height: 160, background: `url(${c.imagen_url}) center/cover`, flexShrink: 0 }} />
               ) : (
                 <div style={{ height: 80, background: 'linear-gradient(135deg, rgba(168,85,247,0.2), rgba(236,72,153,0.15))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', flexShrink: 0 }}>
-                  {config.icon}
+                  {info.icon}
                 </div>
               )}
               <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1 }}>

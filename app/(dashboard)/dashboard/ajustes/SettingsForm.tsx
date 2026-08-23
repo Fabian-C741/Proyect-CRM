@@ -103,12 +103,13 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
 
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem' }}>
         <p style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', color: 'white' }}>Favicon (icono de la pestaña)</p>
-        <ImageUploader defaultValue={initialData.favicon_url} inputName="faviconUrl" />
+        <ImageUploader defaultValue={initialData.favicon_url} inputName="faviconUrl" label="Favicon" size="sm" />
+        <small style={{ color: 'var(--text-muted)', display: 'block', marginTop: '0.25rem' }}>Imagen cuadrada chica (32x32 o 64x64).</small>
       </div>
 
       <div style={{ borderTop: '1px solid rgba(255,255,255,0.06)', paddingTop: '1rem' }}>
         <p style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '1rem', color: 'white' }}>Ícono App (PWA / APK)</p>
-        <ImageUploader defaultValue={initialData.pwa_icon_url} inputName="pwaIconUrl" />
+        <ImageUploader defaultValue={initialData.pwa_icon_url} inputName="pwaIconUrl" label="Ícono de App" size="sm" />
         <small style={{ color: 'var(--text-muted)' }}>Imagen cuadrada, mínimo 512x512. Se usará como ícono de la app instalada.</small>
       </div>
 
@@ -143,7 +144,7 @@ export default function SettingsForm({ initialData }: { initialData: any }) {
         </div>
         <div style={{ marginTop: '1rem' }}>
           <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 500, fontSize: '0.875rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Foto / Imagen (subí o pegá una URL)</label>
-          <ImageUploader defaultValue={initialData.sobre_mi_imagen_url} inputName="sobreMiImagenUrl" />
+          <ImageUploader defaultValue={initialData.sobre_mi_imagen_url} inputName="sobreMiImagenUrl" label="Foto Sobre Mí" size="sm" />
           <small style={{ color: 'var(--text-muted)', marginTop: '0.25rem', display: 'block' }}>Foto tuya o imagen representativa. Se muestra circular.</small>
         </div>
       </div>

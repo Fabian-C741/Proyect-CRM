@@ -6,9 +6,11 @@ import { createSupabaseBrowserClient } from '@/lib/supabase/client'
 type Props = {
   defaultValue?: string | null
   inputName: string
+  label?: string
+  size?: 'sm' | 'lg'
 }
 
-export default function ImageUploader({ defaultValue, inputName }: Props) {
+export default function ImageUploader({ defaultValue, inputName, label = 'Imagen', size = 'lg' }: Props) {
   const [preview, setPreview] = useState(defaultValue || '')
   const [urlInput, setUrlInput] = useState(defaultValue || '')
   const [uploading, setUploading] = useState(false)
@@ -35,9 +37,18 @@ export default function ImageUploader({ defaultValue, inputName }: Props) {
     if (hiddenRef.current) hiddenRef.current.value = publicUrl
   }
 
+  const quitarImagen = () => {
+    setPreview('')
+    setUrlInput('')
+    if (hiddenRef.current) hiddenRef.current.value = ''
+    if (fileRef.current) fileRef.current.value = ''
+  }
+
+  const esChico = size === 'sm'
+
   return (
     <div className="space-y-2">
-      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Imagen</label>
+      <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">{label}</label>
       <input ref={fileRef} type="file" accept="image/*" onChange={e => handleFile(e.target.files?.[0])} disabled={uploading} className="text-xs text-slate-400 file:mr-3 file:py-1.5 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-pink-500/10 file:text-pink-400 hover:file:bg-pink-500/20 disabled:opacity-50" />
       <input type="hidden" ref={hiddenRef} name={inputName} value={preview} />
       <div className="flex gap-2 items-center">
@@ -46,10 +57,25 @@ export default function ImageUploader({ defaultValue, inputName }: Props) {
       </div>
       {error && <p className="text-xs text-red-400">{error}</p>}
       {preview && (
-        <div className="relative w-full rounded-lg overflow-hidden bg-slate-800" style={{ aspectRatio: '4/3' }}>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={preview} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
-          <button type="button" onClick={() => { setPreview(''); setUrlInput(''); if (hiddenRef.current) hiddenRef.current.value = ''; if (fileRef.current) fileRef.current.value = '' }} className="absolute top-1 right-1 bg-black/60 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-black/80">✕</button>
+        <div className="flex items-center gap-3">
+          <div
+            className="rounded-lg overflow-hidden bg-slate-800 shrink-0"
+            style={
+              esChico
+                ? { width: 96, height: 96 }
+                : { width: '100%', aspectRatio: '4/3' }
+            }
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={preview} alt="" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+          </div>
+          <button
+            type="button"
+            onClick={quitarImagen}
+            className="btn-secondary text-red-400 border-red-500/20 hover:bg-red-500/10 text-xs shrink-0"
+          >
+            🗑️ Quitar foto
+          </button>
         </div>
       )}
     </div>
