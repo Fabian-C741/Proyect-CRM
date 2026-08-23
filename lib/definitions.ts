@@ -215,12 +215,19 @@ export type MenuItem = {
   children?: MenuItem[] // Para agrupar los submenús localmente
 }
 
+// Bloques de contenido para páginas personalizadas (editor enriquecido)
+export type PaginaBloque =
+  | { tipo: 'titulo'; texto: string }
+  | { tipo: 'texto'; texto: string }
+  | { tipo: 'imagen'; url: string; descripcion?: string }
+
 export type Pagina = {
   id: string
   user_id: string
   slug: string
   titulo: string
   contenido: string | null
+  bloques?: PaginaBloque[] | null
   activo: boolean
   created_at: string
 }

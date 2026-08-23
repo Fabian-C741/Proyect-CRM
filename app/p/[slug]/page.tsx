@@ -47,7 +47,42 @@ export default async function PaginaDinamica({ params }: Props) {
           </h1>
           <div style={{ height: 2, width: 64, background: 'linear-gradient(90deg, #ec4899, #a855f7)', borderRadius: 2, marginBottom: '1.75rem' }} />
 
-          {pagina.contenido ? (
+          {Array.isArray(pagina.bloques) && pagina.bloques.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+              {pagina.bloques.map((b, i) => {
+                if (b.tipo === 'titulo') {
+                  return (
+                    <h2 key={i} style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text-primary)', margin: '0.75rem 0 0', lineHeight: 1.3 }}>
+                      {b.texto}
+                    </h2>
+                  )
+                }
+                if (b.tipo === 'texto') {
+                  return (
+                    <p key={i} style={{ color: 'var(--text-secondary)', lineHeight: 1.8, fontSize: '1rem', whiteSpace: 'pre-wrap', margin: 0 }}>
+                      {b.texto}
+                    </p>
+                  )
+                }
+                return (
+                  <figure key={i} style={{ margin: 0 }}>
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={b.url}
+                      alt={b.descripcion || ''}
+                      loading="lazy"
+                      style={{ width: '100%', borderRadius: 12, display: 'block' }}
+                    />
+                    {b.descripcion && (
+                      <figcaption style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.5rem', textAlign: 'center' }}>
+                        {b.descripcion}
+                      </figcaption>
+                    )}
+                  </figure>
+                )
+              })}
+            </div>
+          ) : pagina.contenido ? (
             <p style={{ color: 'var(--text-secondary)', lineHeight: 1.8, fontSize: '1rem', whiteSpace: 'pre-wrap', margin: 0 }}>
               {pagina.contenido}
             </p>

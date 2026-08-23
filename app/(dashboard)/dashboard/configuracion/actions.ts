@@ -3,6 +3,7 @@
 import { revalidatePath } from 'next/cache'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
 import { getCurrentUser } from '@/lib/dal/auth'
+import type { PaginaBloque } from '@/lib/definitions'
 
 // ─────────────────────────────────────────────
 // SITE SETTINGS
@@ -352,6 +353,33 @@ function slugify(texto: string): string {
     .slice(0, 60)
 }
 
+type BloqueRaw = { tipo?: unknown; texto?: unknown; url?: unknown; descripcion?: unknown }
+
+function parseBloques(raw: FormDataEntryValue | null): PaginaBloque[] {
+  if (!raw || typeof raw !== 'string') return []
+  try {
+    const arr: unknown = JSON.parse(raw)
+    if (!Array.isArray(arr)) return []
+    const out: PaginaBloque[] = []
+    for (const b of (arr as BloqueRaw[]).slice(0, 100)) {
+      if (!b || typeof b !== 'object') continue
+      if ((b.tipo === 'titulo' || b.tipo === 'texto')) {
+        const texto = String(b.texto ?? '').slice(0, 5000)
+        if (!texto.trim()) continue
+        out.push({ tipo: b.tipo, texto })
+      } else if (b.tipo === 'imagen') {
+        const url = String(b.url ?? '').slice(0, 1000)
+        if (!url) continue
+        const descripcion = b.descripcion ? String(b.descripcion).slice(0, 300) : undefined
+        out.push(descripcion ? { tipo: 'imagen', url, descripcion } : { tipo: 'imagen', url })
+      }
+    }
+    return out
+  } catch {
+    return []
+  }
+}
+
 export async function createPaginaAction(formData: FormData) {
   const user = await getCurrentUser()
   if (!user) return { error: 'No autorizado' }
@@ -381,6 +409,7 @@ export async function createPaginaAction(formData: FormData) {
     slug,
     titulo,
     contenido,
+    bloques: parseBloques(formData.get('bloques')),
     activo: true,
   })
   if (error) {
@@ -427,6 +456,8 @@ export async function updatePaginaAction(id: string, formData: FormData) {
   const supabase = await createSupabaseServerClient()
 
   const payload: Record<string, unknown> = { titulo, contenido }
+  const bloques = formData.get('bloques')
+  if (bloques !== null) payload.bloques = parseBloques(bloques)
   if (activo !== undefined) payload.activo = activo
 
   const { data: actualizada } = await supabase
