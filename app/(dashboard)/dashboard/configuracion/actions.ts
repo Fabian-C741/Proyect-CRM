@@ -340,6 +340,146 @@ export async function updateMenuItemAction(id: string, formData: FormData) {
 }
 
 // ─────────────────────────────────────────────
+// PÁGINAS PERSONALIZADAS (/p/slug)
+// ─────────────────────────────────────────────
+function slugify(texto: string): string {
+  return texto
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+    .slice(0, 60)
+}
+
+export async function createPaginaAction(formData: FormData) {
+  const user = await getCurrentUser()
+  if (!user) return { error: 'No autorizado' }
+
+  const titulo = ((formData.get('titulo') as string) || '').trim()
+  if (!titulo) return { error: 'El título es obligatorio' }
+  const contenido = ((formData.get('contenido') as string) || '').trim() || null
+
+  const supabase = await createSupabaseServerClient()
+
+  // Slug único por usuario
+  const base = slugify(titulo) || 'pagina'
+  let slug = base
+  for (let i = 2; i < 50; i++) {
+    const { data: existing } = await supabase
+      .from('paginas')
+      .select('id')
+      .eq('user_id', user.id)
+      .eq('slug', slug)
+      .maybeSingle()
+    if (!existing) break
+    slug = `${base}-${i}`
+  }
+
+  const { error } = await supabase.from('paginas').insert({
+    user_id: user.id,
+    slug,
+    titulo,
+    contenido,
+    activo: true,
+  })
+  if (error) {
+    console.error('[createPaginaAction] error:', error.message, error.code, error.details, error.hint)
+    const tablaFalta = (error.message || '').toLowerCase().includes('paginas') || error.code === 'PGRST204' || error.code === '42P01'
+    if (tablaFalta) {
+      return { error: '⚠️ Falta la migración en Supabase: ejecutá el archivo supabase_migration_paginas.sql en SQL Editor y volvé a intentar.' }
+    }
+    return { error: 'Error al crear la página: ' + error.message }
+  }
+
+  // Enlazar automáticamente en el menú superior
+  const { data: menuItems } = await supabase
+    .from('menu_items')
+    .select('orden')
+    .eq('user_id', user.id)
+    .order('orden', { ascending: false })
+    .limit(1)
+  const orden = ((menuItems?.[0]?.orden as number) ?? 0) + 1
+
+  await supabase.from('menu_items').insert({
+    user_id: user.id,
+    label: titulo,
+    href: `/p/${slug}`,
+    orden,
+    activo: true,
+    parent_id: null,
+  })
+
+  revalidatePath('/')
+  revalidatePath('/dashboard/configuracion')
+  return { success: true, slug }
+}
+
+export async function updatePaginaAction(id: string, formData: FormData) {
+  const user = await getCurrentUser()
+  if (!user) return { error: 'No autorizado' }
+
+  const titulo = ((formData.get('titulo') as string) || '').trim()
+  if (!titulo) return { error: 'El título es obligatorio' }
+  const contenido = ((formData.get('contenido') as string) || '').trim() || null
+  const activo = formData.get('activo') !== null ? formData.get('activo') === 'true' : undefined
+
+  const supabase = await createSupabaseServerClient()
+
+  const payload: Record<string, unknown> = { titulo, contenido }
+  if (activo !== undefined) payload.activo = activo
+
+  const { data: actualizada } = await supabase
+    .from('paginas')
+    .update(payload)
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .select('slug')
+    .maybeSingle()
+
+  if (!actualizada) return { error: 'No se pudo actualizar la página' }
+
+  // Mantener sincronizada la etiqueta del menú
+  await supabase
+    .from('menu_items')
+    .update({ label: titulo })
+    .eq('user_id', user.id)
+    .eq('href', `/p/${actualizada.slug}`)
+
+  revalidatePath('/')
+  revalidatePath(`/p/${actualizada.slug}`)
+  revalidatePath('/dashboard/configuracion')
+  return { success: true }
+}
+
+export async function deletePaginaAction(id: string) {
+  const user = await getCurrentUser()
+  if (!user) return { error: 'No autorizado' }
+
+  const supabase = await createSupabaseServerClient()
+
+  const { data: pagina } = await supabase
+    .from('paginas')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', user.id)
+    .select('slug')
+    .maybeSingle()
+
+  if (pagina?.slug) {
+    await supabase
+      .from('menu_items')
+      .delete()
+      .eq('user_id', user.id)
+      .eq('href', `/p/${pagina.slug}`)
+  }
+
+  revalidatePath('/')
+  revalidatePath('/dashboard/configuracion')
+  return { success: true }
+}
+
+// ─────────────────────────────────────────────
 // BLOQUEOS HORARIOS
 // ─────────────────────────────────────────────
 export async function crearBloqueoAction(formData: FormData) {

@@ -7,8 +7,9 @@ import TestimoniosEditor from './TestimoniosEditor'
 import MenuEditor from './MenuEditor'
 import BloqueosEditor from './BloqueosEditor'
 import SeccionesEditor from './SeccionesEditor'
+import PaginasEditor from './PaginasEditor'
 import { logoutAction } from '@/app/(auth)/login/logoutAction'
-import type { MenuItem, SeccionesLanding } from '@/lib/definitions'
+import type { MenuItem, SeccionesLanding, Pagina } from '@/lib/definitions'
 
 type Props = {
   user: { id: string; email: string | undefined }
@@ -17,10 +18,12 @@ type Props = {
   menuItems: MenuItem[]
   bloqueos: BloqueoHorario[]
   seccionesConfig: SeccionesLanding | null
+  paginas: Pagina[]
 }
 
 const TABS = [
   { id: 'secciones', label: '🗂 Secciones Landing', description: 'Títulos y visibilidad' },
+  { id: 'paginas', label: '📄 Páginas', description: 'Páginas nuevas y enlaces' },
   { id: 'menu', label: '⚓ Menú Superior', description: 'Navegación dinámica' },
   { id: 'portfolio', label: '📸 Portfolio', description: 'Galería de trabajos' },
   { id: 'testimonios', label: '⭐ Testimonios', description: 'Reseñas de clientes' },
@@ -28,7 +31,7 @@ const TABS = [
   { id: 'cuenta', label: '👤 Cuenta', description: 'Tu perfil y sesión' },
 ]
 
-export default function ConfiguracionClient({ user, portfolio, testimonios, menuItems, bloqueos, seccionesConfig }: Props) {
+export default function ConfiguracionClient({ user, portfolio, testimonios, menuItems, bloqueos, seccionesConfig, paginas }: Props) {
   const [activeTab, setActiveTab] = useState('secciones')
 
 
@@ -84,6 +87,16 @@ export default function ConfiguracionClient({ user, portfolio, testimonios, menu
               Elegí qué secciones mostrar y con qué textos: Servicios, Cursos, PDFs y eBooks.
             </p>
             <SeccionesEditor configInicial={seccionesConfig} />
+          </div>
+        )}
+
+        {activeTab === 'paginas' && (
+          <div>
+            <h2 className="text-lg font-semibold text-white mb-1">Páginas Personalizadas</h2>
+            <p className="text-slate-400 text-sm mb-6">
+              Creá páginas nuevas con tu contenido y se enlazan solas en el menú.
+            </p>
+            <PaginasEditor paginas={paginas} />
           </div>
         )}
 

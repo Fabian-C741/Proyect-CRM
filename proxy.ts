@@ -52,7 +52,8 @@ export async function proxy(request: NextRequest) {
     pathname.startsWith('/api/sw') ||          // Service worker (PWA/APK)
     pathname === '/manifest.json' ||           // Manifest PWA
     pathname === '/manifest.webmanifest' ||    // Manifest PWA (metadata route)
-    pathname.startsWith('/offline')            // Página offline del SW
+    pathname.startsWith('/offline') ||         // Página offline del SW
+    pathname === '/p' || pathname.startsWith('/p/') // Páginas personalizadas públicas
   const isDashboardRoute = !isAuthRoute && !isPublicAsset && pathname !== '/'
 
   // Si no hay credenciales configuradas, permitir la landing page pero bloquear el dashboard

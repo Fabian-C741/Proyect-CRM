@@ -215,6 +215,16 @@ export type MenuItem = {
   children?: MenuItem[] // Para agrupar los submenús localmente
 }
 
+export type Pagina = {
+  id: string
+  user_id: string
+  slug: string
+  titulo: string
+  contenido: string | null
+  activo: boolean
+  created_at: string
+}
+
 
 // ============================================================
 // TIPOS DE FORMULARIOS (Server Actions)

@@ -1,6 +1,7 @@
 import { getCurrentUser } from '@/lib/dal/auth'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
-import type { PortfolioItem, Testimonio, MenuItem, BloqueoHorario, SeccionesLanding } from '@/lib/definitions'
+import { getPaginas } from '@/lib/dal/paginas'
+import type { PortfolioItem, Testimonio, MenuItem, BloqueoHorario, SeccionesLanding, Pagina } from '@/lib/definitions'
 import ConfiguracionClient from './ConfiguracionClient'
 
 async function getConfigData(userId: string) {
@@ -13,6 +14,8 @@ async function getConfigData(userId: string) {
     supabase.from('bloqueos_horarios').select('*').eq('user_id', userId).eq('activo', true).order('fecha', { ascending: false }),
     supabase.from('site_settings').select('secciones_config').eq('user_id', userId).maybeSingle(),
   ])
+
+  const paginas = await getPaginas(userId)
 
   let portfolio = (portfolioRes.data as PortfolioItem[]) ?? []
 
@@ -38,6 +41,7 @@ async function getConfigData(userId: string) {
     menuItems: (menuItemsRes.data as MenuItem[]) ?? [],
     bloqueos: (bloqueosRes.data as BloqueoHorario[]) ?? [],
     seccionesConfig: (settingsRes.data as { secciones_config?: SeccionesLanding } | null)?.secciones_config ?? null,
+    paginas,
   }
 }
 
@@ -55,6 +59,7 @@ export default async function ConfiguracionPage() {
       menuItems={data.menuItems}
       bloqueos={data.bloqueos}
       seccionesConfig={data.seccionesConfig}
+      paginas={data.paginas}
     />
   )
 }

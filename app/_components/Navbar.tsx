@@ -20,6 +20,8 @@ export default function Navbar({ brandName, menuItems }: Props) {
     if (url.startsWith('www.')) return `https://${url}`
     // Rutas internas del dashboard (páginas reales de Next.js)
     if (url.startsWith('/dashboard')) return url
+    // Páginas personalizadas creadas desde el dashboard (/p/slug)
+    if (url === '/p' || url.startsWith('/p/')) return url
     // Anclas directas (#servicios, #galeria)
     if (url.startsWith('#')) return url
     // Rutas que empiezan con / pero NO son del dashboard → probablemente anclas sin el #
