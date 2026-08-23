@@ -17,7 +17,6 @@ export default async function PrivacidadPage() {
   ])
 
   const brandName = settings?.brand_name || 'CRM Maquilladora'
-  const whatsapp = settings?.whatsapp_number || ''
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden bg-surface-bg">
@@ -90,9 +89,7 @@ export default async function PrivacidadPage() {
                 sobre tus datos personales en cualquier momento.
               </p>
               <p style={{ margin: 0 }}>
-                Para hacerlo, escribinos por WhatsApp {whatsapp ? (
-                  <a href={`https://wa.me/${whatsapp.replace(/\D/g, '')}`} className="text-pink-400 hover:text-pink-300">{whatsapp}</a>
-                ) : null} o al correo de contacto del estudio. Atenderemos tu solicitud a la brevedad.
+                Para hacerlo, escribinos por WhatsApp o al correo de contacto del estudio. Atenderemos tu solicitud a la brevedad.
               </p>
             </section>
 
