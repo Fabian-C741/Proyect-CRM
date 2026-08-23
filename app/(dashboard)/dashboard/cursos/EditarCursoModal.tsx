@@ -1,5 +1,6 @@
 'use client'
 
+import useBodyScrollLock from '@/app/_components/useBodyScrollLock'
 import { useState } from 'react'
 import type { Curso } from '@/lib/definitions'
 import { getTipoInfo } from '@/lib/definitions'
@@ -16,6 +17,7 @@ const MODOS_VENTA = [
 type Props = { curso: Curso; tiposDisponibles?: string[]; onClose: () => void }
 
 export default function EditarCursoModal({ curso, tiposDisponibles, onClose }: Props) {
+  useBodyScrollLock(true)
   const opcionesTipo = (tiposDisponibles && tiposDisponibles.length > 0
     ? tiposDisponibles
     : Array.from(new Set([curso.tipo || 'servicio', 'servicio', 'curso', 'pdf', 'ebook'])))

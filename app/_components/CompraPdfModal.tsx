@@ -1,5 +1,6 @@
 'use client'
 
+import useBodyScrollLock from '@/app/_components/useBodyScrollLock'
 import { useState } from 'react'
 import type { Curso } from '@/lib/definitions'
 
@@ -9,6 +10,7 @@ type Props = {
 }
 
 export default function CompraPdfModal({ curso, onClose }: Props) {
+  useBodyScrollLock(true)
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
 

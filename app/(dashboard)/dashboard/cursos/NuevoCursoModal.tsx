@@ -1,5 +1,6 @@
 'use client'
 
+import useBodyScrollLock from '@/app/_components/useBodyScrollLock'
 import { useState } from 'react'
 import { createCursoAction } from './actions'
 import ImageUploader from '@/app/_components/ImageUploader'
@@ -14,6 +15,7 @@ const MODOS_VENTA = [
 
 export default function NuevoCursoModal({ tiposDisponibles = ['servicio', 'curso', 'pdf', 'ebook'] }: { tiposDisponibles?: string[] }) {
   const [isOpen, setIsOpen] = useState(false)
+  useBodyScrollLock(isOpen)
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [modoVenta, setModoVenta] = useState('whatsapp')

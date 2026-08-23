@@ -92,6 +92,12 @@ body {
     -webkit-backdrop-filter: none;
     background: rgba(22, 22, 42, 0.94);
   }
+  /* Overlays de modales (backdrop-blur-sm/md de Tailwind) */
+  .backdrop-blur-sm,
+  .backdrop-blur-md {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
 }
 
 /* Hover lift effect — reemplaza onMouseEnter/onMouseLeave en Server Components */

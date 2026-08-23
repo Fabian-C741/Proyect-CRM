@@ -1,10 +1,12 @@
 'use client'
 
+import useBodyScrollLock from '@/app/_components/useBodyScrollLock'
 import { useState } from 'react'
 import { createClienteAction } from './actions'
 
 export default function NuevoClienteModal() {
   const [isOpen, setIsOpen] = useState(false)
+  useBodyScrollLock(isOpen)
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
 

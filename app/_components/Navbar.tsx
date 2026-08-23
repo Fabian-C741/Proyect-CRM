@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import type { MenuItem } from '@/lib/definitions'
+import useBodyScrollLock from './useBodyScrollLock'
 
 type Props = {
   brandName: string
@@ -12,6 +13,7 @@ type Props = {
 export default function Navbar({ brandName, menuItems }: Props) {
   const [activeDropdown, setActiveDropdown] = useState<string | null>(null)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  useBodyScrollLock(isMobileMenuOpen)
 
   const getHref = (url: string | null | undefined): string => {
     if (!url) return '#'

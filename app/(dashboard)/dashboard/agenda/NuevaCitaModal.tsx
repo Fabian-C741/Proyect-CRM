@@ -1,5 +1,6 @@
 'use client'
 
+import useBodyScrollLock from '@/app/_components/useBodyScrollLock'
 import { useState } from 'react'
 import { createCitaAction } from './actions'
 import type { Cliente, Curso } from '@/lib/definitions'
@@ -11,6 +12,7 @@ interface NuevaCitaModalProps {
 
 export default function NuevaCitaModal({ clientes, cursos }: NuevaCitaModalProps) {
   const [isOpen, setIsOpen] = useState(false)
+  useBodyScrollLock(isOpen)
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
