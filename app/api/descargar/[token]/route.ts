@@ -25,6 +25,10 @@ export async function GET(
     return new NextResponse('Archivo no disponible.', { status: 404 })
   }
 
+  if (archivoUrl.startsWith('http')) {
+    return NextResponse.redirect(archivoUrl)
+  }
+
   const filePath = archivoUrl.split('/').pop()
   if (!filePath) return new NextResponse('Archivo inválido.', { status: 400 })
 

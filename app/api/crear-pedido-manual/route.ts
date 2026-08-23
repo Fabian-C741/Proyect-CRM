@@ -37,8 +37,10 @@ export async function POST(req: NextRequest) {
       .from('pdfs')
       .upload(path, buf, { contentType: comprobante.type || 'image/jpeg', upsert: false })
     if (!upErr) {
-      const { data: pub } = admin.storage.from('pdfs').getPublicUrl(path)
-      comprobanteUrl = pub.publicUrl
+      const { data: signed } = await admin.storage
+        .from('pdfs')
+        .createSignedUrl(path, 60 * 60 * 24 * 365)
+      comprobanteUrl = signed?.signedUrl || null
     }
   }
 

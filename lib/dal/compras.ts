@@ -29,19 +29,24 @@ export async function comprarPdfAction(formData: FormData) {
 
   // Generar link firmado (24h)
   const bucket = 'pdfs'
-  const filePath = cursoData.archivo_url.split('/').pop()
-  if (!filePath) return { error: 'URL de archivo inválida' }
+  let downloadUrl: string | null
 
-  const { data: signedData, error: signedErr } = await admin.storage
-    .from(bucket)
-    .createSignedUrl(filePath, 60 * 60 * 24) // 24 horas
-
-  if (signedErr || !signedData) {
-    console.error('[Compra] Error al crear signed URL:', signedErr)
-    return { error: 'Error al generar link de descarga' }
+  if (cursoData.archivo_url.startsWith('http')) {
+    downloadUrl = cursoData.archivo_url
+  } else {
+    const filePath = cursoData.archivo_url.split('/').pop()
+    if (!filePath) return { error: 'URL de archivo inválida' }
+    const { data: signedData, error: signedErr } = await admin.storage
+      .from(bucket)
+      .createSignedUrl(filePath, 60 * 60 * 24) // 24 horas
+    if (signedErr || !signedData) {
+      console.error('[Compra] Error al crear signed URL:', signedErr)
+      return { error: 'Error al generar link de descarga' }
+    }
+    downloadUrl = signedData.signedUrl
   }
 
-  const downloadUrl = signedData.signedUrl
+  if (!downloadUrl) return { error: 'URL de archivo inválida' }
 
   // Obtener settings para WhatsApp del admin
   const { data: settings } = await (admin

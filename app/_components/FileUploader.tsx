@@ -31,9 +31,9 @@ export default function FileUploader({ defaultValue, inputName, accept = '.pdf',
       setUploading(false)
       return
     }
-    const { data: { publicUrl } } = supabase.storage.from('pdfs').getPublicUrl(data.path)
-    setUrlInput(publicUrl); setUploading(false)
-    if (hiddenRef.current) hiddenRef.current.value = publicUrl
+    const path = data.path
+    setUrlInput(path); setUploading(false)
+    if (hiddenRef.current) hiddenRef.current.value = path
   }
 
   const fileName = urlInput ? urlInput.split('/').pop() : null

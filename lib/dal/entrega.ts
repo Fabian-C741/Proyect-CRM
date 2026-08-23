@@ -7,7 +7,8 @@ const BUCKET = 'pdfs'
 const VIGENCIA_DESCARGA_HORAS = 24
 
 async function generarDownloadUrl(archivoUrl: string): Promise<string | null> {
-  const filePath = archivoUrl.split('/').pop()
+  if (archivoUrl.startsWith('http')) return archivoUrl
+  const filePath = archivoUrl.split('/').pop() || archivoUrl
   if (!filePath) return null
   const admin = getSupabaseAdmin()
   const { data, error } = await admin.storage
