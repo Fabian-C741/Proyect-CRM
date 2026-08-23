@@ -57,13 +57,13 @@ export default function ImageUploader({ defaultValue, inputName, label = 'Imagen
       </div>
       {error && <p className="text-xs text-red-400">{error}</p>}
       {preview && (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3" style={esChico ? undefined : { flexDirection: 'column', alignItems: 'stretch' }}>
           <div
             className="rounded-lg overflow-hidden bg-slate-800 shrink-0"
             style={
               esChico
                 ? { width: 96, height: 96 }
-                : { width: '100%', aspectRatio: '4/3' }
+                : { width: '100%', height: 180 }
             }
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -72,7 +72,8 @@ export default function ImageUploader({ defaultValue, inputName, label = 'Imagen
           <button
             type="button"
             onClick={quitarImagen}
-            className="btn-secondary text-red-400 border-red-500/20 hover:bg-red-500/10 text-xs shrink-0"
+            className="btn-secondary text-red-400 border-red-500/20 hover:bg-red-500/10 text-xs"
+            style={esChico ? { flexShrink: 0 } : { alignSelf: 'flex-end' }}
           >
             🗑️ Quitar foto
           </button>

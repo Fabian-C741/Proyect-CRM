@@ -39,23 +39,21 @@ export default async function LandingPage() {
     ctaButtonText:  settings?.cta_button_text || 'Reservar mi turno',
   }
 
-  const servicios = productos.filter(c => c.tipo === 'servicio')
-  const cursos    = productos.filter(c => c.tipo === 'curso')
-  const pdfs      = productos.filter(c => c.tipo === 'pdf')
-  const ebooks    = productos.filter(c => c.tipo === 'ebook')
-
+  // Agrupar productos por tipo (base + personalizados) y ordenar secciones
   const secciones: SeccionesLanding = settings?.secciones_config || {}
-  const seccion = (tipo: 'servicio' | 'curso' | 'pdf' | 'ebook') => {
-    if (secciones[tipo]?.visible === false) return null
-    return {
-      titulo: secciones[tipo]?.titulo || undefined,
-      descripcion: secciones[tipo]?.descripcion || undefined,
-    }
+  const grupos = new Map<string, typeof productos>()
+  for (const p of productos) {
+    const lista = grupos.get(p.tipo) || []
+    lista.push(p)
+    grupos.set(p.tipo, lista)
   }
-  const cfgServicio = seccion('servicio')
-  const cfgCurso = seccion('curso')
-  const cfgPdf = seccion('pdf')
-  const cfgEbook = seccion('ebook')
+  const tiposVisibles = Array.from(grupos.keys())
+    .filter(tipo => secciones[tipo]?.visible !== false)
+    .sort((a, b) => {
+      const oa = secciones[a]?.orden ?? (['servicio', 'curso', 'pdf', 'ebook'].indexOf(a) >= 0 ? ['servicio', 'curso', 'pdf', 'ebook'].indexOf(a) : 100)
+      const ob = secciones[b]?.orden ?? (['servicio', 'curso', 'pdf', 'ebook'].indexOf(b) >= 0 ? ['servicio', 'curso', 'pdf', 'ebook'].indexOf(b) : 100)
+      return oa - ob
+    })
 
   return (
     <div className="min-h-screen flex flex-col relative overflow-hidden bg-surface-bg">
@@ -72,10 +70,17 @@ export default async function LandingPage() {
           whatsappNumber={pageConfig.whatsappNumber}
         />
 
-        {cfgServicio && <CategorySection tipo="servicio" items={servicios} whatsappNumber={pageConfig.whatsappNumber} titulo={cfgServicio.titulo} descripcion={cfgServicio.descripcion} />}
-        {cfgCurso && <CategorySection tipo="curso" items={cursos} whatsappNumber={pageConfig.whatsappNumber} titulo={cfgCurso.titulo} descripcion={cfgCurso.descripcion} />}
-        {cfgPdf && <CategorySection tipo="pdf" items={pdfs} whatsappNumber={pageConfig.whatsappNumber} titulo={cfgPdf.titulo} descripcion={cfgPdf.descripcion} />}
-        {cfgEbook && <CategorySection tipo="ebook" items={ebooks} whatsappNumber={pageConfig.whatsappNumber} titulo={cfgEbook.titulo} descripcion={cfgEbook.descripcion} />}
+        {tiposVisibles.map(tipo => (
+          <CategorySection
+            key={tipo}
+            tipo={tipo}
+            items={grupos.get(tipo) || []}
+            whatsappNumber={pageConfig.whatsappNumber}
+            icono={secciones[tipo]?.icono || undefined}
+            titulo={secciones[tipo]?.titulo || undefined}
+            descripcion={secciones[tipo]?.descripcion || undefined}
+          />
+        ))}
 
         <SobreMiSection texto={pageConfig.sobreMiTexto} imagenUrl={pageConfig.sobreMiImg} />
 

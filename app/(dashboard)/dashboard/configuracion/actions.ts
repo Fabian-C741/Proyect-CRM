@@ -56,22 +56,32 @@ export async function saveSiteSettingsAction(formData: FormData) {
 }
 
 // ─────────────────────────────────────────────
-// SECCIONES LANDING (títulos/desc/visibilidad)
+// SECCIONES LANDING (ícono/título/desc/visibilidad)
 // ─────────────────────────────────────────────
-const TIPOS_VALIDOS = ['servicio', 'curso', 'pdf', 'ebook'] as const
+const KEY_VALIDO = /^[a-z0-9_]{1,30}$/
 
-function sanitizeSecciones(raw: unknown): Record<string, { visible: boolean; titulo: string; descripcion: string }> | null {
+function sanitizeSecciones(raw: unknown): Record<string, {
+  visible: boolean
+  icono: string
+  titulo: string
+  descripcion: string
+  orden: number
+  personalizada: boolean
+}> | null {
   if (!raw || typeof raw !== 'object') return null
   const entrada = raw as Record<string, unknown>
-  const salida: Record<string, { visible: boolean; titulo: string; descripcion: string }> = {}
-  for (const tipo of TIPOS_VALIDOS) {
-    const s = entrada[tipo]
+  const salida: Record<string, { visible: boolean; icono: string; titulo: string; descripcion: string; orden: number; personalizada: boolean }> = {}
+  for (const [tipo, s] of Object.entries(entrada)) {
+    if (!KEY_VALIDO.test(tipo)) continue
     if (!s || typeof s !== 'object') continue
     const o = s as Record<string, unknown>
     salida[tipo] = {
       visible: o.visible !== false,
+      icono: typeof o.icono === 'string' ? o.icono.trim().slice(0, 8) : '',
       titulo: typeof o.titulo === 'string' ? o.titulo.trim().slice(0, 120) : '',
       descripcion: typeof o.descripcion === 'string' ? o.descripcion.trim().slice(0, 400) : '',
+      orden: typeof o.orden === 'number' && Number.isFinite(o.orden) ? Math.trunc(o.orden) : 100,
+      personalizada: o.personalizada === true,
     }
   }
   return salida

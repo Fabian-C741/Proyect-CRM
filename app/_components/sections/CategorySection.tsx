@@ -4,15 +4,16 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import type { Curso } from '@/lib/definitions'
-import { TIPOS_PRODUCTO_INFO } from '@/lib/definitions'
+import { getTipoInfo } from '@/lib/definitions'
 import CompraPdfModal from '../CompraPdfModal'
 
 const ITEMS_POR_PAGINA = 4
 
 type Props = {
-  tipo: 'servicio' | 'curso' | 'pdf' | 'ebook'
+  tipo: string
   items: Curso[]
   whatsappNumber: string
+  icono?: string
   titulo?: string
   descripcion?: string
 }
@@ -25,10 +26,11 @@ const cardVariants = {
   }),
 }
 
-export default function CategorySection({ tipo, items, whatsappNumber, titulo, descripcion }: Props) {
+export default function CategorySection({ tipo, items, whatsappNumber, icono, titulo, descripcion }: Props) {
   const [cantidad, setCantidad] = useState(ITEMS_POR_PAGINA)
   const [comprandoPdf, setComprandoPdf] = useState<Curso | null>(null)
-  const info = TIPOS_PRODUCTO_INFO[tipo]
+  const info = getTipoInfo(tipo)
+  const iconoFinal = icono?.trim() || info.icon
   const tituloFinal = titulo?.trim() || info.label
   const descFinal = descripcion?.trim() || info.desc
   const visibles = items.slice(0, cantidad)
@@ -46,7 +48,7 @@ export default function CategorySection({ tipo, items, whatsappNumber, titulo, d
       id={tipo === 'servicio' ? 'servicios-productos' : tipo + 's'}
       style={{ width: '100%', maxWidth: 1000, margin: '0 auto 4rem', textAlign: 'left' }}
     >
-      <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.25rem' }}>{info.icon} {tituloFinal}</h2>
+      <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.25rem' }}>{iconoFinal} {tituloFinal}</h2>
       <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>{descFinal}</p>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem' }}>
@@ -68,7 +70,7 @@ export default function CategorySection({ tipo, items, whatsappNumber, titulo, d
                 <div style={{ height: 160, background: `url(${c.imagen_url}) center/cover`, flexShrink: 0 }} />
               ) : (
                 <div style={{ height: 80, background: 'linear-gradient(135deg, rgba(168,85,247,0.2), rgba(236,72,153,0.15))', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', flexShrink: 0 }}>
-                  {info.icon}
+                  {iconoFinal}
                 </div>
               )}
               <div style={{ padding: '1.25rem', display: 'flex', flexDirection: 'column', flex: 1 }}>

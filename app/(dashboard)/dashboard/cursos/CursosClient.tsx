@@ -2,15 +2,9 @@
 
 import { useState } from 'react'
 import type { Curso } from '@/lib/definitions'
+import { getTipoInfo } from '@/lib/definitions'
 import EditarCursoModal from './EditarCursoModal'
 import { deleteCursoAction } from './actions'
-
-const TIPO_LABELS: Record<string, { icon: string; label: string; color: string }> = {
-  servicio: { icon: '💆', label: 'Servicio', color: 'rgba(236,72,153,0.15)' },
-  curso:    { icon: '🎓', label: 'Curso', color: 'rgba(168,85,247,0.15)' },
-  pdf:      { icon: '📄', label: 'PDF', color: 'rgba(59,130,246,0.15)' },
-  ebook:    { icon: '📚', label: 'eBook', color: 'rgba(34,197,94,0.15)' },
-}
 
 const MODO_LABELS: Record<string, string> = {
   whatsapp:    '💬 WhatsApp',
@@ -18,7 +12,7 @@ const MODO_LABELS: Record<string, string> = {
   mensaje:     '✉️ Mensaje',
 }
 
-export default function CursosClient({ cursos: initial }: { cursos: Curso[] }) {
+export default function CursosClient({ cursos: initial, tiposDisponibles }: { cursos: Curso[]; tiposDisponibles: string[] }) {
   const [cursos, setCursos] = useState(initial)
   const [editCurso, setEditCurso] = useState<Curso | null>(null)
   const [deleting, setDeleting] = useState<string | null>(null)
@@ -47,7 +41,7 @@ export default function CursosClient({ cursos: initial }: { cursos: Curso[] }) {
     <>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {cursos.map((curso) => {
-          const tipoInfo = TIPO_LABELS[curso.tipo || 'servicio'] || TIPO_LABELS.servicio
+          const tipoInfo = getTipoInfo(curso.tipo || 'servicio')
           return (
             <div key={curso.id} className="card-glass card-hover flex flex-col overflow-hidden">
               {/* Imagen */}
@@ -76,11 +70,11 @@ export default function CursosClient({ cursos: initial }: { cursos: Curso[] }) {
                     style={{
                       display: 'inline-flex', alignItems: 'center', gap: '0.25rem',
                       padding: '0.2rem 0.6rem', borderRadius: 9999,
-                      background: tipoInfo.color,
+                      background: 'rgba(255,255,255,0.06)',
                       color: 'var(--text-primary)', fontSize: '0.75rem', fontWeight: 600,
                     }}
                   >
-                    {tipoInfo.icon} {tipoInfo.label}
+                    {tipoInfo.icon} {tipoInfo.label || curso.tipo}
                   </span>
                   {curso.mostrar_en_landing && (
                     <span className="badge badge-green">Visible en landing</span>
@@ -129,6 +123,7 @@ export default function CursosClient({ cursos: initial }: { cursos: Curso[] }) {
       {editCurso && (
         <EditarCursoModal
           curso={editCurso}
+          tiposDisponibles={tiposDisponibles}
           onClose={() => setEditCurso(null)}
         />
       )}

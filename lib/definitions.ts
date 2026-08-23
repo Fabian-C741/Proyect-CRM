@@ -65,18 +65,39 @@ export type TipoProducto = 'servicio' | 'curso' | 'pdf' | 'ebook'
 
 export type SeccionLandingConfig = {
   visible?: boolean
+  icono?: string
   titulo?: string
   descripcion?: string
+  orden?: number
+  personalizada?: boolean
 }
 
-export type SeccionesLanding = Partial<Record<TipoProducto, SeccionLandingConfig>>
+// Clave = tipo de producto (los 4 base o personalizados creados por el usuario)
+export type SeccionesLanding = Record<string, SeccionLandingConfig>
 
-// Textos por defecto de las secciones de la landing (usados si no hay config guardada)
+// Textos por defecto de las secciones base (usados si no hay config guardada)
 export const TIPOS_PRODUCTO_INFO: Record<TipoProducto, { icon: string; label: string; desc: string }> = {
   servicio: { icon: '💆', label: 'Servicios', desc: 'Maquillaje y tratamientos profesionales' },
   curso:    { icon: '🎓', label: 'Cursos', desc: 'Aprendé desde donde estés' },
   pdf:      { icon: '📄', label: 'PDFs', desc: 'Material descargable exclusivo' },
   ebook:    { icon: '📚', label: 'eBooks', desc: 'Guías completas para potenciar tu look' },
+}
+
+const TIPO_FALLBACK = { icon: '📦', label: '', desc: '' }
+
+/** Info de un tipo (base o personalizado) con fallback para tipos desconocidos. */
+export function getTipoInfo(tipo: string): { icon: string; label: string; desc: string } {
+  if (tipo in TIPOS_PRODUCTO_INFO) return TIPOS_PRODUCTO_INFO[tipo as TipoProducto]
+  return { ...TIPO_FALLBACK, label: tipo.charAt(0).toUpperCase() + tipo.slice(1).replace(/_/g, ' ') }
+}
+
+/** Tipos base en orden canónico + los personalizados que existan en la config. */
+export function getTiposDisponibles(secciones: SeccionesLanding | null | undefined): string[] {
+  const base = Object.keys(TIPOS_PRODUCTO_INFO)
+  const extra = Object.keys(secciones || {}).filter(
+    t => !(t in TIPOS_PRODUCTO_INFO) && secciones?.[t]?.personalizada !== false && secciones?.[t]?.visible !== false
+  )
+  return [...base, ...extra]
 }
 
 export type Curso = {
@@ -89,7 +110,7 @@ export type Curso = {
   activo: boolean
   imagen_url: string | null
   archivo_url: string | null
-  tipo: TipoProducto
+  tipo: string
   modo_venta: 'whatsapp' | 'link_externo' | 'mensaje'
   link_externo: string | null
   mensaje_whatsapp: string | null

@@ -4,13 +4,7 @@ import { useState } from 'react'
 import { createCursoAction } from './actions'
 import ImageUploader from '@/app/_components/ImageUploader'
 import FileUploader from '@/app/_components/FileUploader'
-
-const TIPOS = [
-  { value: 'servicio', label: '💆 Servicio (maquillaje, etc.)' },
-  { value: 'curso', label: '🎓 Curso Online' },
-  { value: 'pdf', label: '📄 PDF Descargable' },
-  { value: 'ebook', label: '📚 eBook' },
-]
+import { getTipoInfo } from '@/lib/definitions'
 
 const MODOS_VENTA = [
   { value: 'whatsapp', label: '💬 Consultar por WhatsApp' },
@@ -18,12 +12,12 @@ const MODOS_VENTA = [
   { value: 'mensaje', label: '✉️ Mensaje personalizado' },
 ]
 
-export default function NuevoCursoModal() {
+export default function NuevoCursoModal({ tiposDisponibles = ['servicio', 'curso', 'pdf', 'ebook'] }: { tiposDisponibles?: string[] }) {
   const [isOpen, setIsOpen] = useState(false)
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [modoVenta, setModoVenta] = useState('whatsapp')
-  const [tipo, setTipo] = useState<'servicio' | 'curso' | 'pdf' | 'ebook'>('servicio')
+  const [tipo, setTipo] = useState(tiposDisponibles[0] || 'servicio')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -74,9 +68,15 @@ export default function NuevoCursoModal() {
               {/* Tipo */}
               <div>
                 <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tipo de Producto *</label>
-                <select name="tipo" className="input-base" value={tipo} onChange={e => setTipo(e.target.value as 'servicio' | 'curso' | 'pdf' | 'ebook')}>
-                  {TIPOS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+                <select name="tipo" className="input-base" value={tipo} onChange={e => setTipo(e.target.value)}>
+                  {tiposDisponibles.map(t => {
+                    const info = getTipoInfo(t)
+                    return <option key={t} value={t}>{info.icon} {info.label || t}</option>
+                  })}
                 </select>
+                <p className="text-xs text-slate-500 mt-1">
+                  ¿Falta una categoría? Creala en Configuración → 🗂 Secciones Landing.
+                </p>
               </div>
 
               {/* Nombre */}

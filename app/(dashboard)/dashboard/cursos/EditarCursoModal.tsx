@@ -2,16 +2,10 @@
 
 import { useState } from 'react'
 import type { Curso } from '@/lib/definitions'
+import { getTipoInfo } from '@/lib/definitions'
 import { updateCursoAction } from './actions'
 import ImageUploader from '@/app/_components/ImageUploader'
 import FileUploader from '@/app/_components/FileUploader'
-
-const TIPOS = [
-  { value: 'servicio', label: '💆 Servicio' },
-  { value: 'curso', label: '🎓 Curso Online' },
-  { value: 'pdf', label: '📄 PDF Descargable' },
-  { value: 'ebook', label: '📚 eBook' },
-]
 
 const MODOS_VENTA = [
   { value: 'whatsapp', label: '💬 Consultar por WhatsApp' },
@@ -19,13 +13,16 @@ const MODOS_VENTA = [
   { value: 'mensaje', label: '✉️ Mensaje personalizado' },
 ]
 
-type Props = { curso: Curso; onClose: () => void }
+type Props = { curso: Curso; tiposDisponibles?: string[]; onClose: () => void }
 
-export default function EditarCursoModal({ curso, onClose }: Props) {
+export default function EditarCursoModal({ curso, tiposDisponibles, onClose }: Props) {
+  const opcionesTipo = (tiposDisponibles && tiposDisponibles.length > 0
+    ? tiposDisponibles
+    : Array.from(new Set([curso.tipo || 'servicio', 'servicio', 'curso', 'pdf', 'ebook'])))
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [modoVenta, setModoVenta] = useState<'whatsapp' | 'link_externo' | 'mensaje'>(curso.modo_venta || 'whatsapp')
-  const [tipo, setTipo] = useState<'servicio' | 'curso' | 'pdf' | 'ebook'>(curso.tipo || 'servicio')
+  const [tipo, setTipo] = useState(curso.tipo || 'servicio')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -61,8 +58,11 @@ export default function EditarCursoModal({ curso, onClose }: Props) {
 
           <div>
             <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Tipo</label>
-            <select name="tipo" className="input-base" value={tipo} onChange={e => setTipo(e.target.value as 'servicio' | 'curso' | 'pdf' | 'ebook')}>
-              {TIPOS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+            <select name="tipo" className="input-base" value={tipo} onChange={e => setTipo(e.target.value)}>
+              {opcionesTipo.map(t => {
+                const info = getTipoInfo(t)
+                return <option key={t} value={t}>{info.icon} {info.label || t}</option>
+              })}
             </select>
           </div>
 
