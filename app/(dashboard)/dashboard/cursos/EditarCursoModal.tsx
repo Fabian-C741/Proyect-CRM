@@ -12,6 +12,8 @@ const MODOS_VENTA = [
   { value: 'whatsapp', label: '💬 Consultar por WhatsApp' },
   { value: 'link_externo', label: '🔗 Link Externo' },
   { value: 'mensaje', label: '✉️ Mensaje personalizado' },
+  { value: 'mercadopago', label: '🛒 MercadoPago' },
+  { value: 'transferencia', label: '🏦 Transferencia bancaria' },
 ]
 
 type Props = { curso: Curso; tiposDisponibles?: string[]; onClose: () => void }

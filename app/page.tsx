@@ -39,6 +39,13 @@ export default async function LandingPage() {
     ctaButtonText:  settings?.cta_button_text || 'Reservar mi turno',
   }
 
+  const banco = {
+    cbu: settings?.cbu ?? null,
+    alias_cbu: settings?.alias_cbu ?? null,
+    banco: settings?.banco ?? null,
+    titular_cuenta: settings?.titular_cuenta ?? null,
+  }
+
   // Agrupar productos por tipo (base + personalizados) y ordenar secciones
   const secciones: SeccionesLanding = settings?.secciones_config || {}
   const grupos = new Map<string, typeof productos>()
@@ -81,6 +88,7 @@ export default async function LandingPage() {
             icono={secciones[tipo]?.icono || undefined}
             titulo={secciones[tipo]?.titulo || undefined}
             descripcion={secciones[tipo]?.descripcion || undefined}
+            banco={banco}
           />
         ))}
 

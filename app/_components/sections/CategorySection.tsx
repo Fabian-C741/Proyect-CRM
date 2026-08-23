@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import type { Curso } from '@/lib/definitions'
 import { getTipoInfo } from '@/lib/definitions'
-import CompraPdfModal from '../CompraPdfModal'
+import CompraModal from '../CompraModal'
 
 const ITEMS_POR_PAGINA = 4
 
@@ -16,6 +16,7 @@ type Props = {
   icono?: string
   titulo?: string
   descripcion?: string
+  banco?: { cbu?: string | null; alias_cbu?: string | null; banco?: string | null; titular_cuenta?: string | null }
 }
 
 const cardVariants = {
@@ -26,9 +27,9 @@ const cardVariants = {
   }),
 }
 
-export default function CategorySection({ tipo, items, whatsappNumber, icono, titulo, descripcion }: Props) {
+export default function CategorySection({ tipo, items, whatsappNumber, icono, titulo, descripcion, banco }: Props) {
   const [cantidad, setCantidad] = useState(ITEMS_POR_PAGINA)
-  const [comprandoPdf, setComprandoPdf] = useState<Curso | null>(null)
+  const [compraModal, setCompraModal] = useState<Curso | null>(null)
   const info = getTipoInfo(tipo)
   const iconoFinal = icono?.trim() || info.icon
   const tituloFinal = titulo?.trim() || info.label
@@ -54,6 +55,7 @@ export default function CategorySection({ tipo, items, whatsappNumber, icono, ti
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem' }}>
         {visibles.map((c, idx) => {
           const waMsg = c.mensaje_whatsapp || `Hola! Quiero info sobre ${c.nombre}`
+          const esPago = c.modo_venta === 'mercadopago' || c.modo_venta === 'transferencia'
           return (
             <motion.div
               key={c.id}
@@ -85,13 +87,13 @@ export default function CategorySection({ tipo, items, whatsappNumber, icono, ti
                   <p style={{ fontSize: '1.25rem', fontWeight: 800, color: '#f472b6', marginBottom: '0.75rem' }}>
                     ${c.precio.toLocaleString('es-AR')}
                   </p>
-                  {c.tipo === 'pdf' && c.archivo_url ? (
+                  {esPago ? (
                     <button
-                      onClick={() => setComprandoPdf(c)}
+                      onClick={() => setCompraModal(c)}
                       className="btn-primary"
                       style={{ width: '100%', justifyContent: 'center', padding: '0.5rem 1rem', fontSize: '0.8125rem', border: 'none', cursor: 'pointer' }}
                     >
-                      🛒 Comprar ahora
+                      🛒 {c.modo_venta === 'transferencia' ? 'Comprar' : 'Pagar ahora'}
                     </button>
                   ) : c.modo_venta === 'link_externo' && c.link_externo ? (
                     <Link href={c.link_externo} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ width: '100%', justifyContent: 'center', padding: '0.5rem 1rem', fontSize: '0.8125rem' }}>
@@ -127,8 +129,8 @@ export default function CategorySection({ tipo, items, whatsappNumber, icono, ti
       )}
     </motion.section>
 
-    {comprandoPdf && (
-      <CompraPdfModal curso={comprandoPdf} onClose={() => setComprandoPdf(null)} />
+    {compraModal && (
+      <CompraModal curso={compraModal} banco={banco} onClose={() => setCompraModal(null)} />
     )}
     </>
   )

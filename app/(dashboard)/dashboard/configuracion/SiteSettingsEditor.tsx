@@ -115,6 +115,30 @@ export default function SiteSettingsEditor({ settings }: Props) {
         </div>
       </div>
 
+      {/* Sección Datos bancarios */}
+      <div>
+        <h3 className="text-sm font-semibold text-slate-300 mb-3 border-b border-white/5 pb-2">Datos Bancarios (para transferencia)</h3>
+        <p className="text-xs text-slate-500 mb-3">Estos datos se muestran al cliente cuando elige pagar por transferencia bancaria.</p>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Titular de la cuenta</label>
+            <input name="titular_cuenta" defaultValue={settings?.titular_cuenta || ''} className="input-base" />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Banco</label>
+            <input name="banco" defaultValue={settings?.banco || ''} placeholder="ej. Banco Nación" className="input-base" />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">CBU</label>
+            <input name="cbu" defaultValue={settings?.cbu || ''} className="input-base" />
+          </div>
+          <div>
+            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Alias (CVU/Alias)</label>
+            <input name="alias_cbu" defaultValue={settings?.alias_cbu || ''} placeholder="ej. estudio.luna.mp" className="input-base" />
+          </div>
+        </div>
+      </div>
+
       <div className="pt-2 flex justify-end">
         <button type="submit" className="btn-primary" disabled={isPending}>
           {isPending ? 'Guardando...' : '💾 Guardar Configuración'}

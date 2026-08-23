@@ -11,6 +11,8 @@ const MODOS_VENTA = [
   { value: 'whatsapp', label: '💬 Consultar por WhatsApp' },
   { value: 'link_externo', label: '🔗 Link Externo (MercadoPago, Hotmart, etc.)' },
   { value: 'mensaje', label: '✉️ Mensaje personalizado' },
+  { value: 'mercadopago', label: '🛒 MercadoPago' },
+  { value: 'transferencia', label: '🏦 Transferencia bancaria' },
 ]
 
 export default function NuevoCursoModal({ tiposDisponibles = ['servicio', 'curso', 'pdf', 'ebook'] }: { tiposDisponibles?: string[] }) {

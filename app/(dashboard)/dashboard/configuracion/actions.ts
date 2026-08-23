@@ -21,6 +21,10 @@ export async function saveSiteSettingsAction(formData: FormData) {
     whatsapp_number: (formData.get('whatsapp_number') as string) || null,
     sobre_mi_texto: (formData.get('sobre_mi_texto') as string) || null,
     sobre_mi_imagen_url: (formData.get('sobre_mi_imagen_url') as string) || null,
+    cbu: (formData.get('cbu') as string) || null,
+    alias_cbu: (formData.get('alias_cbu') as string) || null,
+    banco: (formData.get('banco') as string) || null,
+    titular_cuenta: (formData.get('titular_cuenta') as string) || null,
     updated_at: new Date().toISOString(),
   }
 

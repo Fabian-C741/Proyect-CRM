@@ -7,7 +7,7 @@ import InstallPWA from './InstallPWA'
 
 type Props = {
   brandName?: string
-  navItems: { name: string; href: string; icon: string }[]
+  navItems: { name: string; href: string; icon: string; badge?: number }[]
 }
 
 export default function Sidebar({ brandName = 'CRM Beauty', navItems }: Props) {
@@ -44,7 +44,10 @@ export default function Sidebar({ brandName = 'CRM Beauty', navItems }: Props) {
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={isActive ? 'text-pink-500' : 'text-slate-500'}>
                 <path d={item.icon} />
               </svg>
-              {item.name}
+              <span className="flex-1">{item.name}</span>
+              {item.badge ? (
+                <span className="ml-auto bg-pink-500 text-white text-xs font-bold px-1.5 py-0.5 rounded-full">{item.badge}</span>
+              ) : null}
             </Link>
           )
         })}
