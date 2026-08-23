@@ -71,7 +71,7 @@ export default async function PaginaDinamica({ params }: Props) {
                       src={b.url}
                       alt={b.descripcion || ''}
                       loading="lazy"
-                      style={{ width: '100%', borderRadius: 12, display: 'block' }}
+                      style={{ width: '100%', maxHeight: 420, objectFit: 'cover', borderRadius: 12, display: 'block' }}
                     />
                     {b.descripcion && (
                       <figcaption style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.5rem', textAlign: 'center' }}>

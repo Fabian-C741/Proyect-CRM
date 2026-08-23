@@ -112,10 +112,12 @@ function BloquesEditor({
             <span className="text-xs text-pink-400 font-semibold">
               {b.tipo === 'titulo' ? '🏷️ Título' : b.tipo === 'texto' ? '📝 Texto' : '🖼️ Imagen'}
             </span>
-            <div className="flex gap-1">
+            <div className="flex gap-1 items-center">
               <button type="button" onClick={() => mover(i, -1)} disabled={i === 0} title="Subir" className="px-1.5 text-slate-400 hover:text-white disabled:opacity-30">▲</button>
               <button type="button" onClick={() => mover(i, 1)} disabled={i === bloques.length - 1} title="Bajar" className="px-1.5 text-slate-400 hover:text-white disabled:opacity-30">▼</button>
-              <button type="button" onClick={() => setBloques(bloques.filter((_, j) => j !== i))} title="Eliminar" className="px-1.5 text-red-400 hover:text-red-300">✕</button>
+              <button type="button" onClick={() => setBloques(bloques.filter((_, j) => j !== i))} className="ml-1 text-xs text-red-400 hover:text-red-300 border border-red-500/20 rounded-lg px-2 py-0.5">
+                🗑️ Eliminar
+              </button>
             </div>
           </div>
 
@@ -329,7 +331,7 @@ export default function PaginasEditor({ paginas }: { paginas: Pagina[] }) {
                       ✏️ Editar
                     </button>
                     <button type="button" onClick={() => eliminar(p)} disabled={pendiente} className="text-xs text-red-400 hover:text-red-300 border border-red-500/20 rounded-lg px-2 py-1">
-                      🗑️
+                      🗑️ Eliminar
                     </button>
                   </div>
                 </div>

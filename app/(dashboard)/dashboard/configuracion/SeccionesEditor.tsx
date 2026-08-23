@@ -226,8 +226,8 @@ export default function SeccionesEditor({ configInicial }: { configInicial: Secc
                 <div className="flex justify-end">
                   <button
                     type="button"
-                    onClick={() => eliminarSeccion(tipo)}
-                    className="text-xs text-red-400 hover:text-red-300"
+                    onClick={() => { if (confirm(`¿Eliminar la sección "${cfg.titulo || tipo}"?`)) eliminarSeccion(tipo) }}
+                    className="text-xs text-red-400 hover:text-red-300 border border-red-500/20 rounded-lg px-2 py-1"
                   >
                     🗑️ Eliminar sección
                   </button>
