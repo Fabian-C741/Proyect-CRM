@@ -23,7 +23,7 @@ export default function EditarCursoModal({ curso, tiposDisponibles, onClose }: P
     : Array.from(new Set([curso.tipo || 'servicio', 'servicio', 'curso', 'pdf', 'ebook'])))
   const [isPending, setIsPending] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [modoVenta, setModoVenta] = useState<'whatsapp' | 'link_externo' | 'mensaje'>(curso.modo_venta || 'whatsapp')
+  const [modoVenta, setModoVenta] = useState<'whatsapp' | 'link_externo' | 'mensaje' | 'mercadopago' | 'transferencia'>(curso.modo_venta || 'whatsapp')
   const [tipo, setTipo] = useState(curso.tipo || 'servicio')
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {

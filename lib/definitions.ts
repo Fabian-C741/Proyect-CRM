@@ -111,7 +111,7 @@ export type Curso = {
   imagen_url: string | null
   archivo_url: string | null
   tipo: string
-  modo_venta: 'whatsapp' | 'link_externo' | 'mensaje'
+  modo_venta: 'whatsapp' | 'link_externo' | 'mensaje' | 'mercadopago' | 'transferencia'
   link_externo: string | null
   mensaje_whatsapp: string | null
   mostrar_en_landing: boolean
@@ -188,7 +188,30 @@ export type SiteSettings = {
   smtp_user: string | null
   smtp_pass: string | null
   smtp_from_email: string | null
+  cbu: string | null
+  alias_cbu: string | null
+  banco: string | null
+  titular_cuenta: string | null
   secciones_config?: SeccionesLanding | null
+  updated_at: string
+}
+
+export type Pedido = {
+  id: string
+  user_id: string
+  producto_id: string | null
+  tipo: string | null
+  nombre_cliente: string | null
+  email: string | null
+  telefono: string | null
+  monto: number
+  estado: 'pendiente' | 'pagado' | 'expirado' | 'cancelado' | 'pendiente_manual'
+  mp_preference_id: string | null
+  mp_payment_id: string | null
+  comprobante_url: string | null
+  download_token: string | null
+  download_expires_at: string | null
+  created_at: string
   updated_at: string
 }
 
