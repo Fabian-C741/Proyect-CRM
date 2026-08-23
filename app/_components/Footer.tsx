@@ -34,6 +34,7 @@ export default function Footer({ brandName }: { brandName: string }) {
         <div style={{ width: '100%', height: 1, background: 'rgba(255,255,255,0.05)', margin: '1rem 0' }} />
 
         <div style={{ display: 'flex', justifyContent: 'center', width: '100%', fontSize: '0.8125rem', color: 'var(--text-muted)', flexWrap: 'wrap', gap: '1rem' }}>
+          <Link href="/privacidad" className="hover:text-pink-400" style={{ color: 'inherit' }}>Política de Privacidad</Link>
           <span>© {new Date().getFullYear()} {brandName}. Todos los derechos reservados.</span>
         </div>
       </div>
