@@ -23,19 +23,21 @@ async function getPwaData(): Promise<{ name: string; icono: string | null }> {
 export default async function manifest(): Promise<MetadataRoute.Manifest> {
   const { name, icono } = await getPwaData()
 
-  return {
-    name,
-    short_name: name,
-    description: 'Sistema de gestión y reservas para maquilladora profesional.',
-    start_url: '/dashboard',
-    display: 'standalone',
-    background_color: '#0f172a',
-    theme_color: '#ec4899',
-    icons: icono
-      ? [
-          { src: icono, sizes: '192x192', type: 'image/png', purpose: 'any' },
-          { src: icono, sizes: '512x512', type: 'image/png', purpose: 'maskable' },
-        ]
-      : [],
-  }
+    // Si hay ícono personalizado se usa para todo; si no, fallback a los
+    // íconos locales generados (siempre cuadrados y PNG válidos).
+    const base = icono || '/icon-512.png'
+    return {
+      name,
+      short_name: name,
+      description: 'Sistema de gestión y reservas para maquilladora profesional.',
+      start_url: '/dashboard',
+      display: 'standalone',
+      background_color: '#0f172a',
+      theme_color: '#ec4899',
+      icons: [
+        { src: icono || '/icon-192.png', sizes: '192x192', type: 'image/png', purpose: 'any' },
+        { src: base, sizes: '512x512', type: 'image/png', purpose: 'any' },
+        { src: base, sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+      ],
+    }
 }
