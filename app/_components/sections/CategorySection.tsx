@@ -31,9 +31,11 @@ export default function CategorySection({ tipo, items, whatsappNumber, icono, ti
   const [cantidad, setCantidad] = useState(ITEMS_POR_PAGINA)
   const [compraModal, setCompraModal] = useState<Curso | null>(null)
   const info = getTipoInfo(tipo)
-  const iconoFinal = icono?.trim() || info.icon
+  // Sin config (undefined) → valores por defecto del tipo.
+  // Con config vacía ('') → el admin lo dejó vacío a propósito: no se dibuja nada.
+  const iconoFinal = icono === undefined ? info.icon : icono.trim()
   const tituloFinal = titulo?.trim() || info.label
-  const descFinal = descripcion?.trim() || info.desc
+  const descFinal = descripcion === undefined ? info.desc : descripcion.trim()
   const visibles = items.slice(0, cantidad)
   const hayMas = cantidad < items.length
 
@@ -49,8 +51,8 @@ export default function CategorySection({ tipo, items, whatsappNumber, icono, ti
       id={tipo === 'servicio' ? 'servicios-productos' : tipo + 's'}
       style={{ width: '100%', maxWidth: 1000, margin: '0 auto 4rem', textAlign: 'left' }}
     >
-      <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.25rem' }}>{iconoFinal} {tituloFinal}</h2>
-      <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>{descFinal}</p>
+      <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '0.25rem' }}>{iconoFinal ? `${iconoFinal} ` : ''}{tituloFinal}</h2>
+      {descFinal && <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>{descFinal}</p>}
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: '1.5rem' }}>
         {visibles.map((c, idx) => {

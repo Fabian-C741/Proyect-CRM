@@ -26,7 +26,8 @@ function estadoInicial(config: SeccionesLanding | null): EstadoSecciones {
       visible: guardado?.visible !== false,
       titulo: guardado?.titulo || '',
       descripcion: guardado?.descripcion || '',
-      icono: guardado?.icono || info.icon,
+      // Si hay config guardada se respeta tal cual (incluso vacío); el default solo aplica sin config
+      icono: typeof guardado?.icono === 'string' ? guardado.icono : info.icon,
       orden: guardado?.orden ?? ORDEN_BASE[tipo],
       personalizada: false,
     }
@@ -39,7 +40,7 @@ function estadoInicial(config: SeccionesLanding | null): EstadoSecciones {
       visible: cfg?.visible !== false,
       titulo: cfg?.titulo || '',
       descripcion: cfg?.descripcion || '',
-      icono: cfg?.icono || '📦',
+      icono: typeof cfg?.icono === 'string' ? cfg.icono : '📦',
       orden: cfg?.orden ?? 100 + Object.keys(estado).length,
       personalizada: true,
     }
@@ -172,7 +173,7 @@ export default function SeccionesEditor({ configInicial }: { configInicial: Secc
             <div key={tipo} className="p-4 rounded-xl border border-white/10 bg-white/[0.03] space-y-3" style={{ opacity: cfg.visible === false ? 0.55 : 1, transition: 'opacity 0.2s' }}>
               <div className="flex items-center justify-between gap-2">
                 <span className="font-semibold text-white text-sm truncate">
-                  {cfg.icono || '📦'} {cfg.titulo?.trim() || tipo}
+                  {cfg.icono ? `${cfg.icono} ` : ''}{cfg.titulo?.trim() || tipo}
                 </span>
                 <label className="flex items-center gap-2 cursor-pointer select-none shrink-0">
                   <input

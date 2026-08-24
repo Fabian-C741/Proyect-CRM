@@ -85,9 +85,9 @@ export default async function LandingPage() {
             tipo={tipo}
             items={grupos.get(tipo) || []}
             whatsappNumber={pageConfig.whatsappNumber}
-            icono={secciones[tipo]?.icono || undefined}
+            icono={secciones[tipo]?.icono}
             titulo={secciones[tipo]?.titulo || undefined}
-            descripcion={secciones[tipo]?.descripcion || undefined}
+            descripcion={secciones[tipo]?.descripcion}
             banco={banco}
           />
         ))}
