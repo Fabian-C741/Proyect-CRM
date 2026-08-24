@@ -22,6 +22,7 @@ export async function proxy(request: NextRequest) {
     font-src 'self' https://fonts.gstatic.com;
     img-src 'self' blob: data: https://*.supabase.co https://images.unsplash.com;
     connect-src 'self' https://*.supabase.co wss://*.supabase.co;
+    frame-src https://www.youtube.com https://www.youtube-nocookie.com;
     object-src 'none';
     base-uri 'self';
     form-action 'self';
