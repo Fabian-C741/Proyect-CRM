@@ -1,6 +1,7 @@
 'use client'
 
 import useBodyScrollLock from '@/app/_components/useBodyScrollLock'
+import ModalOverlay from '@/app/_components/ModalOverlay'
 import { useState } from 'react'
 import { createCursoAction } from './actions'
 import ImageUploader from '@/app/_components/ImageUploader'
@@ -53,7 +54,7 @@ export default function NuevoCursoModal({ tiposDisponibles = ['servicio', 'curso
       </button>
 
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+        <ModalOverlay>
           <form onSubmit={handleSubmit} className="flex flex-col w-full max-w-lg max-h-[90vh] bg-surface-800 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
             <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center shrink-0">
               <h2 className="text-lg font-semibold text-white">Nuevo Producto / Servicio</h2>
@@ -166,7 +167,7 @@ export default function NuevoCursoModal({ tiposDisponibles = ['servicio', 'curso
               </button>
             </div>
           </form>
-        </div>
+        </ModalOverlay>
       )}
     </>
   )

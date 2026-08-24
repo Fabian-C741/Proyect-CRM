@@ -1,6 +1,7 @@
 'use client'
 
 import useBodyScrollLock from '@/app/_components/useBodyScrollLock'
+import ModalOverlay from '@/app/_components/ModalOverlay'
 import { useState } from 'react'
 import type { Curso } from '@/lib/definitions'
 import { getTipoInfo } from '@/lib/definitions'
@@ -44,7 +45,7 @@ export default function EditarCursoModal({ curso, tiposDisponibles, onClose }: P
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4 animate-fade-in">
+    <ModalOverlay>
       <form onSubmit={handleSubmit} className="flex flex-col w-full max-w-lg max-h-[90vh] bg-surface-800 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
         <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center shrink-0">
           <h2 className="text-lg font-semibold text-white">Editar Producto</h2>
@@ -138,6 +139,6 @@ export default function EditarCursoModal({ curso, tiposDisponibles, onClose }: P
           </button>
         </div>
       </form>
-    </div>
+    </ModalOverlay>
   )
 }

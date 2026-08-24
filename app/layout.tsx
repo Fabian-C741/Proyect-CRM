@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 import { Inter } from 'next/font/google'
 import './globals.css'
 import { createSupabaseServerClient } from '@/lib/supabase/server'
@@ -19,6 +19,14 @@ async function getSettings() {
       .maybeSingle()
     return data as { favicon_url: string; brand_name: string } | null
   } catch { return null }
+}
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  // Android: redimensiona el viewport cuando aparece el teclado,
+  // para que los modales fijos no queden corridos/tapados.
+  interactiveWidget: 'resizes-content',
 }
 
 export async function generateMetadata(): Promise<Metadata> {

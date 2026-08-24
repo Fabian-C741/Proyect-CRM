@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import type { Curso } from '@/lib/definitions'
+import ModalOverlay from './ModalOverlay'
 
 type Banco = { cbu?: string | null; alias_cbu?: string | null; banco?: string | null; titular_cuenta?: string | null }
 
@@ -62,7 +63,7 @@ export default function CompraModal({ curso, banco, onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+    <ModalOverlay>
       <form onSubmit={enviar} className="flex flex-col w-full max-w-lg max-h-[90vh] bg-surface-800 border border-white/10 rounded-2xl shadow-2xl overflow-hidden">
         <div className="px-6 py-4 border-b border-white/5 flex justify-between items-center shrink-0">
           <h2 className="text-lg font-semibold text-white">
@@ -138,6 +139,6 @@ export default function CompraModal({ curso, banco, onClose }: Props) {
           )}
         </div>
       </form>
-    </div>
+    </ModalOverlay>
   )
 }
