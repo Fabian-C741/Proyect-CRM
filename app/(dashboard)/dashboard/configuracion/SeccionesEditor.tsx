@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { saveSeccionesAction } from './actions'
-import { TIPOS_PRODUCTO_INFO, type SeccionLandingConfig, type SeccionesLanding } from '@/lib/definitions'
+import { TIPOS_PRODUCTO_INFO, getTipoInfo, type SeccionLandingConfig, type SeccionesLanding } from '@/lib/definitions'
 
 type EstadoSeccion = Required<Pick<SeccionLandingConfig, 'visible' | 'titulo' | 'descripcion' | 'icono'>> & {
   orden: number
@@ -24,8 +24,9 @@ function estadoInicial(config: SeccionesLanding | null): EstadoSecciones {
     const guardado = config?.[tipo]
     estado[tipo] = {
       visible: guardado?.visible !== false,
-      titulo: guardado?.titulo || '',
-      descripcion: guardado?.descripcion || '',
+      // Pre-cargar los valores reales que se ven en la landing (defaults incluidos) para que sean editables
+      titulo: guardado?.titulo ?? info.label,
+      descripcion: guardado?.descripcion ?? info.desc,
       // Si hay config guardada se respeta tal cual (incluso vacío); el default solo aplica sin config
       icono: typeof guardado?.icono === 'string' ? guardado.icono : info.icon,
       orden: guardado?.orden ?? ORDEN_BASE[tipo],
@@ -38,7 +39,7 @@ function estadoInicial(config: SeccionesLanding | null): EstadoSecciones {
     if (cfg?.personalizada === false) continue
     estado[tipo] = {
       visible: cfg?.visible !== false,
-      titulo: cfg?.titulo || '',
+      titulo: cfg?.titulo || getTipoInfo(tipo).label,
       descripcion: cfg?.descripcion || '',
       icono: typeof cfg?.icono === 'string' ? cfg.icono : '📦',
       orden: cfg?.orden ?? 100 + Object.keys(estado).length,
@@ -215,7 +216,7 @@ export default function SeccionesEditor({ configInicial }: { configInicial: Secc
                 <textarea
                   value={cfg.descripcion || ''}
                   onChange={e => actualizar(tipo, 'descripcion', e.target.value)}
-                  placeholder={tipo in TIPOS_PRODUCTO_INFO ? TIPOS_PRODUCTO_INFO[tipo as keyof typeof TIPOS_PRODUCTO_INFO].desc : 'Texto opcional bajo el título'}
+                  placeholder="Texto opcional bajo el título (vacío = sin texto)"
                   maxLength={400}
                   rows={2}
                   className="input-base text-sm"
