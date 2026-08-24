@@ -24,10 +24,11 @@ function estadoInicial(config: SeccionesLanding | null): EstadoSecciones {
     const guardado = config?.[tipo]
     estado[tipo] = {
       visible: guardado?.visible !== false,
-      // Pre-cargar los valores reales que se ven en la landing (defaults incluidos) para que sean editables
-      titulo: guardado?.titulo ?? info.label,
-      descripcion: guardado?.descripcion ?? info.desc,
-      // Si hay config guardada se respeta tal cual (incluso vacío); el default solo aplica sin config
+      // Pre-cargar los valores reales que se ve en la landing (defaults incluidos).
+      // '||' también rescata configs viejas guardadas con strings vacíos.
+      titulo: guardado?.titulo || info.label,
+      descripcion: guardado?.descripcion || info.desc,
+      // El ícono SÍ distingue: si hay config guardada se respeta tal cual (incluso vacío = sin ícono)
       icono: typeof guardado?.icono === 'string' ? guardado.icono : info.icon,
       orden: guardado?.orden ?? ORDEN_BASE[tipo],
       personalizada: false,
@@ -216,7 +217,7 @@ export default function SeccionesEditor({ configInicial }: { configInicial: Secc
                 <textarea
                   value={cfg.descripcion || ''}
                   onChange={e => actualizar(tipo, 'descripcion', e.target.value)}
-                  placeholder="Texto opcional bajo el título (vacío = sin texto)"
+                  placeholder="Texto opcional bajo el título (si lo borrás vuelve el texto por defecto)"
                   maxLength={400}
                   rows={2}
                   className="input-base text-sm"

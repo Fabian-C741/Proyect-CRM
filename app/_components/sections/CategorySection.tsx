@@ -31,11 +31,11 @@ export default function CategorySection({ tipo, items, whatsappNumber, icono, ti
   const [cantidad, setCantidad] = useState(ITEMS_POR_PAGINA)
   const [compraModal, setCompraModal] = useState<Curso | null>(null)
   const info = getTipoInfo(tipo)
-  // Sin config (undefined) → valores por defecto del tipo.
-  // Con config vacía ('') → el admin lo dejó vacío a propósito: no se dibuja nada.
+  // El ícono distingue "sin config" (default del tipo) de "vacío a propósito" (no se dibuja).
+  // Título y descripción siempre tienen fallback al default del tipo.
   const iconoFinal = icono === undefined ? info.icon : icono.trim()
   const tituloFinal = titulo?.trim() || info.label
-  const descFinal = descripcion === undefined ? info.desc : descripcion.trim()
+  const descFinal = descripcion?.trim() || info.desc
   const visibles = items.slice(0, cantidad)
   const hayMas = cantidad < items.length
 
