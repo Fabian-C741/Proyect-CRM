@@ -243,6 +243,7 @@ export type PaginaBloque =
   | { tipo: 'titulo'; texto: string }
   | { tipo: 'texto'; texto: string }
   | { tipo: 'imagen'; url: string; descripcion?: string }
+  | { tipo: 'video'; url: string; descripcion?: string }
 
 export type Pagina = {
   id: string

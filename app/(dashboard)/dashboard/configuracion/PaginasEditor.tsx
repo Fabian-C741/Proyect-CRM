@@ -6,6 +6,14 @@ import { createSupabaseBrowserClient } from '@/lib/supabase/client'
 import { createPaginaAction, updatePaginaAction, deletePaginaAction } from './actions'
 import type { Pagina, PaginaBloque } from '@/lib/definitions'
 
+// Extrae el ID de un enlace de YouTube (watch / youtu.be / shorts / embed / live)
+const YOUTUBE_ID_RE = /^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})/i
+
+function idYouTube(url: string): string | null {
+  const m = url.trim().match(YOUTUBE_ID_RE)
+  return m ? m[1] : null
+}
+
 // ─────────────────────────────────────────────
 // Subida de imagen para un bloque
 // ─────────────────────────────────────────────
@@ -69,6 +77,59 @@ function ImagenBloqueUploader({
 }
 
 // ─────────────────────────────────────────────
+// Editor de bloque de video (YouTube por enlace)
+// ─────────────────────────────────────────────
+function VideoBloqueInput({
+  bloque,
+  onChange,
+}: {
+  bloque: Extract<PaginaBloque, { tipo: 'video' }>
+  onChange: (patch: Partial<Extract<PaginaBloque, { tipo: 'video' }>>) => void
+}) {
+  const id = bloque.url ? idYouTube(bloque.url) : null
+  const invalida = Boolean(bloque.url) && !id
+
+  return (
+    <div className="space-y-2 w-full">
+      <input
+        type="text"
+        placeholder="Pegá el enlace del video (ej. https://www.youtube.com/watch?v=...)"
+        value={bloque.url}
+        onChange={e => onChange({ url: e.target.value })}
+        maxLength={1000}
+        className="input-base text-xs"
+      />
+      <input
+        type="text"
+        placeholder="Descripción del video (opcional)"
+        value={bloque.descripcion || ''}
+        onChange={e => onChange({ descripcion: e.target.value })}
+        maxLength={300}
+        className="input-base text-xs"
+      />
+      {invalida && (
+        <p className="text-xs text-red-400">
+          El enlace no parece ser de YouTube. Ej.: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+        </p>
+      )}
+      {id && (
+        <div className="rounded-lg overflow-hidden bg-slate-800" style={{ position: 'relative', width: '100%', paddingBottom: '56.25%' }}>
+          <iframe
+            src={`https://www.youtube.com/embed/${id}`}
+            title="Preview del video"
+            allowFullScreen
+            loading="lazy"
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+            referrerPolicy="strict-origin-when-cross-origin"
+            style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+          />
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ─────────────────────────────────────────────
 // Editor de bloques (lista ordenable)
 // ─────────────────────────────────────────────
 function BloquesEditor({
@@ -95,6 +156,8 @@ function BloquesEditor({
   const agregar = (tipo: PaginaBloque['tipo']) => {
     if (tipo === 'imagen') {
       setBloques([...bloques, { tipo: 'imagen', url: '', descripcion: '' }])
+    } else if (tipo === 'video') {
+      setBloques([...bloques, { tipo: 'video', url: '', descripcion: '' }])
     } else {
       setBloques([...bloques, { tipo, texto: '' }])
     }
@@ -110,7 +173,7 @@ function BloquesEditor({
         <div key={i} className="p-3 rounded-lg border border-white/10 bg-white/[0.03] space-y-2">
           <div className="flex items-center justify-between">
             <span className="text-xs text-pink-400 font-semibold">
-              {b.tipo === 'titulo' ? '🏷️ Título' : b.tipo === 'texto' ? '📝 Texto' : '🖼️ Imagen'}
+              {b.tipo === 'titulo' ? '🏷️ Título' : b.tipo === 'texto' ? '📝 Texto' : b.tipo === 'imagen' ? '🖼️ Imagen' : '🎬 Video'}
             </span>
             <div className="flex gap-1 items-center">
               <button type="button" onClick={() => mover(i, -1)} disabled={i === 0} title="Subir" className="px-1.5 text-slate-400 hover:text-white disabled:opacity-30">▲</button>
@@ -148,6 +211,13 @@ function BloquesEditor({
               onChange={patch => actualizar(i, patch)}
             />
           )}
+
+          {b.tipo === 'video' && (
+            <VideoBloqueInput
+              bloque={b}
+              onChange={patch => actualizar(i, patch)}
+            />
+          )}
         </div>
       ))}
 
@@ -155,6 +225,7 @@ function BloquesEditor({
         <button type="button" onClick={() => agregar('titulo')} className="btn-secondary text-xs">🏷️ Título</button>
         <button type="button" onClick={() => agregar('texto')} className="btn-secondary text-xs">📝 Texto</button>
         <button type="button" onClick={() => agregar('imagen')} className="btn-secondary text-xs">🖼️ Imagen</button>
+        <button type="button" onClick={() => agregar('video')} className="btn-secondary text-xs">🎬 Video</button>
       </div>
     </div>
   )
@@ -253,7 +324,7 @@ export default function PaginasEditor({ paginas }: { paginas: Pagina[] }) {
   return (
     <div className="space-y-4">
       <p className="text-slate-400 text-sm">
-        Creá páginas propias con títulos, textos e imágenes. Se publican en{' '}
+        Creá páginas propias con títulos, textos, imágenes y videos de YouTube. Se publican en{' '}
         <code className="bg-white/5 px-1 rounded">/p/nombre</code> y se agregan solas al menú superior.
         Después podés ordenarlas o agruparlas en la pestaña ⚓ Menú Superior.
       </p>

@@ -359,6 +359,14 @@ function slugify(texto: string): string {
 
 type BloqueRaw = { tipo?: unknown; texto?: unknown; url?: unknown; descripcion?: unknown }
 
+// Extrae el ID de un enlace de YouTube (watch / youtu.be / shorts / embed / live)
+const YOUTUBE_ID_RE = /^(?:https?:\/\/)?(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})/i
+
+function urlYouTubeAEmbed(raw: string): string | null {
+  const m = raw.trim().match(YOUTUBE_ID_RE)
+  return m ? `https://www.youtube.com/embed/${m[1]}` : null
+}
+
 function parseBloques(raw: FormDataEntryValue | null): PaginaBloque[] {
   if (!raw || typeof raw !== 'string') return []
   try {
@@ -376,6 +384,11 @@ function parseBloques(raw: FormDataEntryValue | null): PaginaBloque[] {
         if (!url) continue
         const descripcion = b.descripcion ? String(b.descripcion).slice(0, 300) : undefined
         out.push(descripcion ? { tipo: 'imagen', url, descripcion } : { tipo: 'imagen', url })
+      } else if (b.tipo === 'video') {
+        const embed = urlYouTubeAEmbed(String(b.url ?? '').slice(0, 1000))
+        if (!embed) continue
+        const descripcion = b.descripcion ? String(b.descripcion).slice(0, 300) : undefined
+        out.push(descripcion ? { tipo: 'video', url: embed, descripcion } : { tipo: 'video', url: embed })
       }
     }
     return out

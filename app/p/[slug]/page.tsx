@@ -64,6 +64,28 @@ export default async function PaginaDinamica({ params }: Props) {
                     </p>
                   )
                 }
+                if (b.tipo === 'video') {
+                  return (
+                    <figure key={i} style={{ margin: 0 }}>
+                      <div style={{ position: 'relative', width: '100%', paddingBottom: '56.25%', borderRadius: 12, overflow: 'hidden', background: '#000' }}>
+                        <iframe
+                          src={b.url}
+                          title={b.descripcion || 'Video de YouTube'}
+                          allowFullScreen
+                          loading="lazy"
+                          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                          referrerPolicy="strict-origin-when-cross-origin"
+                          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 0 }}
+                        />
+                      </div>
+                      {b.descripcion && (
+                        <figcaption style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '0.5rem', textAlign: 'center' }}>
+                          {b.descripcion}
+                        </figcaption>
+                      )}
+                    </figure>
+                  )
+                }
                 return (
                   <figure key={i} style={{ margin: 0 }}>
                     {/* eslint-disable-next-line @next/next/no-img-element */}
